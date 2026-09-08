@@ -12,6 +12,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const tabPanels = document.querySelectorAll('.tab-panel');
 
   function activateTab(tabId) {
+    document.body.dataset.activeTab = tabId;
+
     tabButtons.forEach(btn => {
       if (btn.dataset.tab === tabId) {
         btn.classList.add('active');
