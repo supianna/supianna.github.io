@@ -122,28 +122,28 @@ document.addEventListener('DOMContentLoaded', () => {
 
   let currentSelectedTag = '✨ 영감';
 
-  // 기본 샘플 메모 데이터
+  // 기본 샘플 메모 데이터 (Mystic Deep Aurora 테마)
   const defaultNotes = [
     {
       id: 1,
       author: '수피아나 (Supianna)',
       tag: '✨ 영감',
-      content: '방문해주셔서 진심으로 감사합니다! 🌊\n햇살을 받아 반짝이는 바다 윤슬처럼, 이곳에서 따뜻하고 편안한 영감을 얻어가시길 바랍니다.',
-      date: '2026.09.08 13:30'
+      content: '오로라 테크 아카이브에 오신 것을 환영합니다! 🌌\n끝없는 밤하늘을 수놓는 오로라처럼, 이곳에서 새로운 영감과 아이디어를 발견하시길 바랍니다.',
+      date: '2026.09.08 13:45'
     },
     {
       id: 2,
-      author: '익명의 여행자',
-      tag: '🌊 윤슬',
-      content: '바다 파티클 효과와 시원한 블루 & 골드 톤 디자인이 너무 매력적이에요! 원스크린 홈 화면도 한눈에 들어와서 정말 편리합니다.',
-      date: '2026.09.08 13:35'
+      author: '익명의 탐험가',
+      tag: '🌌 오로라',
+      content: '딥 스페이스 밤하늘과 네온 오로라 글래스모피즘이 정말 몽환적이고 세련되었네요! 원스크린 홈 대시보드 몰입감이 최고입니다.',
+      date: '2026.09.08 13:48'
     },
     {
       id: 3,
       author: '동료 개발자',
       tag: '🚀 응원',
-      content: '단단한 코드 구조와 감성적인 UI의 조화가 멋집니다. 앞으로 펼쳐질 다양한 프로젝트들도 진심으로 응원합니다!',
-      date: '2026.09.08 13:38'
+      content: '미래지향적인 비주얼과 탄탄한 아키텍처의 조화가 멋집니다. 앞으로 펼쳐질 다양한 프로젝트들도 진심으로 응원합니다!',
+      date: '2026.09.08 13:50'
     }
   ];
 
@@ -182,17 +182,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (notes.length === 0) {
       boardListEl.innerHTML = `
-        <div style="grid-column: 1 / -1; text-align: center; padding: 3rem 1rem; color: var(--text-muted); background: var(--glass-card-bg); border-radius: var(--radius-xl); border: 1px dashed rgba(142, 186, 242, 0.4);">
-          <div style="font-size: 2.2rem; margin-bottom: 0.5rem;">💌</div>
-          <p style="font-size: 1rem; font-weight: 600; color: var(--pastel-blue-deep);">아직 남겨진 메모가 없습니다.</p>
-          <p style="font-size: 0.875rem; margin-top: 0.25rem;">위 폼에서 첫 번째 따뜻한 이야기를 남겨보세요!</p>
+        <div style="grid-column: 1 / -1; text-align: center; padding: 3.5rem 1rem; color: var(--text-muted); background: var(--glass-bg); border-radius: var(--radius-xl); border: 1px dashed rgba(255, 255, 255, 0.15);">
+          <div style="font-size: 2.5rem; margin-bottom: 0.6rem; filter: drop-shadow(0 0 10px rgba(192, 132, 252, 0.5));">🌌</div>
+          <p style="font-size: 1.05rem; font-weight: 700; color: var(--text-primary);">아직 남겨진 우주의 메시지가 없습니다.</p>
+          <p style="font-size: 0.885rem; margin-top: 0.35rem; color: var(--text-secondary);">위 폼에서 첫 번째 반짝이는 메모를 남겨보세요!</p>
         </div>
       `;
       return;
     }
 
     boardListEl.innerHTML = notes.map(note => {
-      // XSS 방지를 위한 HTML 이스케이프
       const safeAuthor = escapeHtml(note.author || '익명의 여행자');
       const safeContent = escapeHtml(note.content || '');
       const safeTag = escapeHtml(note.tag || '✨ 영감');
@@ -273,7 +272,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       let author = boardAuthorInput.value.trim();
       if (!author) {
-        author = '익명의 여행자';
+        author = '익명의 탐험가';
       }
 
       const now = new Date();
@@ -288,7 +287,7 @@ document.addEventListener('DOMContentLoaded', () => {
       };
 
       const notes = loadNotes();
-      notes.unshift(newNote); // 최신글이 맨 위로
+      notes.unshift(newNote);
       saveNotes(notes);
 
       // 폼 리셋
@@ -296,15 +295,14 @@ document.addEventListener('DOMContentLoaded', () => {
       if (charCounter) charCounter.textContent = '0';
       renderNotes();
 
-      // 등록 성공 피드백
-      alert('메모가 따뜻하게 등록되었습니다 ✨');
+      alert('오로라 보드에 메모가 등록되었습니다 ✨');
     });
   }
 
   // 샘플 메모 복원 버튼
   if (btnResetSample) {
     btnResetSample.addEventListener('click', () => {
-      if (confirm('기본 샘플 메모로 다시 채우시겠습니까? (기존 메모는 덮어씌워집니다)')) {
+      if (confirm('오로라 기본 샘플 메모로 다시 채우시겠습니까? (기존 메모는 덮어씌워집니다)')) {
         saveNotes(defaultNotes);
         renderNotes();
       }
@@ -315,7 +313,7 @@ document.addEventListener('DOMContentLoaded', () => {
   renderNotes();
 
   // ------------------------------------------------------------------------
-  // 2. 바다 윤슬 은은한 반짝임 애니메이션 (Ambient Yoonseul Sparkles)
+  // 4. 은하수 별빛 & 오로라 파티클 캔버스 (Cosmic Starlight & Twinkling Dust)
   // ------------------------------------------------------------------------
   const canvas = document.getElementById('sparkle-canvas');
   if (!canvas) return;
@@ -329,30 +327,36 @@ document.addEventListener('DOMContentLoaded', () => {
     height = canvas.height = window.innerHeight;
   });
 
-  // 반짝임 파티클 생성
-  const sparkles = [];
-  const SPARKLE_COUNT = 45; // 화면 전체에 은은하게 퍼지는 파티클 수
+  const stars = [];
+  const STAR_COUNT = 65;
 
-  class Sparkle {
+  class CosmicStar {
     constructor() {
       this.reset();
-      this.alpha = Math.random() * 0.7; // 초기 투명도 랜덤 분산
+      this.alpha = Math.random() * 0.8;
     }
 
     reset() {
       this.x = Math.random() * width;
       this.y = Math.random() * height;
-      this.size = Math.random() * 2.8 + 1.2; // 부드럽고 작은 크기
+      this.size = Math.random() * 2.2 + 0.8;
       this.alpha = 0;
-      this.speed = Math.random() * 0.015 + 0.008; // 천천히 숨쉬듯 깜빡임
+      this.speed = Math.random() * 0.015 + 0.005;
       this.isGrowing = true;
-      this.colorType = Math.random() > 0.4 ? 'gold' : 'blue'; // 따뜻한 햇살빛 또는 맑은 하늘빛
+      const typeChoice = Math.random();
+      if (typeChoice < 0.4) {
+        this.color = 'cyan'; // #38bdf8
+      } else if (typeChoice < 0.75) {
+        this.color = 'violet'; // #c084fc
+      } else {
+        this.color = 'white'; // #ffffff
+      }
     }
 
     update() {
       if (this.isGrowing) {
         this.alpha += this.speed;
-        if (this.alpha >= 0.75) {
+        if (this.alpha >= 0.85) {
           this.isGrowing = false;
         }
       } else {
@@ -361,9 +365,8 @@ document.addEventListener('DOMContentLoaded', () => {
           this.reset();
         }
       }
-
-      // 물결처럼 아주 미세하게 부유하는 움직임
-      this.y += Math.sin(Date.now() * 0.001 + this.x) * 0.15;
+      this.y -= 0.12; // 은하수처럼 아주 천천히 위로 부유
+      if (this.y < 0) this.y = height;
     }
 
     draw() {
@@ -371,37 +374,88 @@ document.addEventListener('DOMContentLoaded', () => {
       ctx.beginPath();
       ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
 
-      let gradient = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.size * 2.2);
-      if (this.colorType === 'gold') {
-        // 따스한 윤슬 골든 옐로우 틴트
-        gradient.addColorStop(0, `rgba(255, 255, 255, ${this.alpha})`);
-        gradient.addColorStop(0.5, `rgba(253, 230, 138, ${this.alpha * 0.7})`);
-        gradient.addColorStop(1, `rgba(251, 191, 36, 0)`);
-      } else {
-        // 투명한 에메랄드 스카이블루 틴트
-        gradient.addColorStop(0, `rgba(255, 255, 255, ${this.alpha})`);
-        gradient.addColorStop(0.5, `rgba(186, 230, 253, ${this.alpha * 0.6})`);
-        gradient.addColorStop(1, `rgba(147, 197, 253, 0)`);
+      let colorRgba = `rgba(255, 255, 255, ${this.alpha})`;
+      let glowRgba = `rgba(255, 255, 255, 0.4)`;
+      if (this.color === 'cyan') {
+        colorRgba = `rgba(56, 189, 248, ${this.alpha})`;
+        glowRgba = `rgba(6, 182, 212, 0.6)`;
+      } else if (this.color === 'violet') {
+        colorRgba = `rgba(192, 132, 252, ${this.alpha})`;
+        glowRgba = `rgba(139, 92, 246, 0.6)`;
       }
 
-      ctx.fillStyle = gradient;
-      ctx.shadowBlur = 8;
-      ctx.shadowColor = this.colorType === 'gold' ? 'rgba(253, 230, 138, 0.6)' : 'rgba(186, 230, 253, 0.6)';
+      ctx.fillStyle = colorRgba;
+      ctx.shadowBlur = 10;
+      ctx.shadowColor = glowRgba;
       ctx.fill();
       ctx.restore();
     }
   }
 
-  for (let i = 0; i < SPARKLE_COUNT; i++) {
-    sparkles.push(new Sparkle());
+  for (let i = 0; i < STAR_COUNT; i++) {
+    stars.push(new CosmicStar());
+  }
+
+  // 때때로 밤하늘을 가로지르는 은은한 유성(Shooting Star)
+  let shootingStar = null;
+
+  class ShootingStar {
+    constructor() {
+      this.reset();
+    }
+    reset() {
+      this.x = Math.random() * (width * 0.7);
+      this.y = Math.random() * (height * 0.4);
+      this.len = Math.random() * 80 + 50;
+      this.speed = Math.random() * 8 + 6;
+      this.size = Math.random() * 1.5 + 1;
+      this.alpha = 1;
+      this.active = true;
+    }
+    update() {
+      this.x += this.speed;
+      this.y += this.speed * 0.55;
+      this.alpha -= 0.025;
+      if (this.alpha <= 0) {
+        this.active = false;
+      }
+    }
+    draw() {
+      if (!this.active) return;
+      ctx.save();
+      ctx.strokeStyle = `rgba(192, 132, 252, ${this.alpha})`;
+      ctx.lineWidth = this.size;
+      ctx.beginPath();
+      ctx.moveTo(this.x, this.y);
+      ctx.lineTo(this.x - this.len, this.y - this.len * 0.55);
+      ctx.stroke();
+      ctx.restore();
+    }
+  }
+
+  function maybeSpawnShootingStar() {
+    if (!shootingStar && Math.random() < 0.008) {
+      shootingStar = new ShootingStar();
+    }
   }
 
   function animate() {
     ctx.clearRect(0, 0, width, height);
-    sparkles.forEach(s => {
+
+    stars.forEach(s => {
       s.update();
       s.draw();
     });
+
+    maybeSpawnShootingStar();
+    if (shootingStar) {
+      shootingStar.update();
+      shootingStar.draw();
+      if (!shootingStar.active) {
+        shootingStar = null;
+      }
+    }
+
     requestAnimationFrame(animate);
   }
 

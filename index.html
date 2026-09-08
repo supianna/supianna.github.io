@@ -11,9 +11,13 @@
 </head>
 <body data-active-tab="home">
 
-  <!-- 윤슬 바다 배경 레이어 (저투명도) & 파스텔 블렌딩 -->
-  <div class="ocean-bg-layer" aria-hidden="true"></div>
-  <div class="pastel-overlay" aria-hidden="true"></div>
+  <!-- 신비로운 오로라 배경 레이어 & 글로우 오브 -->
+  <div class="aurora-bg-container" aria-hidden="true">
+    <div class="aurora-blob blob-violet"></div>
+    <div class="aurora-blob blob-cyan"></div>
+    <div class="aurora-blob blob-emerald"></div>
+    <div class="aurora-mesh-noise"></div>
+  </div>
   <canvas id="sparkle-canvas" aria-hidden="true"></canvas>
 
   <!-- 상단 네비게이션 바 -->
@@ -35,20 +39,20 @@
   <!-- 메인 컨텐츠 영역 -->
   <main class="main-content">
 
-    <!-- 탭 1: HOME (스크롤 없는 한 화면 원스크린 레이아웃) -->
+    <!-- 탭 1: HOME (스크롤 없는 한 화면 오로라 대시보드) -->
     <section id="home" class="tab-panel active">
       <div class="home-wrapper">
         <div class="hero-section">
           <div class="highlight-badge">
-            <span class="badge-sparkle">✨</span> 물결 위 햇살처럼, 잔잔하고 꾸준하게
+            <span class="badge-sparkle">🌌</span> Mystic Aurora & Cosmic Space
           </div>
           <h1 class="hero-title">
-            배움과 성장을 사랑하는<br>
-            <span class="accent-blue">개발자 Supianna</span>의 <span class="accent-yellow">기록 공간</span>
+            밤하늘 오로라처럼 빛을 더하는<br>
+            <span class="accent-aurora">개발자 Supianna</span>의 <span class="accent-glow">디지털 아카이브</span>
           </h1>
           <p class="hero-desc">
-            탄탄한 기본기와 논리적인 문제 해결력으로 일상에 닿는 가치를 빚어냅니다.<br>
-            시원하고 맑은 바다 물결처럼 유연하며 확장 가능한 코드를 지향합니다.
+            깊은 우주 속 은은하게 일렁이는 오로라처럼, 단단한 아키텍처와 유연한 감각으로<br>
+            사용자에게 감동을 주는 직관적이고 완성도 높은 경험을 설계합니다.
           </p>
           <div class="hero-actions">
             <button class="btn btn-primary" data-target-tab="who-am-i">
@@ -64,28 +68,28 @@
           </div>
         </div>
 
-        <!-- 핵심 가치 및 하이라이트 카드 3종 -->
+        <!-- 3대 핵심 가치 오로라 글래스 카드 -->
         <div class="features-grid">
           <article class="feature-card" data-target-tab="who-am-i">
             <div class="feature-card-header">
               <span class="feature-tag">Mindset</span>
-              <span class="feature-icon">🌱</span>
+              <span class="feature-icon">🔮</span>
             </div>
             <h2 class="feature-title">끊임없는 탐구와 배움</h2>
             <p class="feature-desc">
-              새로운 기술을 편견 없이 능동적으로 받아들이며, 본질을 짚어내는 지속 가능한 학습을 이어갑니다.
+              새로운 기술과 지식을 편견 없이 받아들이며, 본질을 짚어내는 유연하고 깊이 있는 학습을 이어갑니다.
             </p>
-            <span class="feature-more">자세히 보기 →</span>
+            <span class="feature-more">더 알아보기 →</span>
           </article>
 
           <article class="feature-card" data-target-tab="projects">
             <div class="feature-card-header">
               <span class="feature-tag">Craftsmanship</span>
-              <span class="feature-icon">💎</span>
+              <span class="feature-icon">⚡</span>
             </div>
             <h2 class="feature-title">단단한 아키텍처 & 코드</h2>
             <p class="feature-desc">
-              단일 책임과 명확한 역할을 중요시하며, 동료가 편안하게 읽고 확장할 수 있는 견고한 결과물을 만듭니다.
+              단일 책임과 명확한 역할을 지키며, 동료가 편안하게 읽고 확장할 수 있는 견고한 시스템을 구축합니다.
             </p>
             <span class="feature-more">프로젝트 보기 →</span>
           </article>
@@ -93,13 +97,13 @@
           <article class="feature-card" data-target-tab="free-board">
             <div class="feature-card-header">
               <span class="feature-tag">Connection</span>
-              <span class="feature-icon">🌊</span>
+              <span class="feature-icon">🌌</span>
             </div>
-            <h2 class="feature-title">따뜻한 소통과 연대</h2>
+            <h2 class="feature-title">따뜻한 소통과 시너지</h2>
             <p class="feature-desc">
-              기술을 통해 사람과 사람을 잇고, 서로의 의견을 경청하고 존중하며 함께 더 큰 시너지를 만들어갑니다.
+              기술을 통해 사람을 잇고, 서로의 의견을 경청하며 함께 더 눈부신 시너지를 완성해 나갑니다.
             </p>
-            <span class="feature-more">메시지 남기기 →</span>
+            <span class="feature-more">방명록 남기기 →</span>
           </article>
         </div>
       </div>
@@ -117,10 +121,10 @@
               <span class="status-indicator" title="Active & Coding"></span>
             </div>
             <div class="resume-profile">
-              <div class="profile-badge">Developer & Explorer</div>
+              <div class="profile-badge">Mystic Explorer & Developer</div>
               <h2>Supianna (수피아나)</h2>
               <div class="resume-role">Software Developer / Tech Explorer</div>
-              <p class="profile-quote">"바다의 윤슬처럼 잔잔하면서도 스스로 빛나는 코드를 지향합니다."</p>
+              <p class="profile-quote">"끝없는 밤하늘의 오로라처럼, 깊이 있는 시선과 유연한 감각으로 빛을 발합니다."</p>
               <div class="resume-meta">
                 <span class="resume-meta-item">📍 대한민국</span>
                 <span class="resume-meta-item">🔗 <a href="https://github.com/supianna" target="_blank" rel="noopener noreferrer">github.com/supianna</a></span>
@@ -233,9 +237,9 @@
           <div class="story-block">
             <h4 class="resume-subheading">3. 앞으로의 비전 및 포부</h4>
             <p class="resume-text-block">
-              햇살을 머금고 반짝이는 바다 윤슬처럼, 언제나 차분하지만 스스로 빛을 발하는 단단한 개발자가 되고 싶습니다.
-              사용자에게는 일상의 작은 편리와 즐거움을 선물하고, 팀에는 어떤 문제를 맡겨도 든든하게 신뢰할 수 있는 개발자로
-              매일 한 걸음씩 깊이를 더해가겠습니다.
+              밤하늘을 수놓는 오로라처럼, 깊이 있는 사고와 자신만의 고유한 빛을 지닌 단단한 개발자가 되고 싶습니다.
+              사용자에게는 일상의 편리와 감동을 선물하고, 팀에는 언제나 신뢰할 수 있는 개발자로
+              매일 한 걸음씩 지평을 넓혀가겠습니다.
             </p>
           </div>
         </div>
@@ -250,8 +254,8 @@
             <div class="timeline-item">
               <span class="timeline-dot"></span>
               <div class="timeline-period">2026 - 현재</div>
-              <div class="timeline-title">개인 포트폴리오 & 테크 블로그 브랜드 구축</div>
-              <div class="timeline-desc">감성 마린 블루/선샤인 골드 테마 및 반응형 원스크린 대시보드 기반의 개인 웹사이트 설계 및 GitHub Pages 배포</div>
+              <div class="timeline-title">개인 포트폴리오 & 오로라 테크 아카이브 구축</div>
+              <div class="timeline-desc">신비로운 딥 오로라 & 글래스모피즘 테마 및 싱글 스크린 대시보드 기반 개인 웹사이트 설계 및 GitHub Pages 배포</div>
             </div>
             <div class="timeline-item">
               <span class="timeline-dot"></span>
@@ -276,14 +280,14 @@
           </div>
           <div class="interests-grid">
             <div class="interest-card">
-              <span class="interest-icon">🌊</span>
-              <h4>바다 산책 & 윤슬</h4>
-              <p>탁 트인 파도 소리를 들으며 반짝이는 물결을 바라볼 때 깊은 휴식과 영감을 얻습니다.</p>
+              <span class="interest-icon">🌌</span>
+              <h4>밤하늘 & 천체 관측</h4>
+              <p>탁 트인 밤하늘의 은하수와 별빛을 올려다보며 깊은 사색과 새로운 창의적 영감을 얻습니다.</p>
             </div>
             <div class="interest-card">
               <span class="interest-icon">☕</span>
               <h4>커피 & 테크 리딩</h4>
-              <p>향긋한 드립 커피와 함께 최신 기술 트렌드와 좋은 아티클을 읽으며 시야를 넓힙니다.</p>
+              <p>향긋한 커피 한 잔과 함께 글로벌 최신 기술 트렌드와 철학이 담긴 아티클을 탐독합니다.</p>
             </div>
             <div class="interest-card">
               <span class="interest-icon">✍️</span>
@@ -323,19 +327,19 @@
           <article class="project-card" data-category="web">
             <div class="project-card-banner banner-yoonseul">
               <span class="project-badge">Featured</span>
-              <span class="project-icon-large">🌊</span>
+              <span class="project-icon-large">🌌</span>
             </div>
             <div class="project-card-body">
               <div class="project-category-tag">Web & UI / Branding</div>
-              <h3 class="project-title">Yoonseul Tech Blog & Portfolio</h3>
+              <h3 class="project-title">Mystic Aurora Portfolio & Archive</h3>
               <p class="project-desc">
-                햇살이 부서지는 바다 윤슬을 테마로 한 싱글 스크린 대시보드 포트폴리오. 캔버스 파티클 애니메이션과 세련된 글래스모피즘 디자인을 적용했습니다.
+                신비로운 오로라 글로우와 글래스모피즘을 결합한 원스크린 대시보드 포트폴리오. 은하수 캔버스 파티클과 부드러운 오로라 메쉬 오브를 적용했습니다.
               </p>
               <div class="project-tech-tags">
                 <span>HTML5</span>
-                <span>CSS3 Glassmorphism</span>
+                <span>Deep Glassmorphism</span>
                 <span>Vanilla JS</span>
-                <span>Canvas API</span>
+                <span>Cosmic Canvas API</span>
               </div>
               <div class="project-actions">
                 <a href="#home" class="btn-card-action primary" data-target-tab="home">라이브 보기</a>
@@ -469,9 +473,9 @@
                 <label>기분 & 태그 선택</label>
                 <div class="emoji-tag-selector" id="emoji-selector">
                   <button type="button" class="emoji-tag-btn active" data-tag="✨ 영감">✨ 영감</button>
-                  <button type="button" class="emoji-tag-btn" data-tag="🌊 윤슬">🌊 윤슬</button>
+                  <button type="button" class="emoji-tag-btn" data-tag="🌌 오로라">🌌 오로라</button>
                   <button type="button" class="emoji-tag-btn" data-tag="💡 아이디어">💡 아이디어</button>
-                  <button type="button" class="emoji-tag-btn" data-tag="☕ 일상">☕ 일상</button>
+                  <button type="button" class="emoji-tag-btn" data-tag="🪐 일상">🪐 일상</button>
                   <button type="button" class="emoji-tag-btn" data-tag="🚀 응원">🚀 응원</button>
                 </div>
               </div>

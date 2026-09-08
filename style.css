@@ -1,50 +1,44 @@
 /* ==========================================================================
-   Supianna's Portfolio CSS
-   테마: 지중해 마린 블루 & 선샤인 골드 (Marine Blue & Sunshine Gold)
-   배경: 햇살이 부서지는 눈부신 바다 윤슬 (Vibrant Ocean Sun Glitter)
+   Supianna's Digital Portfolio & Archive
+   Theme: 신비로운 오로라 & 글래스모피즘 (Mystic Deep Aurora)
+   Mood: 딥 스페이스 밤하늘 위 몽환적으로 일렁이는 오로라 & 프로스티드 3D 글래스
    ========================================================================== */
 
 :root {
-  /* 🌟 황금 배색: 마린 블루 & 선샤인 골드 */
-  --blue-dark: #172554;          /* 깊고 신뢰감 있는 딥 네이비 (제목 및 굵은 텍스트) */
-  --blue-main: #2563eb;          /* 맑고 시원한 코발트/마린 블루 */
-  --blue-sky: #38bdf8;           /* 청명한 스카이 블루 */
-  --blue-light: #eff6ff;         /* 투명한 아이스 블루 틴트 */
-  --blue-border: rgba(59, 130, 246, 0.3);
+  /* 🌌 딥 스페이스 베이스 팔레트 */
+  --bg-deep: #070913;
+  --bg-surface: #0c1020;
+  --bg-surface-elevated: #131930;
 
-  --yellow-main: #f59e0b;        /* 화사하고 생기 넘치는 선샤인 앰버 */
-  --yellow-sun: #facc15;         /* 눈부신 골든 옐로우 */
-  --yellow-cream: #fef08a;       /* 부드럽고 따스한 버터 옐로우 */
-  --yellow-light: #fefce8;       /* 은은한 햇살 크림 배경 */
-  --yellow-text: #92400e;        /* 가독성을 완벽히 잡은 따뜻한 앰버 텍스트 */
+  /* 🔮 신비로운 오로라 네온 액센트 */
+  --aurora-violet: #8b5cf6;
+  --aurora-purple: #c084fc;
+  --aurora-cyan: #06b6d4;
+  --aurora-sky: #38bdf8;
+  --aurora-emerald: #10b981;
+  --aurora-mint: #34d399;
+  --aurora-amber: #fbbf24;
 
-  /* 텍스트 & 중립 톤 */
-  --text-primary: #0f172a;        /* 또렷한 메인 텍스트 */
-  --text-secondary: #334155;      /* 부드럽고 편안한 본문 텍스트 */
-  --text-muted: #64748b;          /* 은은한 보조 텍스트 */
+  /* 텍스트 & 명도 시스템 (크리스탈 & 실버) */
+  --text-primary: #f8fafc;
+  --text-secondary: #cbd5e1;
+  --text-muted: #94a3b8;
 
-  /* 이전 변수 매핑 호환성 */
-  --pastel-blue-deep: var(--blue-dark);
-  --pastel-blue-main: var(--blue-main);
-  --pastel-blue-soft: var(--blue-sky);
-  --pastel-blue-light: var(--blue-light);
-  --pastel-butter: var(--yellow-sun);
-  --pastel-butter-border: rgba(250, 204, 21, 0.5);
-
-  /* 화이트 글래스모피즘 (윤슬 배경 위에서 100% 가독성 보장) */
-  --glass-card-bg: rgba(255, 255, 255, 0.88);
-  --glass-card-hover: rgba(255, 255, 255, 0.96);
-  --glass-border: rgba(255, 255, 255, 0.95);
-  --glass-shadow: 0 12px 36px -4px rgba(37, 99, 235, 0.12), 0 4px 16px rgba(245, 158, 11, 0.08);
-  --glass-shadow-hover: 0 18px 42px -6px rgba(37, 99, 235, 0.22), 0 6px 20px rgba(245, 158, 11, 0.15);
+  /* 💎 딥 프로스티드 글래스모피즘 (Deep Frosted Glass) */
+  --glass-bg: rgba(14, 20, 38, 0.65);
+  --glass-bg-hover: rgba(22, 31, 58, 0.78);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --glass-border-hover: rgba(192, 132, 252, 0.45);
+  --glass-shadow: 0 16px 40px -8px rgba(0, 0, 0, 0.55), 0 0 30px -10px rgba(139, 92, 246, 0.18);
+  --glass-shadow-hover: 0 20px 50px -6px rgba(0, 0, 0, 0.7), 0 0 35px rgba(6, 182, 212, 0.3);
 
   --radius-xl: 20px;
   --radius-lg: 14px;
   --radius-full: 9999px;
-  --transition: all 0.28s cubic-bezier(0.25, 0.8, 0.25, 1);
+  --transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* 기본 리셋 & 부드러운 스크롤 */
+/* 기본 리셋 & 스크롤 설정 */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -60,43 +54,91 @@ body {
   display: flex;
   flex-direction: column;
   overflow-x: hidden;
-  background-color: #e0f2fe;
+  background-color: var(--bg-deep);
 }
 
 /* --------------------------------------------------------------------------
-   윤슬 바다 배경 레이어 (Vibrant Sun Glitter Background)
+   신비로운 오로라 배경 (Mystic Aurora Mesh Glowing Blobs)
    -------------------------------------------------------------------------- */
-.ocean-bg-layer {
+.aurora-bg-container {
   position: fixed;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
   z-index: -2;
-  background-image: url('assets/yoonseul.jpg');
-  background-size: cover;
-  background-position: center 30%;
-  background-repeat: no-repeat;
-  opacity: 0.62; /* 바다 윤슬의 반짝임과 물결이 선명하게 보이도록 투명도 낮춤 */
-  filter: brightness(1.05) contrast(1.08) saturate(1.15);
+  overflow: hidden;
   pointer-events: none;
+  background: radial-gradient(circle at 50% 0%, #0d1428 0%, var(--bg-deep) 75%);
 }
 
-/* 맑고 투명한 햇살 그라디언트 오버레이 */
-.pastel-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  z-index: -1;
-  background: 
-    linear-gradient(180deg, rgba(224, 242, 254, 0.35) 0%, rgba(255, 255, 255, 0.1) 45%, rgba(254, 240, 138, 0.28) 100%),
-    radial-gradient(circle at 80% 20%, rgba(250, 204, 21, 0.2) 0%, transparent 50%);
+.aurora-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(95px);
+  opacity: 0.55;
   pointer-events: none;
+  mix-blend-mode: screen;
 }
 
-/* 윤슬 반짝임 캔버스 */
+/* 바이올렛 글로우 오브 */
+.blob-violet {
+  width: 550px;
+  height: 550px;
+  background: radial-gradient(circle, var(--aurora-violet) 0%, rgba(139, 92, 246, 0) 70%);
+  top: -120px;
+  left: 15%;
+  animation: auroraFloat1 20s infinite alternate ease-in-out;
+}
+
+/* 시안 글로우 오브 */
+.blob-cyan {
+  width: 580px;
+  height: 580px;
+  background: radial-gradient(circle, var(--aurora-cyan) 0%, rgba(6, 182, 212, 0) 70%);
+  top: 15%;
+  right: 10%;
+  animation: auroraFloat2 24s infinite alternate ease-in-out;
+}
+
+/* 에메랄드 글로우 오브 */
+.blob-emerald {
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, var(--aurora-emerald) 0%, rgba(16, 185, 129, 0) 70%);
+  bottom: -100px;
+  left: 35%;
+  animation: auroraFloat3 22s infinite alternate ease-in-out;
+}
+
+@keyframes auroraFloat1 {
+  0% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(80px, 60px) scale(1.15); }
+  100% { transform: translate(-50px, 90px) scale(0.95); }
+}
+
+@keyframes auroraFloat2 {
+  0% { transform: translate(0, 0) scale(1.05); }
+  50% { transform: translate(-90px, -40px) scale(0.9); }
+  100% { transform: translate(40px, 80px) scale(1.2); }
+}
+
+@keyframes auroraFloat3 {
+  0% { transform: translate(0, 0) scale(0.95); }
+  50% { transform: translate(70px, -70px) scale(1.1); }
+  100% { transform: translate(-60px, -30px) scale(1); }
+}
+
+/* 미세 우주 텍스처 노이즈 오버레이 */
+.aurora-mesh-noise {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+  background-size: 36px 36px;
+  opacity: 0.6;
+}
+
+/* 캔버스 파티클 (은하수 별빛 레이어) */
 #sparkle-canvas {
   position: fixed;
   top: 0;
@@ -114,16 +156,16 @@ body {
   position: sticky;
   top: 0;
   z-index: 100;
-  background: rgba(255, 255, 255, 0.72);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.85);
-  box-shadow: 0 4px 20px rgba(74, 136, 217, 0.05);
-  padding: 0.9rem 1.5rem;
+  background: rgba(7, 11, 22, 0.75);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 25px rgba(0, 0, 0, 0.35);
+  padding: 0.85rem 1.75rem;
 }
 
 .nav-container {
-  max-width: 1000px;
+  max-width: 1040px;
   margin: 0 auto;
   display: flex;
   justify-content: space-between;
@@ -135,40 +177,41 @@ body {
 .nav-brand {
   display: flex;
   align-items: center;
-  gap: 0.6rem;
+  gap: 0.65rem;
   font-size: 1.25rem;
-  font-weight: 700;
-  color: var(--pastel-blue-deep);
+  font-weight: 800;
+  color: var(--text-primary);
   text-decoration: none;
   cursor: pointer;
   letter-spacing: -0.01em;
 }
 
 .brand-dot {
-  width: 9px;
-  height: 9px;
-  background: var(--pastel-butter);
+  width: 10px;
+  height: 10px;
+  background: linear-gradient(135deg, var(--aurora-purple), var(--aurora-cyan));
   border-radius: 50%;
-  box-shadow: 0 0 10px rgba(253, 230, 138, 0.9);
+  box-shadow: 0 0 12px var(--aurora-purple);
   display: inline-block;
-  border: 1.5px solid #fff;
+  border: 1.5px solid rgba(255, 255, 255, 0.8);
 }
 
 .nav-tabs {
   display: flex;
   align-items: center;
-  background: rgba(234, 243, 253, 0.75);
-  padding: 0.3rem;
+  background: rgba(18, 25, 48, 0.7);
+  padding: 0.32rem;
   border-radius: var(--radius-full);
-  gap: 0.25rem;
-  border: 1px solid rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(10px);
+  gap: 0.3rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(14px);
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
 .nav-tab-btn {
   border: none;
   background: transparent;
-  padding: 0.5rem 1.25rem;
+  padding: 0.48rem 1.3rem;
   border-radius: var(--radius-full);
   font-size: 0.925rem;
   font-weight: 600;
@@ -178,14 +221,14 @@ body {
 }
 
 .nav-tab-btn:hover {
-  color: var(--pastel-blue-deep);
-  background: rgba(255, 255, 255, 0.7);
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.08);
 }
 
 .nav-tab-btn.active {
-  background: var(--blue-main);
+  background: linear-gradient(135deg, var(--aurora-violet) 0%, var(--aurora-cyan) 100%);
   color: #ffffff;
-  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
+  box-shadow: 0 0 20px rgba(139, 92, 246, 0.55), inset 0 1px 1px rgba(255, 255, 255, 0.4);
 }
 
 /* --------------------------------------------------------------------------
@@ -193,24 +236,24 @@ body {
    -------------------------------------------------------------------------- */
 .main-content {
   flex: 1;
-  max-width: 1000px;
+  max-width: 1040px;
   width: 100%;
   margin: 0 auto;
   padding: 2.5rem 1.5rem 4rem;
   transition: padding 0.3s ease;
 }
 
-/* 부드러운 탭 전환 애니메이션 */
+/* 부드러운 오로라 페이드인 전환 */
 .tab-panel {
   display: none;
-  animation: emotionalFadeIn 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: auroraFadeIn 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .tab-panel.active {
   display: block;
 }
 
-@keyframes emotionalFadeIn {
+@keyframes auroraFadeIn {
   from {
     opacity: 0;
     transform: translateY(14px);
@@ -222,14 +265,14 @@ body {
 }
 
 /* --------------------------------------------------------------------------
-   공통 버튼 & 뱃지 스타일 확장
+   공통 버튼 스타일
    -------------------------------------------------------------------------- */
 .btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  padding: 0.72rem 1.6rem;
+  padding: 0.72rem 1.65rem;
   border-radius: var(--radius-full);
   font-size: 0.95rem;
   font-weight: 600;
@@ -237,18 +280,20 @@ body {
   border: none;
   transition: var(--transition);
   text-decoration: none;
-  backdrop-filter: blur(8px);
+  backdrop-filter: blur(10px);
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, var(--blue-main) 0%, #1d4ed8 100%);
+  background: linear-gradient(135deg, var(--aurora-violet) 0%, #6366f1 100%);
   color: #ffffff;
-  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
+  box-shadow: 0 4px 18px rgba(139, 92, 246, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .btn-primary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 22px rgba(37, 99, 235, 0.45);
+  box-shadow: 0 8px 26px rgba(139, 92, 246, 0.6);
+  background: linear-gradient(135deg, #9333ea 0%, #4f46e5 100%);
 }
 
 .btn-primary .btn-icon {
@@ -256,40 +301,41 @@ body {
 }
 
 .btn-primary:hover .btn-icon {
-  transform: translateX(3px);
+  transform: translateX(4px);
 }
 
 .btn-secondary {
-  background: linear-gradient(135deg, var(--yellow-sun) 0%, var(--yellow-main) 100%);
-  color: #78350f;
-  font-weight: 700;
-  border: 1px solid rgba(250, 204, 21, 0.7);
-  box-shadow: 0 4px 14px rgba(245, 158, 11, 0.28);
+  background: linear-gradient(135deg, rgba(6, 182, 212, 0.25) 0%, rgba(16, 185, 129, 0.25) 100%);
+  color: var(--aurora-mint);
+  font-weight: 600;
+  border: 1px solid rgba(45, 212, 191, 0.45);
+  box-shadow: 0 4px 16px rgba(6, 182, 212, 0.15);
 }
 
 .btn-secondary:hover {
-  background: linear-gradient(135deg, #fef08a 0%, #d97706 100%);
+  background: linear-gradient(135deg, var(--aurora-cyan) 0%, var(--aurora-emerald) 100%);
   color: #ffffff;
   transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(245, 158, 11, 0.4);
+  box-shadow: 0 8px 24px rgba(6, 182, 212, 0.4);
 }
 
 .btn-tertiary {
-  background: rgba(255, 255, 255, 0.85);
-  color: var(--pastel-blue-deep);
-  border: 1px solid rgba(142, 186, 242, 0.45);
-  box-shadow: 0 3px 12px rgba(37, 99, 235, 0.08);
+  background: rgba(255, 255, 255, 0.07);
+  color: var(--text-secondary);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 .btn-tertiary:hover {
-  background: rgba(255, 255, 255, 0.98);
-  border-color: var(--blue-main);
+  background: rgba(255, 255, 255, 0.14);
+  color: #ffffff;
+  border-color: var(--aurora-purple);
   transform: translateY(-2px);
-  box-shadow: 0 6px 18px rgba(37, 99, 235, 0.18);
+  box-shadow: 0 6px 18px rgba(192, 132, 252, 0.25);
 }
 
 /* --------------------------------------------------------------------------
-   탭 1: HOME (스크롤 없는 한 화면 원스크린 대시보드 레이아웃)
+   탭 1: HOME (스크롤 없는 한 화면 원스크린 오로라 대시보드)
    -------------------------------------------------------------------------- */
 .home-wrapper {
   display: flex;
@@ -307,54 +353,56 @@ body {
 .highlight-badge {
   display: inline-flex;
   align-items: center;
-  gap: 0.45rem;
-  padding: 0.35rem 1.15rem;
-  background: rgba(254, 252, 232, 0.92);
-  border: 1px solid var(--pastel-butter-border);
-  color: var(--yellow-text);
+  gap: 0.5rem;
+  padding: 0.38rem 1.25rem;
+  background: rgba(30, 41, 75, 0.65);
+  border: 1px solid rgba(192, 132, 252, 0.4);
+  color: var(--aurora-purple);
   border-radius: var(--radius-full);
   font-size: 0.875rem;
   font-weight: 600;
-  margin-bottom: 1.1rem;
-  box-shadow: 0 2px 10px rgba(253, 230, 138, 0.35);
-  backdrop-filter: blur(8px);
+  margin-bottom: 1.15rem;
+  box-shadow: 0 0 16px rgba(139, 92, 246, 0.3);
+  backdrop-filter: blur(12px);
 }
 
 .badge-sparkle {
   display: inline-block;
-  animation: pulseSparkle 2s infinite ease-in-out;
+  animation: pulseCosmic 2.5s infinite ease-in-out;
 }
 
-@keyframes pulseSparkle {
-  0%, 100% { transform: scale(1); opacity: 0.9; }
-  50% { transform: scale(1.25); opacity: 1; }
+@keyframes pulseCosmic {
+  0%, 100% { transform: scale(1); filter: drop-shadow(0 0 4px var(--aurora-purple)); }
+  50% { transform: scale(1.25); filter: drop-shadow(0 0 10px var(--aurora-cyan)); }
 }
 
 .hero-title {
-  font-size: clamp(1.85rem, 3.2vw, 2.65rem);
+  font-size: clamp(1.85rem, 3.3vw, 2.7rem);
   font-weight: 800;
-  line-height: 1.32;
-  color: var(--pastel-blue-deep);
+  line-height: 1.34;
+  color: var(--text-primary);
   margin-bottom: 0.85rem;
-  letter-spacing: -0.025em;
+  letter-spacing: -0.03em;
 }
 
-.hero-title .accent-blue {
-  color: var(--pastel-blue-main);
+.hero-title .accent-aurora {
+  background: linear-gradient(135deg, #c084fc 0%, #38bdf8 55%, #34d399 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: inline-block;
 }
 
-.hero-title .accent-yellow {
-  color: #b45309;
-  background: linear-gradient(180deg, transparent 65%, rgba(253, 230, 138, 0.65) 65%);
-  padding: 0 4px;
+.hero-title .accent-glow {
+  color: #f1f5f9;
+  text-shadow: 0 0 20px rgba(139, 92, 246, 0.6);
 }
 
 .hero-desc {
   font-size: clamp(0.92rem, 1.2vw, 1.075rem);
   color: var(--text-secondary);
-  max-width: 620px;
-  margin: 0 auto 1.4rem;
-  line-height: 1.7;
+  max-width: 660px;
+  margin: 0 auto 1.45rem;
+  line-height: 1.72;
 }
 
 .hero-actions {
@@ -365,7 +413,7 @@ body {
   margin-bottom: 0.5rem;
 }
 
-/* 홈 특징 카드 그리드 (3열 하이라이트) */
+/* 홈 특징 카드 그리드 (3열 오로라 글래스) */
 .features-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -374,70 +422,88 @@ body {
 }
 
 .feature-card {
-  background: var(--glass-card-bg);
+  background: var(--glass-bg);
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-xl);
-  padding: 1.4rem 1.35rem;
+  padding: 1.45rem 1.4rem;
   box-shadow: var(--glass-shadow);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
   transition: var(--transition);
   position: relative;
   display: flex;
   flex-direction: column;
   cursor: pointer;
   text-align: left;
+  overflow: hidden;
+}
+
+.feature-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(192, 132, 252, 0.6), transparent);
+  opacity: 0;
+  transition: var(--transition);
 }
 
 .feature-card:hover {
-  transform: translateY(-5px);
-  background: var(--glass-card-hover);
+  transform: translateY(-6px);
+  background: var(--glass-bg-hover);
   box-shadow: var(--glass-shadow-hover);
-  border-color: rgba(59, 130, 246, 0.4);
+  border-color: var(--glass-border-hover);
+}
+
+.feature-card:hover::before {
+  opacity: 1;
 }
 
 .feature-card-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 0.6rem;
+  margin-bottom: 0.65rem;
 }
 
 .feature-tag {
   font-size: 0.725rem;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--pastel-blue-deep);
-  background: rgba(234, 243, 253, 0.9);
-  padding: 0.2rem 0.55rem;
+  letter-spacing: 0.06em;
+  color: var(--aurora-cyan);
+  background: rgba(6, 182, 212, 0.15);
+  padding: 0.22rem 0.6rem;
   border-radius: 6px;
-  border: 1px solid rgba(142, 186, 242, 0.35);
+  border: 1px solid rgba(6, 182, 212, 0.35);
 }
 
 .feature-icon {
-  font-size: 1.2rem;
+  font-size: 1.25rem;
+  filter: drop-shadow(0 0 8px rgba(192, 132, 252, 0.5));
 }
 
 .feature-title {
-  font-size: 1.12rem;
+  font-size: 1.15rem;
   font-weight: 700;
-  color: var(--pastel-blue-deep);
+  color: var(--text-primary);
   margin-bottom: 0.45rem;
 }
 
 .feature-desc {
   font-size: 0.885rem;
-  color: var(--text-secondary);
-  line-height: 1.6;
+  color: var(--text-muted);
+  line-height: 1.62;
   flex: 1;
 }
 
 .feature-more {
-  margin-top: 0.75rem;
+  margin-top: 0.85rem;
   font-size: 0.825rem;
   font-weight: 600;
-  color: var(--blue-main);
+  color: var(--aurora-sky);
   opacity: 0.85;
   transition: opacity 0.2s ease, transform 0.2s ease;
   display: inline-block;
@@ -445,7 +511,8 @@ body {
 
 .feature-card:hover .feature-more {
   opacity: 1;
-  transform: translateX(3px);
+  color: var(--aurora-purple);
+  transform: translateX(4px);
 }
 
 /* --------------------------------------------------------------------------
@@ -454,11 +521,11 @@ body {
 @media (min-height: 620px) and (min-width: 769px) {
   body[data-active-tab="home"] {
     height: 100vh;
-    overflow: hidden; /* 데스크톱에서 완벽히 스크롤 방지 */
+    overflow: hidden; /* 데스크톱에서 스크롤바 완전 제거 */
   }
 
   body[data-active-tab="home"] .navbar {
-    padding: 0.65rem 1.5rem;
+    padding: 0.65rem 1.75rem;
   }
 
   body[data-active-tab="home"] .main-content {
@@ -502,11 +569,11 @@ body {
 
   body[data-active-tab="home"] .features-grid {
     margin-top: 0.5rem;
-    gap: 1rem;
+    gap: 1.1rem;
   }
 
   body[data-active-tab="home"] .feature-card {
-    padding: 1.15rem 1.25rem;
+    padding: 1.2rem 1.25rem;
   }
 
   body[data-active-tab="home"] .footer {
@@ -524,18 +591,31 @@ body {
 }
 
 .resume-header-card {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.94) 0%, rgba(234, 243, 253, 0.9) 100%);
+  background: var(--glass-bg);
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-xl);
-  padding: 2.25rem 2.5rem;
+  padding: 2.4rem 2.6rem;
   box-shadow: var(--glass-shadow);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
   display: flex;
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
   gap: 1.5rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.resume-header-card::before {
+  content: '';
+  position: absolute;
+  top: -50px;
+  right: -50px;
+  width: 200px;
+  height: 200px;
+  background: radial-gradient(circle, rgba(139, 92, 246, 0.25) 0%, transparent 70%);
+  pointer-events: none;
 }
 
 .resume-profile-wrapper {
@@ -546,12 +626,12 @@ body {
 
 .profile-avatar-box {
   position: relative;
-  width: 90px;
-  height: 90px;
+  width: 95px;
+  height: 95px;
   border-radius: 50%;
-  background: linear-gradient(135deg, rgba(254, 252, 232, 0.95) 0%, rgba(224, 242, 254, 0.95) 100%);
-  border: 3px solid #ffffff;
-  box-shadow: 0 8px 24px rgba(37, 99, 235, 0.18);
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.3) 0%, rgba(6, 182, 212, 0.3) 100%);
+  border: 2px solid rgba(255, 255, 255, 0.25);
+  box-shadow: 0 0 25px rgba(139, 92, 246, 0.5);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -559,7 +639,7 @@ body {
 }
 
 .avatar-emoji {
-  font-size: 2.6rem;
+  font-size: 2.75rem;
 }
 
 .status-indicator {
@@ -569,9 +649,9 @@ body {
   width: 14px;
   height: 14px;
   background: #10b981;
-  border: 2.5px solid #ffffff;
+  border: 2.5px solid var(--bg-deep);
   border-radius: 50%;
-  box-shadow: 0 0 6px rgba(16, 185, 129, 0.7);
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.8);
 }
 
 .profile-badge {
@@ -579,40 +659,40 @@ body {
   font-size: 0.75rem;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--blue-main);
-  background: rgba(234, 243, 253, 0.9);
-  padding: 0.2rem 0.6rem;
+  letter-spacing: 0.06em;
+  color: var(--aurora-purple);
+  background: rgba(192, 132, 252, 0.15);
+  padding: 0.22rem 0.65rem;
   border-radius: var(--radius-full);
-  margin-bottom: 0.35rem;
-  border: 1px solid rgba(59, 130, 246, 0.25);
+  margin-bottom: 0.4rem;
+  border: 1px solid rgba(192, 132, 252, 0.35);
 }
 
 .resume-profile h2 {
-  font-size: 1.95rem;
+  font-size: 2rem;
   font-weight: 800;
-  color: var(--pastel-blue-deep);
-  margin-bottom: 0.2rem;
+  color: var(--text-primary);
+  margin-bottom: 0.25rem;
   letter-spacing: -0.02em;
 }
 
 .resume-role {
   font-size: 1.05rem;
   font-weight: 600;
-  color: var(--pastel-blue-main);
-  margin-bottom: 0.4rem;
+  color: var(--aurora-sky);
+  margin-bottom: 0.45rem;
 }
 
 .profile-quote {
   font-size: 0.925rem;
   color: var(--text-secondary);
   font-style: italic;
-  margin-bottom: 0.7rem;
+  margin-bottom: 0.75rem;
 }
 
 .resume-meta {
   display: flex;
-  gap: 1.1rem;
+  gap: 1.25rem;
   flex-wrap: wrap;
   font-size: 0.885rem;
   color: var(--text-muted);
@@ -625,7 +705,7 @@ body {
 }
 
 .resume-meta-item a {
-  color: var(--pastel-blue-deep);
+  color: var(--aurora-sky);
   text-decoration: underline;
   text-underline-offset: 3px;
   font-weight: 500;
@@ -634,17 +714,17 @@ body {
 .profile-cta {
   display: flex;
   flex-direction: column;
-  gap: 0.65rem;
+  gap: 0.7rem;
 }
 
 .resume-section-card {
-  background: var(--glass-card-bg);
+  background: var(--glass-bg);
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-xl);
-  padding: 2.2rem 2.4rem;
+  padding: 2.25rem 2.5rem;
   box-shadow: var(--glass-shadow);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
 }
 
 .section-heading {
@@ -653,21 +733,21 @@ body {
   gap: 0.75rem;
   margin-bottom: 1.5rem;
   padding-bottom: 0.75rem;
-  border-bottom: 1px solid rgba(142, 186, 242, 0.25);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .heading-indicator {
   width: 5px;
   height: 22px;
-  background: var(--pastel-butter);
+  background: linear-gradient(180deg, var(--aurora-purple), var(--aurora-cyan));
   border-radius: 4px;
-  box-shadow: 0 0 8px rgba(253, 230, 138, 0.8);
+  box-shadow: 0 0 10px rgba(139, 92, 246, 0.7);
 }
 
 .section-heading h3 {
   font-size: 1.35rem;
   font-weight: 800;
-  color: var(--pastel-blue-deep);
+  color: var(--text-primary);
 }
 
 /* 역량 그리드 */
@@ -678,17 +758,18 @@ body {
 }
 
 .competency-item {
-  background: rgba(255, 255, 255, 0.65);
-  border: 1px solid rgba(224, 242, 254, 0.8);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: var(--radius-lg);
-  padding: 1.35rem;
+  padding: 1.4rem;
   transition: var(--transition);
 }
 
 .competency-item:hover {
-  background: rgba(255, 255, 255, 0.95);
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(6, 182, 212, 0.35);
   transform: translateY(-3px);
-  box-shadow: 0 8px 20px rgba(37, 99, 235, 0.1);
+  box-shadow: 0 8px 24px rgba(6, 182, 212, 0.15);
 }
 
 .comp-icon {
@@ -699,13 +780,13 @@ body {
 .competency-item h4 {
   font-size: 1.05rem;
   font-weight: 700;
-  color: var(--pastel-blue-deep);
-  margin-bottom: 0.4rem;
+  color: var(--text-primary);
+  margin-bottom: 0.45rem;
 }
 
 .competency-item p {
   font-size: 0.885rem;
-  color: var(--text-secondary);
+  color: var(--text-muted);
   line-height: 1.65;
 }
 
@@ -713,14 +794,14 @@ body {
 .tech-stack-groups {
   display: flex;
   flex-direction: column;
-  gap: 1.3rem;
+  gap: 1.35rem;
 }
 
 .tech-group-title {
   font-size: 0.95rem;
   font-weight: 700;
-  color: var(--pastel-blue-main);
-  margin-bottom: 0.6rem;
+  color: var(--aurora-purple);
+  margin-bottom: 0.65rem;
 }
 
 .skills-container {
@@ -730,10 +811,10 @@ body {
 }
 
 .skill-chip {
-  background: rgba(234, 243, 253, 0.85);
-  color: var(--pastel-blue-deep);
-  border: 1px solid rgba(142, 186, 242, 0.4);
-  padding: 0.4rem 0.95rem;
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text-secondary);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 0.42rem 1rem;
   border-radius: var(--radius-full);
   font-size: 0.865rem;
   font-weight: 600;
@@ -741,20 +822,22 @@ body {
 }
 
 .skill-chip:hover {
-  background: var(--pastel-blue-main);
+  background: rgba(139, 92, 246, 0.25);
   color: #ffffff;
+  border-color: var(--aurora-purple);
+  box-shadow: 0 0 12px rgba(139, 92, 246, 0.4);
   transform: translateY(-2px);
 }
 
 .skill-chip.highlight {
-  background: rgba(254, 252, 232, 0.95);
-  border-color: var(--pastel-butter-border);
-  color: #854d0e;
+  background: rgba(6, 182, 212, 0.15);
+  border-color: rgba(6, 182, 212, 0.4);
+  color: var(--aurora-cyan);
 }
 
 /* 에세이 스토리 블록 */
 .story-block {
-  margin-bottom: 1.4rem;
+  margin-bottom: 1.45rem;
 }
 
 .story-block:last-child {
@@ -764,7 +847,7 @@ body {
 .resume-subheading {
   font-size: 1.08rem;
   font-weight: 700;
-  color: var(--pastel-blue-main);
+  color: var(--aurora-sky);
   margin-bottom: 0.45rem;
 }
 
@@ -790,7 +873,7 @@ body {
   top: 8px;
   bottom: 8px;
   width: 2px;
-  background: rgba(142, 186, 242, 0.45);
+  background: linear-gradient(180deg, var(--aurora-purple), var(--aurora-cyan), transparent);
 }
 
 .timeline-item {
@@ -804,28 +887,28 @@ body {
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  background: var(--pastel-butter);
-  border: 2px solid #ffffff;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.25);
+  background: var(--aurora-cyan);
+  border: 2px solid var(--bg-deep);
+  box-shadow: 0 0 8px var(--aurora-cyan);
 }
 
 .timeline-period {
   font-size: 0.85rem;
   font-weight: 700;
-  color: var(--pastel-blue-main);
+  color: var(--aurora-purple);
   margin-bottom: 0.2rem;
 }
 
 .timeline-title {
   font-size: 1.05rem;
   font-weight: 700;
-  color: var(--pastel-blue-deep);
+  color: var(--text-primary);
   margin-bottom: 0.35rem;
 }
 
 .timeline-desc {
   font-size: 0.915rem;
-  color: var(--text-secondary);
+  color: var(--text-muted);
   line-height: 1.6;
 }
 
@@ -837,36 +920,38 @@ body {
 }
 
 .interest-card {
-  background: rgba(255, 255, 255, 0.65);
-  border: 1px solid rgba(224, 242, 254, 0.8);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: var(--radius-lg);
-  padding: 1.35rem;
+  padding: 1.4rem;
   text-align: center;
   transition: var(--transition);
 }
 
 .interest-card:hover {
-  background: rgba(255, 255, 255, 0.95);
+  background: rgba(255, 255, 255, 0.08);
   transform: translateY(-3px);
-  box-shadow: 0 8px 20px rgba(37, 99, 235, 0.1);
+  border-color: rgba(192, 132, 252, 0.35);
+  box-shadow: 0 8px 20px rgba(139, 92, 246, 0.15);
 }
 
 .interest-icon {
-  font-size: 2rem;
+  font-size: 2.1rem;
   display: inline-block;
   margin-bottom: 0.5rem;
+  filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.3));
 }
 
 .interest-card h4 {
   font-size: 1.05rem;
   font-weight: 700;
-  color: var(--pastel-blue-deep);
+  color: var(--text-primary);
   margin-bottom: 0.35rem;
 }
 
 .interest-card p {
   font-size: 0.875rem;
-  color: var(--text-secondary);
+  color: var(--text-muted);
   line-height: 1.6;
 }
 
@@ -880,13 +965,13 @@ body {
 }
 
 .projects-header-card {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.94) 0%, rgba(234, 243, 253, 0.9) 100%);
+  background: var(--glass-bg);
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-xl);
-  padding: 2.25rem 2.5rem;
+  padding: 2.4rem 2.6rem;
   box-shadow: var(--glass-shadow);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -898,20 +983,20 @@ body {
   font-size: 0.75rem;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--blue-main);
-  background: rgba(234, 243, 253, 0.9);
-  padding: 0.25rem 0.65rem;
+  letter-spacing: 0.06em;
+  color: var(--aurora-cyan);
+  background: rgba(6, 182, 212, 0.15);
+  padding: 0.25rem 0.7rem;
   border-radius: var(--radius-full);
   display: inline-block;
   margin-bottom: 0.4rem;
-  border: 1px solid rgba(59, 130, 246, 0.25);
+  border: 1px solid rgba(6, 182, 212, 0.35);
 }
 
 .projects-header-content h2 {
-  font-size: 1.95rem;
+  font-size: 2rem;
   font-weight: 800;
-  color: var(--pastel-blue-deep);
+  color: var(--text-primary);
   margin-bottom: 0.35rem;
 }
 
@@ -924,11 +1009,11 @@ body {
 /* 프로젝트 필터 버튼 */
 .project-filters {
   display: flex;
-  gap: 0.5rem;
-  background: rgba(234, 243, 253, 0.7);
+  gap: 0.45rem;
+  background: rgba(18, 25, 48, 0.7);
   padding: 0.3rem;
   border-radius: var(--radius-full);
-  border: 1px solid rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   flex-wrap: wrap;
 }
 
@@ -939,19 +1024,19 @@ body {
   border-radius: var(--radius-full);
   font-size: 0.875rem;
   font-weight: 600;
-  color: var(--text-secondary);
+  color: var(--text-muted);
   cursor: pointer;
   transition: var(--transition);
 }
 
 .filter-btn:hover {
-  color: var(--blue-main);
+  color: #ffffff;
 }
 
 .filter-btn.active {
-  background: var(--blue-main);
+  background: linear-gradient(135deg, var(--aurora-violet), var(--aurora-cyan));
   color: #ffffff;
-  box-shadow: 0 3px 10px rgba(37, 99, 235, 0.3);
+  box-shadow: 0 0 14px rgba(139, 92, 246, 0.4);
 }
 
 /* 프로젝트 카드 그리드 (2열) */
@@ -962,13 +1047,13 @@ body {
 }
 
 .project-card {
-  background: var(--glass-card-bg);
+  background: var(--glass-bg);
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-xl);
   overflow: hidden;
   box-shadow: var(--glass-shadow);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
   display: flex;
   flex-direction: column;
   transition: var(--transition);
@@ -976,56 +1061,58 @@ body {
 
 .project-card:hover {
   transform: translateY(-6px);
-  background: var(--glass-card-hover);
+  background: var(--glass-bg-hover);
   box-shadow: var(--glass-shadow-hover);
-  border-color: rgba(59, 130, 246, 0.35);
+  border-color: var(--glass-border-hover);
 }
 
 .project-card-banner {
-  height: 120px;
+  height: 125px;
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #e0f2fe 0%, #bfdbfe 100%);
+  background: linear-gradient(135deg, rgba(30, 41, 75, 0.8) 0%, rgba(15, 23, 42, 0.9) 100%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .banner-yoonseul {
-  background: linear-gradient(135deg, #bae6fd 0%, #fed7aa 100%);
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.35) 0%, rgba(6, 182, 212, 0.35) 100%);
 }
 
 .banner-board {
-  background: linear-gradient(135deg, #fef08a 0%, #bbf7d0 100%);
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.35) 0%, rgba(6, 182, 212, 0.35) 100%);
 }
 
 .banner-task {
-  background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.35) 0%, rgba(192, 132, 252, 0.35) 100%);
 }
 
 .banner-clean {
-  background: linear-gradient(135deg, #ccfbf1 0%, #bfdbfe 100%);
+  background: linear-gradient(135deg, rgba(20, 184, 166, 0.35) 0%, rgba(59, 130, 246, 0.35) 100%);
 }
 
 .project-icon-large {
   font-size: 2.8rem;
-  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
+  filter: drop-shadow(0 0 12px rgba(255, 255, 255, 0.4));
 }
 
 .project-badge {
   position: absolute;
   top: 12px;
   right: 14px;
-  background: rgba(255, 255, 255, 0.92);
-  color: var(--blue-main);
+  background: rgba(15, 23, 42, 0.85);
+  color: var(--aurora-cyan);
   font-size: 0.725rem;
   font-weight: 700;
-  padding: 0.2rem 0.6rem;
+  padding: 0.22rem 0.65rem;
   border-radius: var(--radius-full);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(6, 182, 212, 0.4);
+  box-shadow: 0 0 10px rgba(6, 182, 212, 0.25);
 }
 
 .project-card-body {
-  padding: 1.5rem 1.6rem;
+  padding: 1.6rem;
   display: flex;
   flex-direction: column;
   flex: 1;
@@ -1034,24 +1121,24 @@ body {
 .project-category-tag {
   font-size: 0.75rem;
   font-weight: 600;
-  color: var(--blue-main);
+  color: var(--aurora-purple);
   margin-bottom: 0.35rem;
   text-transform: uppercase;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.04em;
 }
 
 .project-title {
   font-size: 1.25rem;
   font-weight: 700;
-  color: var(--pastel-blue-deep);
+  color: var(--text-primary);
   margin-bottom: 0.55rem;
 }
 
 .project-desc {
   font-size: 0.9rem;
-  color: var(--text-secondary);
+  color: var(--text-muted);
   line-height: 1.65;
-  margin-bottom: 1.1rem;
+  margin-bottom: 1.15rem;
   flex: 1;
 }
 
@@ -1065,11 +1152,11 @@ body {
 .project-tech-tags span {
   font-size: 0.75rem;
   font-weight: 600;
-  background: rgba(234, 243, 253, 0.85);
-  color: var(--pastel-blue-deep);
-  padding: 0.22rem 0.6rem;
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text-secondary);
+  padding: 0.22rem 0.65rem;
   border-radius: 6px;
-  border: 1px solid rgba(142, 186, 242, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .project-actions {
@@ -1091,48 +1178,49 @@ body {
 }
 
 .btn-card-action.primary {
-  background: var(--blue-main);
+  background: linear-gradient(135deg, var(--aurora-violet), var(--aurora-cyan));
   color: #ffffff;
-  box-shadow: 0 3px 10px rgba(37, 99, 235, 0.25);
+  box-shadow: 0 2px 10px rgba(139, 92, 246, 0.35);
 }
 
 .btn-card-action.primary:hover {
-  background: #1d4ed8;
   transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(6, 182, 212, 0.5);
 }
 
 .btn-card-action.secondary {
-  background: rgba(234, 243, 253, 0.8);
-  color: var(--pastel-blue-deep);
-  border: 1px solid rgba(142, 186, 242, 0.4);
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-secondary);
+  border: 1px solid rgba(255, 255, 255, 0.15);
 }
 
 .btn-card-action.secondary:hover {
-  background: rgba(255, 255, 255, 0.95);
+  background: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
   transform: translateY(-2px);
 }
 
 .projects-footer-cta {
-  background: var(--glass-card-bg);
+  background: var(--glass-bg);
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-xl);
   padding: 2.5rem 2rem;
   text-align: center;
   box-shadow: var(--glass-shadow);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
 }
 
 .projects-footer-cta h3 {
   font-size: 1.35rem;
   font-weight: 800;
-  color: var(--pastel-blue-deep);
+  color: var(--text-primary);
   margin-bottom: 0.5rem;
 }
 
 .projects-footer-cta p {
   font-size: 0.95rem;
-  color: var(--text-secondary);
+  color: var(--text-muted);
   margin-bottom: 1.3rem;
 }
 
@@ -1146,13 +1234,13 @@ body {
 }
 
 .board-header-card {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.94) 0%, rgba(234, 243, 253, 0.9) 100%);
+  background: var(--glass-bg);
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-xl);
-  padding: 2.25rem 2.5rem;
+  padding: 2.4rem 2.6rem;
   box-shadow: var(--glass-shadow);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -1164,20 +1252,20 @@ body {
   font-size: 0.75rem;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--blue-main);
-  background: rgba(234, 243, 253, 0.9);
-  padding: 0.25rem 0.65rem;
+  letter-spacing: 0.06em;
+  color: var(--aurora-cyan);
+  background: rgba(6, 182, 212, 0.15);
+  padding: 0.25rem 0.7rem;
   border-radius: var(--radius-full);
   display: inline-block;
   margin-bottom: 0.4rem;
-  border: 1px solid rgba(59, 130, 246, 0.25);
+  border: 1px solid rgba(6, 182, 212, 0.35);
 }
 
 .board-header-content h2 {
-  font-size: 1.95rem;
+  font-size: 2rem;
   font-weight: 800;
-  color: var(--pastel-blue-deep);
+  color: var(--text-primary);
   margin-bottom: 0.35rem;
 }
 
@@ -1193,20 +1281,21 @@ body {
 }
 
 .stat-box {
-  background: rgba(255, 255, 255, 0.8);
-  border: 1px solid rgba(142, 186, 242, 0.4);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   padding: 0.9rem 1.6rem;
   border-radius: var(--radius-lg);
   text-align: center;
-  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.08);
+  box-shadow: 0 0 16px rgba(139, 92, 246, 0.15);
 }
 
 .stat-number {
   display: block;
   font-size: 1.85rem;
   font-weight: 800;
-  color: var(--blue-main);
+  color: var(--aurora-cyan);
   line-height: 1.1;
+  text-shadow: 0 0 10px rgba(6, 182, 212, 0.5);
 }
 
 .stat-label {
@@ -1217,13 +1306,13 @@ body {
 
 /* 글 작성 폼 카드 */
 .board-form-card {
-  background: var(--glass-card-bg);
+  background: var(--glass-bg);
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-xl);
   padding: 2rem 2.25rem;
   box-shadow: var(--glass-shadow);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
 }
 
 .form-title-bar {
@@ -1236,15 +1325,15 @@ body {
 .form-dot {
   width: 8px;
   height: 8px;
-  background: var(--yellow-main);
+  background: var(--aurora-cyan);
   border-radius: 50%;
-  box-shadow: 0 0 8px rgba(245, 158, 11, 0.8);
+  box-shadow: 0 0 8px var(--aurora-cyan);
 }
 
 .form-title-bar h3 {
   font-size: 1.2rem;
   font-weight: 700;
-  color: var(--pastel-blue-deep);
+  color: var(--text-primary);
 }
 
 .board-form {
@@ -1282,10 +1371,10 @@ body {
 }
 
 .nickname-group input {
-  padding: 0.65rem 1rem;
+  padding: 0.68rem 1rem;
   border-radius: var(--radius-lg);
-  border: 1px solid rgba(142, 186, 242, 0.45);
-  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.05);
   font-family: inherit;
   font-size: 0.925rem;
   color: var(--text-primary);
@@ -1294,9 +1383,9 @@ body {
 }
 
 .nickname-group input:focus {
-  border-color: var(--blue-main);
-  background: #ffffff;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+  border-color: var(--aurora-cyan);
+  background: rgba(255, 255, 255, 0.09);
+  box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.25);
 }
 
 .emoji-tag-selector {
@@ -1306,27 +1395,27 @@ body {
 }
 
 .emoji-tag-btn {
-  border: 1px solid rgba(142, 186, 242, 0.4);
-  background: rgba(255, 255, 255, 0.8);
-  padding: 0.45rem 0.8rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.05);
+  padding: 0.45rem 0.85rem;
   border-radius: var(--radius-full);
   font-size: 0.85rem;
   font-weight: 600;
-  color: var(--text-secondary);
+  color: var(--text-muted);
   cursor: pointer;
   transition: var(--transition);
 }
 
 .emoji-tag-btn:hover {
-  background: #ffffff;
-  color: var(--blue-main);
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
 }
 
 .emoji-tag-btn.active {
-  background: var(--blue-main);
+  background: linear-gradient(135deg, var(--aurora-violet), var(--aurora-cyan));
   color: #ffffff;
-  border-color: var(--blue-main);
-  box-shadow: 0 3px 10px rgba(37, 99, 235, 0.25);
+  border-color: transparent;
+  box-shadow: 0 0 12px rgba(139, 92, 246, 0.5);
 }
 
 .textarea-group {
@@ -1337,8 +1426,8 @@ body {
   width: 100%;
   padding: 0.85rem 1rem;
   border-radius: var(--radius-lg);
-  border: 1px solid rgba(142, 186, 242, 0.45);
-  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.05);
   font-family: inherit;
   font-size: 0.95rem;
   color: var(--text-primary);
@@ -1349,9 +1438,9 @@ body {
 }
 
 .textarea-group textarea:focus {
-  border-color: var(--blue-main);
-  background: #ffffff;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+  border-color: var(--aurora-purple);
+  background: rgba(255, 255, 255, 0.09);
+  box-shadow: 0 0 0 3px rgba(192, 132, 252, 0.25);
 }
 
 .char-counter {
@@ -1367,7 +1456,7 @@ body {
 }
 
 .btn-submit-board {
-  padding: 0.7rem 2rem;
+  padding: 0.7rem 2.2rem;
   font-size: 0.95rem;
 }
 
@@ -1388,7 +1477,7 @@ body {
 .board-cards-header h3 {
   font-size: 1.25rem;
   font-weight: 700;
-  color: var(--pastel-blue-deep);
+  color: var(--text-primary);
 }
 
 .btn-text-action {
@@ -1404,7 +1493,7 @@ body {
 }
 
 .btn-text-action:hover {
-  color: var(--blue-main);
+  color: var(--aurora-sky);
 }
 
 /* 메모 카드 그리드 (3열) */
@@ -1415,13 +1504,13 @@ body {
 }
 
 .board-note-card {
-  background: var(--glass-card-bg);
+  background: var(--glass-bg);
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-lg);
-  padding: 1.4rem;
+  padding: 1.45rem;
   box-shadow: var(--glass-shadow);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
   display: flex;
   flex-direction: column;
   position: relative;
@@ -1442,21 +1531,22 @@ body {
 
 .board-note-card:hover {
   transform: translateY(-4px);
-  background: var(--glass-card-hover);
+  background: var(--glass-bg-hover);
   box-shadow: var(--glass-shadow-hover);
+  border-color: var(--glass-border-hover);
 }
 
 .note-pin {
   position: absolute;
-  top: -8px;
+  top: -7px;
   left: 50%;
   transform: translateX(-50%);
   width: 14px;
   height: 14px;
   border-radius: 50%;
-  background: var(--yellow-main);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-  border: 2px solid #ffffff;
+  background: var(--aurora-cyan);
+  box-shadow: 0 0 10px var(--aurora-cyan);
+  border: 2px solid var(--bg-deep);
 }
 
 .note-card-header {
@@ -1469,10 +1559,10 @@ body {
 .note-tag {
   font-size: 0.75rem;
   font-weight: 700;
-  background: rgba(254, 252, 232, 0.95);
-  color: var(--yellow-text);
-  border: 1px solid var(--pastel-butter-border);
-  padding: 0.15rem 0.55rem;
+  background: rgba(192, 132, 252, 0.15);
+  color: var(--aurora-purple);
+  border: 1px solid rgba(192, 132, 252, 0.35);
+  padding: 0.15rem 0.6rem;
   border-radius: var(--radius-full);
 }
 
@@ -1481,12 +1571,12 @@ body {
   border: none;
   color: var(--text-muted);
   cursor: pointer;
-  font-size: 1.15rem;
+  font-size: 1.25rem;
   line-height: 1;
   padding: 0.2rem;
   border-radius: 4px;
   transition: var(--transition);
-  opacity: 0.5;
+  opacity: 0.6;
 }
 
 .board-note-card:hover .btn-delete-note {
@@ -1494,8 +1584,8 @@ body {
 }
 
 .btn-delete-note:hover {
-  color: #ef4444;
-  background: rgba(239, 68, 68, 0.1);
+  color: #f87171;
+  background: rgba(239, 68, 68, 0.15);
 }
 
 .note-card-body {
@@ -1517,13 +1607,13 @@ body {
   align-items: center;
   font-size: 0.775rem;
   color: var(--text-muted);
-  border-top: 1px dashed rgba(142, 186, 242, 0.35);
-  padding-top: 0.65rem;
+  border-top: 1px dashed rgba(255, 255, 255, 0.12);
+  padding-top: 0.7rem;
 }
 
 .note-author {
   font-weight: 700;
-  color: var(--pastel-blue-deep);
+  color: var(--aurora-sky);
 }
 
 .note-date {
@@ -1535,10 +1625,10 @@ body {
    -------------------------------------------------------------------------- */
 .footer {
   margin-top: auto;
-  border-top: 1px solid rgba(255, 255, 255, 0.8);
-  background: rgba(255, 255, 255, 0.65);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(7, 11, 22, 0.85);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
   padding: 1.5rem 1.5rem;
   text-align: center;
   font-size: 0.875rem;
@@ -1546,7 +1636,7 @@ body {
 }
 
 .footer-inner {
-  max-width: 1000px;
+  max-width: 1040px;
   margin: 0 auto;
   display: flex;
   justify-content: space-between;
@@ -1556,14 +1646,14 @@ body {
 }
 
 .footer-link {
-  color: var(--pastel-blue-main);
+  color: var(--aurora-sky);
   text-decoration: none;
   font-weight: 600;
   transition: var(--transition);
 }
 
 .footer-link:hover {
-  color: #d97706;
+  color: var(--aurora-purple);
 }
 
 /* --------------------------------------------------------------------------
