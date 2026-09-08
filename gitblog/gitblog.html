@@ -16,6 +16,24 @@
 </head>
 <body data-active-tab="home">
 
+  <!-- =================================================================== -->
+  <!-- 동적 파도 & 윤슬 바다 배경 레이어 (CSS 파도 일렁임 + Canvas 실시간 반짝임) -->
+  <!-- =================================================================== -->
+  <div class="ocean-bg-layer" aria-hidden="true">
+    <div class="ocean-wave-surface"></div>
+    <canvas id="ocean-sparkle-canvas"></canvas>
+  </div>
+
+  <!-- 실시간 파도 물결 왜곡용 SVG 필터 (GPU 하드웨어 가속) -->
+  <svg class="ocean-svg-filters" style="position: absolute; width: 0; height: 0; pointer-events: none;" aria-hidden="true">
+    <filter id="ocean-wave-filter" x="-10%" y="-10%" width="120%" height="120%">
+      <feTurbulence id="ocean-turbulence" type="fractalNoise" baseFrequency="0.012 0.022" numOctaves="2" result="ripple">
+        <animate attributeName="baseFrequency" dur="14s" values="0.010 0.018; 0.015 0.028; 0.010 0.018" repeatCount="indefinite" />
+      </feTurbulence>
+      <feDisplacementMap in="SourceGraphic" in2="ripple" scale="12" xChannelSelector="R" yChannelSelector="B" />
+    </filter>
+  </svg>
+
   <!-- 상단 네비게이션 바 (로고 + 4대 탭) -->
   <header class="navbar">
     <div class="nav-container">

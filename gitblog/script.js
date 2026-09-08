@@ -552,6 +552,146 @@ function createGlowSprite(color, radius) {
   renderArticles();
   renderBoardFeed();
 
+  // ------------------------------------------------------------------------
+  // 6. 실시간 윤슬(햇살 반짝임) 캔버스 엔진 (Ocean Sparkles Engine)
+  // ------------------------------------------------------------------------
+  const sparkleCanvas = document.getElementById('ocean-sparkle-canvas');
+  if (sparkleCanvas) {
+    const ctx = sparkleCanvas.getContext('2d');
+    let width = (sparkleCanvas.width = window.innerWidth);
+    let height = (sparkleCanvas.height = window.innerHeight);
+
+    // 창 크기 조절 시 캔버스 해상도 자동 동기화
+    window.addEventListener('resize', () => {
+      width = sparkleCanvas.width = window.innerWidth;
+      height = sparkleCanvas.height = window.innerHeight;
+      initSparkles();
+    });
+
+    const SPARKLE_COUNT = 60;
+    const sparkles = [];
+
+    // 파스텔 바다 윤슬 색상 (순백색, 샴페인 골드, 파스텔 시안, 페일 핑크)
+    const sparkleColors = [
+      'rgba(255, 255, 255, ',
+      'rgba(255, 252, 240, ',
+      'rgba(224, 245, 255, ',
+      'rgba(255, 240, 245, '
+    ];
+
+    class Sparkle {
+      constructor() {
+        this.reset(true);
+      }
+
+      reset(initial = false) {
+        // 수면 위 윤슬은 화면 상단 25%부터 95% 사이에 집중적으로 분포
+        this.x = Math.random() * width;
+        this.y = (0.22 + Math.random() * 0.74) * height;
+        this.baseSize = 1.2 + Math.random() * 2.8;
+        this.size = this.baseSize;
+        this.color = sparkleColors[Math.floor(Math.random() * sparkleColors.length)];
+        
+        this.alpha = initial ? Math.random() * 0.75 : 0;
+        this.maxAlpha = 0.35 + Math.random() * 0.55;
+        this.fadeSpeed = 0.007 + Math.random() * 0.013;
+        this.fadingIn = true;
+        
+        // 파도 조류에 따른 미세한 유동
+        this.vx = (Math.random() - 0.5) * 0.22;
+        this.vy = (Math.random() - 0.5) * 0.14;
+        
+        // 십자 다이아몬드 굴절 반짝임 여부
+        this.isStar = Math.random() > 0.45;
+      }
+
+      update() {
+        this.x += this.vx;
+        this.y += this.vy;
+
+        if (this.fadingIn) {
+          this.alpha += this.fadeSpeed;
+          if (this.alpha >= this.maxAlpha) {
+            this.fadingIn = false;
+          }
+        } else {
+          this.alpha -= this.fadeSpeed;
+          if (this.alpha <= 0.02) {
+            this.reset();
+          }
+        }
+      }
+
+      draw() {
+        if (this.alpha <= 0) return;
+        ctx.save();
+        ctx.translate(this.x, this.y);
+
+        if (this.isStar) {
+          // 십자 다이아몬드 윤슬 (빛 굴절 효과)
+          const armLen = this.size * 2.4;
+          const grad = ctx.createRadialGradient(0, 0, 0, 0, 0, armLen);
+          grad.addColorStop(0, this.color + this.alpha + ')');
+          grad.addColorStop(1, this.color + '0)');
+
+          ctx.fillStyle = grad;
+          ctx.beginPath();
+          ctx.moveTo(0, -armLen);
+          ctx.quadraticCurveTo(0, 0, armLen, 0);
+          ctx.quadraticCurveTo(0, 0, 0, armLen);
+          ctx.quadraticCurveTo(0, 0, -armLen, 0);
+          ctx.quadraticCurveTo(0, 0, 0, -armLen);
+          ctx.fill();
+
+          // 중앙 코어
+          ctx.fillStyle = `rgba(255, 255, 255, ${Math.min(1, this.alpha * 1.2)})`;
+          ctx.beginPath();
+          ctx.arc(0, 0, this.size * 0.55, 0, Math.PI * 2);
+          ctx.fill();
+        } else {
+          // 부드러운 물방울 보케 윤슬
+          const grad = ctx.createRadialGradient(0, 0, 0, 0, 0, this.size * 2);
+          grad.addColorStop(0, this.color + this.alpha + ')');
+          grad.addColorStop(0.5, this.color + (this.alpha * 0.5) + ')');
+          grad.addColorStop(1, this.color + '0)');
+
+          ctx.fillStyle = grad;
+          ctx.beginPath();
+          ctx.arc(0, 0, this.size * 2, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        ctx.restore();
+      }
+    }
+
+    function initSparkles() {
+      sparkles.length = 0;
+      for (let i = 0; i < SPARKLE_COUNT; i++) {
+        sparkles.push(new Sparkle());
+      }
+    }
+
+    initSparkles();
+
+    // 60fps 부드러운 렌더링 루프 (탭 비활성화 시 자동 절전)
+    function animate() {
+      if (!document.hidden) {
+        ctx.clearRect(0, 0, width, height);
+
+        for (let i = 0; i < sparkles.length; i++) {
+          sparkles[i].update();
+          sparkles[i].draw();
+        }
+      }
+
+      requestAnimationFrame(animate);
+    }
+
+    animate();
+  }
+
 });
+
 
 

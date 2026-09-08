@@ -84,19 +84,64 @@ body {
   position: relative;
 }
 
-/* ★ 모든 페이지 바탕화면: 윤슬 바다 (윤슬바다.avif) 고화질 픽스드 배경 레이어 */
-body::before {
-  content: '';
+/* ==========================================================================
+   ★ 동적 파도 & 윤슬 바다 배경 레이어 (파도 숨결 + SVG 수면 왜곡 + Canvas 반짝임)
+   ========================================================================== */
+.ocean-bg-layer {
   position: fixed;
   inset: 0;
   z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+  background-color: var(--color-bg-page);
+}
+
+.ocean-wave-surface {
+  position: absolute;
+  top: -5%;
+  left: -5%;
+  width: 110%;
+  height: 110%;
   background-image: 
-    linear-gradient(180deg, rgba(255, 255, 255, 0.18) 0%, rgba(255, 255, 255, 0.06) 45%, rgba(220, 238, 252, 0.28) 100%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.16) 0%, rgba(255, 255, 255, 0.04) 45%, rgba(220, 238, 252, 0.26) 100%),
     url('윤슬바다.avif');
   background-size: cover;
   background-position: center center;
   background-repeat: no-repeat;
+  filter: url(#ocean-wave-filter);
+  animation: oceanWaveRoll 16s ease-in-out infinite alternate;
+  transform-origin: 50% 60%;
+  will-change: transform;
+}
+
+@keyframes oceanWaveRoll {
+  0% {
+    transform: scale(1.02) translateY(0) rotate(0deg);
+  }
+  35% {
+    transform: scale(1.055) translateY(-14px) rotate(0.35deg);
+  }
+  70% {
+    transform: scale(1.03) translateY(-5px) rotate(-0.3deg);
+  }
+  100% {
+    transform: scale(1.065) translateY(-18px) rotate(0.25deg);
+  }
+}
+
+#ocean-sparkle-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
   pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ocean-wave-surface {
+    animation: none;
+    filter: none;
+  }
 }
 
 /* ==========================================================================
