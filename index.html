@@ -3,28 +3,222 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Supianna의 페이지</title>
-  <style>
-    body {
-      font-family: sans-serif;
-      max-width: 600px;
-      margin: 50px auto;
-      padding: 0 20px;
-      line-height: 1.6;
-      color: #333;
-    }
-    h1 {
-      color: #1a73e8;
-    }
-  </style>
+  <title>Supianna | 포트폴리오</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>안녕하세요! Supianna입니다 👋</h1>
-  <p>이곳은 저의 GitHub Pages 공간입니다.</p>
-  <ul>
-    <li>소개: 개발과 학습을 기록하는 공간입니다.</li>
-    <li>GitHub: <a href="https://github.com/supianna" target="_blank">@supianna</a></li>
-  </ul>
+
+  <!-- 상단 네비게이션 바 -->
+  <header class="navbar">
+    <div class="nav-container">
+      <a class="nav-brand" href="#home">
+        <span class="brand-dot"></span>
+        <span>Supianna</span>
+      </a>
+      <nav class="nav-tabs" aria-label="메인 메뉴">
+        <button class="nav-tab-btn active" data-tab="home">홈</button>
+        <button class="nav-tab-btn" data-tab="resume">자기소개서</button>
+        <button class="nav-tab-btn" data-tab="projects">내 프로젝트</button>
+        <button class="nav-tab-btn" data-tab="blank">빈 탭</button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- 메인 컨텐츠 영역 -->
+  <main class="main-content">
+
+    <!-- 탭 1: 홈 (Home) -->
+    <section id="home" class="tab-panel active">
+      <div class="hero-section">
+        <div class="highlight-badge">
+          ✨ Welcome to My Space
+        </div>
+        <h1 class="hero-title">
+          배움과 성장을 즐기는<br>
+          <span class="accent-blue">개발자 Supianna</span>의 <span class="accent-yellow">포트폴리오</span>입니다
+        </h1>
+        <p class="hero-desc">
+          탄탄한 기본기와 꼼꼼한 문제 해결 능력을 바탕으로 사용자에게 가치 있는 경험을 만들어갑니다.<br>
+          지속 가능한 코드와 명확한 구조를 지향합니다.
+        </p>
+        <div class="hero-actions">
+          <button class="btn btn-primary" data-target-tab="resume">자기소개서 보기</button>
+          <button class="btn btn-secondary" data-target-tab="projects">내 프로젝트 둘러보기</button>
+        </div>
+      </div>
+
+      <!-- 핵심 가치 카드 그리드 -->
+      <div class="features-grid">
+        <article class="feature-card">
+          <span class="feature-tag">Mindset</span>
+          <h2 class="feature-title">끊임없는 학습</h2>
+          <p class="feature-desc">
+            새로운 기술과 최신 패러다임을 열린 마음으로 탐구하며, 실질적인 가치를 창출하는 도구로 익힙니다.
+          </p>
+        </article>
+
+        <article class="feature-card">
+          <span class="feature-tag">Engineering</span>
+          <h2 class="feature-title">클린 코드 & 모듈화</h2>
+          <p class="feature-desc">
+            유지보수가 쉽고 직관적인 구조를 설계하여 동료와 함께 읽기 좋고 확장성 있는 코드를 작성합니다.
+          </p>
+        </article>
+
+        <article class="feature-card">
+          <span class="feature-tag">Collaboration</span>
+          <h2 class="feature-title">열린 소통과 협업</h2>
+          <p class="feature-desc">
+            복잡한 문제를 명확한 언어로 공유하고, 팀원들과의 적극적인 피드백을 통해 최선의 해결책을 찾아냅니다.
+          </p>
+        </article>
+      </div>
+    </section>
+
+    <!-- 탭 2: 자기소개서 (Resume / About) -->
+    <section id="resume" class="tab-panel">
+      <div class="resume-container">
+        
+        <!-- 프로필 헤더 카드 -->
+        <div class="resume-header-card">
+          <div class="resume-profile">
+            <h2>Supianna (수피아나)</h2>
+            <div class="resume-role">Software Developer / Tech Explorer</div>
+            <div class="resume-meta">
+              <span class="resume-meta-item">📍 대한민국</span>
+              <span class="resume-meta-item">🔗 <a href="https://github.com/supianna" target="_blank" style="color: inherit; text-decoration: underline;">github.com/supianna</a></span>
+              <span class="resume-meta-item">🌐 supianna.github.io</span>
+            </div>
+          </div>
+          <button class="btn btn-primary" data-target-tab="projects">프로젝트 확인하기</button>
+        </div>
+
+        <!-- 1. 핵심 역량 -->
+        <div class="resume-section-card">
+          <div class="section-heading">
+            <span class="heading-indicator"></span>
+            <h3>핵심 역량</h3>
+          </div>
+          <div class="resume-text-block">
+            <p>
+              • <strong>구조적 사고와 문제 분해:</strong> 복잡한 요구사항을 작은 단위의 명확한 로직으로 나누어 안정적으로 구현합니다.<br>
+              • <strong>웹 표준 및 최신 프론트엔드 이해:</strong> HTML5, CSS3, ES6+를 활용한 의미론적 마크업과 반응형 웹 디자인 설계가 가능합니다.<br>
+              • <strong>버전 관리와 협업:</strong> Git을 활용한 단일 책임 커밋, 브랜치 전략 수립 및 이슈 트래킹 기반의 개발에 익숙합니다.
+            </p>
+          </div>
+        </div>
+
+        <!-- 2. 기술 스택 -->
+        <div class="resume-section-card">
+          <div class="section-heading">
+            <span class="heading-indicator"></span>
+            <h3>기술 스택 (Tech Stack)</h3>
+          </div>
+          <div class="skills-container">
+            <span class="skill-chip highlight">HTML5</span>
+            <span class="skill-chip highlight">CSS3</span>
+            <span class="skill-chip highlight">JavaScript (ES6+)</span>
+            <span class="skill-chip">Git / GitHub</span>
+            <span class="skill-chip">GitHub Pages</span>
+            <span class="skill-chip">Python</span>
+            <span class="skill-chip">Responsive Web</span>
+            <span class="skill-chip">Clean Architecture</span>
+          </div>
+        </div>
+
+        <!-- 3. 상세 자기소개 -->
+        <div class="resume-section-card">
+          <div class="section-heading">
+            <span class="heading-indicator"></span>
+            <h3>자기소개</h3>
+          </div>
+
+          <h4 class="resume-subheading">1. 성장 과정 & 개발에 대한 열정</h4>
+          <p class="resume-text-block">
+            궁금한 점이 생기면 직접 코드로 확인하고 테스트해보는 탐구형 학습 태도를 지니고 있습니다. 
+            처음 접하는 기술이라도 공식 문서와 커뮤니티 자료를 꼼꼼히 분석하여 빠르게 내재화하며, 
+            단순히 동작하는 코드를 넘어 확장 가능하고 읽기 쉬운 코드를 만드는 데 자부심을 느낍니다.
+          </p>
+
+          <h4 class="resume-subheading">2. 직무 강점 및 문제 해결 방식</h4>
+          <p class="resume-text-block">
+            문제가 발생했을 때 직관에만 의존하기보다는 현상을 단계별로 추적하고 원인을 명확히 파악하는 체계적인 디버깅을 지향합니다. 
+            단일 책임 원칙(SRP)을 중시하여 각 모듈과 함수가 단 하나의 목적을 명확히 수행하도록 코드를 작성하며, 
+            예외 상황을 꼼꼼히 고려해 예기치 않은 오류에도 유연하게 대처할 수 있는 견고한 시스템을 만듭니다.
+          </p>
+
+          <h4 class="resume-subheading">3. 입사 후 포부 및 미래 비전</h4>
+          <p class="resume-text-block">
+            사용자의 목소리에 귀 기울이며 기술적 가치를 일상 속 편리함으로 바꾸는 개발자가 되고자 합니다. 
+            변화하는 기술 트렌드에 발맞추어 꾸준히 역량을 갈고닦으며, 팀 내에서는 신뢰받는 협업 파트너로, 
+            서비스에서는 안정적인 완성도를 책임지는 든든한 구성원으로 기여하겠습니다.
+          </p>
+        </div>
+
+        <!-- 4. 학력 및 활동 이력 -->
+        <div class="resume-section-card">
+          <div class="section-heading">
+            <span class="heading-indicator"></span>
+            <h3>학력 및 활동 이력</h3>
+          </div>
+          <div class="timeline">
+            <div class="timeline-item">
+              <span class="timeline-dot"></span>
+              <div class="timeline-period">2026 - 현재</div>
+              <div class="timeline-title">개인 포트폴리오 웹사이트 구축 및 운영</div>
+              <div class="timeline-desc">GitHub Pages 기반의 반응형 웹 포트폴리오 및 기술 블로그 운영</div>
+            </div>
+            <div class="timeline-item">
+              <span class="timeline-dot"></span>
+              <div class="timeline-period">2025 - 2026</div>
+              <div class="timeline-title">소프트웨어 개발 역량 강화 및 프로젝트 수행</div>
+              <div class="timeline-desc">웹 표준, 알고리즘, 클린 코드 원칙 중심의 개인 학습 및 프로젝트 준비</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 탭 3: 내 프로젝트 (Projects - Empty State) -->
+    <section id="projects" class="tab-panel">
+      <div class="empty-state-card">
+        <div class="empty-state-icon">🚀</div>
+        <h2 class="empty-state-title">프로젝트 준비 중입니다</h2>
+        <p class="empty-state-desc">
+          현재 새롭고 흥미로운 프로젝트들을 기획 및 개발하고 있습니다.<br>
+          완성도 높은 결과물과 함께 곧 이곳에 멋지게 업데이트될 예정입니다.
+        </p>
+        <span class="empty-state-badge">Coming Soon</span>
+      </div>
+    </section>
+
+    <!-- 탭 4: 빈 탭 (Blank Tab) -->
+    <section id="blank" class="tab-panel">
+      <div class="blank-tab-wrapper">
+        <div class="blank-icon">💡</div>
+        <h2 class="blank-title">자유 공간</h2>
+        <p class="blank-desc">
+          필요에 따라 블로그, 메모, 서재 등 원하는 콘텐츠를 자유롭게 확장할 수 있는 빈 탭입니다.
+        </p>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- 하단 푸터 -->
+  <footer class="footer">
+    <div class="footer-inner">
+      <span>&copy; 2026 Supianna. All rights reserved.</span>
+      <span>
+        Powered by <a class="footer-link" href="https://pages.github.com/" target="_blank">GitHub Pages</a>
+      </span>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
 </body>
 </html>
-
