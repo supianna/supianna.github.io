@@ -219,16 +219,38 @@ function createGlowSprite(color, radius) {
     });
   });
 
-  // data-target-tab을 가진 모든 범용 링크/버튼 이벤트 연결
+  // data-target-tab을 가진 모든 범용 링크/버튼 이벤트 연결 (모바일 조개 터치 인터랙션 지원)
+  const isTouchDevice = () => window.matchMedia('(pointer: coarse)').matches;
+
   document.addEventListener('click', (e) => {
     const jumpBtn = e.target.closest('[data-target-tab]');
-    if (jumpBtn) {
-      e.preventDefault();
-      const targetTab = jumpBtn.getAttribute('data-target-tab');
-      if (targetTab) {
-        activateTab(targetTab);
-        history.pushState(null, '', `#${targetTab}`);
+    if (!jumpBtn) return;
+
+    // 모바일 터치 환경에서 조개 카드를 탭한 경우: 첫 탭에선 열어주고, 열린 후 탭 시 이동
+    const shellCard = jumpBtn.closest('.shell-card');
+    if (shellCard && isTouchDevice()) {
+      const isActionClick = e.target.closest('.card-footer-action, .action-text');
+      if (!shellCard.classList.contains('is-open') && !isActionClick) {
+        e.preventDefault();
+        document.querySelectorAll('.shell-card.is-open').forEach(el => el.classList.remove('is-open'));
+        shellCard.classList.add('is-open');
+        return;
       }
+    }
+
+    e.preventDefault();
+    const targetTab = jumpBtn.getAttribute('data-target-tab');
+    if (targetTab) {
+      document.querySelectorAll('.shell-card.is-open').forEach(el => el.classList.remove('is-open'));
+      activateTab(targetTab);
+      history.pushState(null, '', `#${targetTab}`);
+    }
+  });
+
+  // 화면 빈 곳 클릭 시 모바일에서 열린 조개 닫기
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.shell-card')) {
+      document.querySelectorAll('.shell-card.is-open').forEach(el => el.classList.remove('is-open'));
     }
   });
 
