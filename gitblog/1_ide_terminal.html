@@ -1,0 +1,1565 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <!-- 파일명: gitblog/1_ide_terminal.html -->
+  <!-- 목적: 컨셉 1 - IDE / 터미널 인터랙티브 UI 포트폴리오 시각화 프로토타입 -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>컨셉 1: IDE / 터미널 인터랙티브 UI | Supianna Portfolio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Pretendard:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-darkest: #181a1f;
+      --bg-darker: #1e2227;
+      --bg-dark: #21252b;
+      --bg-sidebar: #282c34;
+      --bg-active-tab: #21252b;
+      --bg-terminal: #15171c;
+      --border-color: #181a1f;
+      --border-light: rgba(255, 255, 255, 0.08);
+      --accent-cyan: #56b6c2;
+      --accent-blue: #61afef;
+      --accent-green: #98c379;
+      --accent-purple: #c678dd;
+      --accent-orange: #d19a66;
+      --accent-red: #e06c75;
+      --accent-yellow: #e5c07b;
+      --text-main: #abb2bf;
+      --text-light: #e6e6e6;
+      --text-muted: #5c6370;
+      --font-code: 'Fira Code', Consolas, Monaco, monospace;
+      --font-ui: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: #0d1117;
+      color: var(--text-main);
+      font-family: var(--font-ui);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* 상단 글로벌 네비게이션 배너 */
+    .global-nav-bar {
+      background: #111418;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 6px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 12px;
+      z-index: 100;
+    }
+
+    .global-nav-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .nav-badge {
+      background: rgba(97, 175, 239, 0.2);
+      color: var(--accent-blue);
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-weight: 600;
+      font-size: 11px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 8px;
+    }
+
+    .nav-link-btn {
+      color: var(--text-muted);
+      text-decoration: none;
+      padding: 3px 10px;
+      border-radius: 4px;
+      transition: all 0.2s;
+    }
+
+    .nav-link-btn:hover, .nav-link-btn.active {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .nav-link-btn.active {
+      color: var(--accent-cyan);
+      font-weight: 600;
+    }
+
+    /* IDE 전체 컨테이너 */
+    .ide-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      background: var(--bg-darker);
+    }
+
+    /* IDE 타이틀바 */
+    .ide-titlebar {
+      height: 38px;
+      background: var(--bg-darkest);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 14px;
+      user-select: none;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .traffic-lights {
+      display: flex;
+      gap: 8px;
+    }
+
+    .traffic-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      display: inline-block;
+      cursor: pointer;
+    }
+
+    .dot-close { background: #ff5f56; }
+    .dot-minimize { background: #ffbd2e; }
+    .dot-maximize { background: #27c93f; }
+
+    .ide-title-text {
+      font-size: 12px;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--font-code);
+    }
+
+    .ide-title-text span {
+      color: var(--accent-cyan);
+    }
+
+    .ide-controls-quick {
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn-run-code {
+      background: rgba(152, 195, 121, 0.15);
+      border: 1px solid rgba(152, 195, 121, 0.4);
+      color: var(--accent-green);
+      font-size: 11px;
+      padding: 4px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-family: var(--font-code);
+      transition: all 0.2s;
+    }
+
+    .btn-run-code:hover {
+      background: var(--accent-green);
+      color: #111;
+      font-weight: 600;
+      box-shadow: 0 0 10px rgba(152, 195, 121, 0.4);
+    }
+
+    /* 메인 워크스페이스 */
+    .ide-body {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+    }
+
+    /* 좌측 액티비티 바 */
+    .activity-bar {
+      width: 48px;
+      background: var(--bg-darkest);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 12px 0;
+      border-right: 1px solid var(--border-color);
+      gap: 16px;
+    }
+
+    .activity-btn {
+      width: 38px;
+      height: 38px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 6px;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 18px;
+      transition: all 0.2s;
+      position: relative;
+    }
+
+    .activity-btn:hover {
+      color: var(--text-light);
+    }
+
+    .activity-btn.active {
+      color: #fff;
+    }
+
+    .activity-btn.active::before {
+      content: '';
+      position: absolute;
+      left: -5px;
+      width: 3px;
+      height: 24px;
+      background: var(--accent-blue);
+      border-radius: 0 3px 3px 0;
+    }
+
+    /* 파일 탐색기 사이드바 */
+    .sidebar {
+      width: 240px;
+      background: var(--bg-sidebar);
+      display: flex;
+      flex-direction: column;
+      border-right: 1px solid var(--border-color);
+      font-size: 13px;
+      user-select: none;
+    }
+
+    .sidebar-header {
+      padding: 10px 16px;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      font-weight: 700;
+      color: var(--text-muted);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+    }
+
+    .tree-view {
+      padding: 8px 0;
+      overflow-y: auto;
+      flex: 1;
+    }
+
+    .tree-folder {
+      margin-bottom: 4px;
+    }
+
+    .tree-folder-title {
+      padding: 5px 14px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--text-main);
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 12px;
+    }
+
+    .tree-folder-title:hover {
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .tree-item {
+      padding: 6px 14px 6px 30px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-main);
+      cursor: pointer;
+      font-family: var(--font-code);
+      font-size: 12px;
+      transition: background 0.15s;
+    }
+
+    .tree-item:hover {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-light);
+    }
+
+    .tree-item.active {
+      background: rgba(97, 175, 239, 0.18);
+      color: #fff;
+      font-weight: 600;
+      border-left: 3px solid var(--accent-blue);
+      padding-left: 27px;
+    }
+
+    .file-icon {
+      font-size: 14px;
+    }
+
+    /* 메인 에디터 및 터미널 스플릿 */
+    .editor-terminal-split {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      background: var(--bg-dark);
+    }
+
+    /* 에디터 탭 바 */
+    .editor-tabs {
+      height: 38px;
+      background: var(--bg-darkest);
+      display: flex;
+      border-bottom: 1px solid var(--border-color);
+      overflow-x: auto;
+    }
+
+    .editor-tab {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0 16px;
+      background: var(--bg-darker);
+      border-right: 1px solid var(--border-color);
+      color: var(--text-muted);
+      font-size: 12px;
+      font-family: var(--font-code);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .editor-tab:hover {
+      background: #252930;
+      color: var(--text-light);
+    }
+
+    .editor-tab.active {
+      background: var(--bg-dark);
+      color: #fff;
+      border-top: 2px solid var(--accent-blue);
+    }
+
+    .tab-close {
+      margin-left: 6px;
+      font-size: 14px;
+      opacity: 0.6;
+      border-radius: 3px;
+      padding: 1px 3px;
+    }
+
+    .tab-close:hover {
+      opacity: 1;
+      background: rgba(255, 255, 255, 0.15);
+    }
+
+    /* 메인 에디터 영역 (코드 + 비주얼 프리뷰 듀얼 패널) */
+    .editor-content-area {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+    }
+
+    /* 좌측 코드 뷰어 */
+    .code-view-panel {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px 0;
+      font-family: var(--font-code);
+      font-size: 13px;
+      line-height: 1.6;
+      background: var(--bg-dark);
+      border-right: 1px solid var(--border-light);
+    }
+
+    .code-line {
+      display: flex;
+      padding: 1px 16px;
+    }
+
+    .code-line:hover {
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .line-number {
+      width: 40px;
+      color: var(--text-muted);
+      text-align: right;
+      padding-right: 16px;
+      user-select: none;
+      opacity: 0.6;
+    }
+
+    .line-text {
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+
+    /* 신택스 컬러 */
+    .token-keyword { color: var(--accent-purple); font-weight: 600; }
+    .token-func { color: var(--accent-blue); }
+    .token-string { color: var(--accent-green); }
+    .token-comment { color: var(--text-muted); font-style: italic; }
+    .token-number { color: var(--accent-orange); }
+    .token-prop { color: var(--accent-red); }
+    .token-class { color: var(--accent-yellow); }
+
+    /* 우측 라이브 카드 렌더링 뷰 */
+    .live-preview-panel {
+      width: 420px;
+      background: #1a1d23;
+      overflow-y: auto;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .preview-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      color: var(--accent-cyan);
+      background: rgba(86, 182, 194, 0.1);
+      border: 1px solid rgba(86, 182, 194, 0.3);
+      padding: 4px 10px;
+      border-radius: 20px;
+      align-self: flex-start;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .card-title {
+      font-size: 20px;
+      color: #fff;
+      font-weight: 700;
+      margin-top: 4px;
+    }
+
+    .card-subtitle {
+      font-size: 13px;
+      color: var(--accent-blue);
+      font-family: var(--font-code);
+    }
+
+    .card-desc {
+      font-size: 14px;
+      line-height: 1.6;
+      color: var(--text-main);
+    }
+
+    .spec-box {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-light);
+      border-radius: 8px;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .spec-item {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+    }
+
+    .spec-label {
+      color: var(--text-muted);
+    }
+
+    .spec-value {
+      color: var(--text-light);
+      font-family: var(--font-code);
+      font-weight: 500;
+    }
+
+    .tags-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 6px;
+    }
+
+    .tag-chip {
+      font-size: 11px;
+      font-family: var(--font-code);
+      padding: 3px 8px;
+      border-radius: 4px;
+      background: rgba(97, 175, 239, 0.12);
+      color: var(--accent-blue);
+      border: 1px solid rgba(97, 175, 239, 0.25);
+    }
+
+    .preview-action-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      background: linear-gradient(135deg, #61afef, #c678dd);
+      color: #fff;
+      padding: 10px 16px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: opacity 0.2s;
+      margin-top: 10px;
+    }
+
+    .preview-action-btn:hover {
+      opacity: 0.9;
+    }
+
+    /* 하단 대화형 터미널 */
+    .terminal-container {
+      height: 220px;
+      background: var(--bg-terminal);
+      border-top: 1px solid var(--border-light);
+      display: flex;
+      flex-direction: column;
+      font-family: var(--font-code);
+      font-size: 12px;
+    }
+
+    .terminal-header {
+      height: 32px;
+      background: #181a1f;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 14px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .terminal-tabs {
+      display: flex;
+      gap: 16px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .terminal-tab-item {
+      color: var(--text-muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .terminal-tab-item.active {
+      color: var(--accent-cyan);
+      border-bottom: 2px solid var(--accent-cyan);
+      padding-bottom: 2px;
+    }
+
+    .terminal-actions-quick {
+      display: flex;
+      gap: 10px;
+      color: var(--text-muted);
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    .terminal-body {
+      flex: 1;
+      padding: 12px 16px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .terminal-output-row {
+      line-height: 1.5;
+      word-break: break-all;
+    }
+
+    .terminal-prompt-line {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .prompt-label {
+      color: var(--accent-green);
+      font-weight: 600;
+    }
+
+    .prompt-path {
+      color: var(--accent-blue);
+    }
+
+    .prompt-symbol {
+      color: var(--accent-purple);
+      font-weight: 700;
+    }
+
+    .terminal-input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: #fff;
+      font-family: var(--font-code);
+      font-size: 12px;
+    }
+
+    /* 하단 상태 표시줄 (Status Bar) */
+    .status-bar {
+      height: 24px;
+      background: #181a1f;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 12px;
+      font-size: 11px;
+      color: var(--text-muted);
+      font-family: var(--font-code);
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .status-left, .status-right {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .status-item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      cursor: pointer;
+    }
+
+    .status-item:hover {
+      color: var(--text-light);
+    }
+
+    .status-git {
+      background: rgba(97, 175, 239, 0.15);
+      color: var(--accent-blue);
+      padding: 1px 6px;
+      border-radius: 3px;
+    }
+
+    /* 스크롤바 커스텀 */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: rgba(0, 0, 0, 0.1);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.12);
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(255, 255, 255, 0.22);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 상단 글로벌 네비게이션 배너 -->
+  <header class="global-nav-bar">
+    <div class="global-nav-left">
+      <span class="nav-badge">Concept 1 of 5</span>
+      <span style="font-weight: 600; color: #fff;">IDE / 터미널 인터랙티브 UI</span>
+      <span style="color: var(--text-muted); font-size: 11px;">(개발자 코드 에디터 & 콘솔)</span>
+    </div>
+    <nav class="nav-links">
+      <a href="index.html" class="nav-link-btn">← 5개 컨셉 허브</a>
+      <a href="1_ide_terminal.html" class="nav-link-btn active">1. IDE/터미널</a>
+      <a href="2_constellation_graph.html" class="nav-link-btn">2. 3D 성좌 그래프</a>
+      <a href="3_data_dashboard.html" class="nav-link-btn">3. 데이터 대시보드</a>
+      <a href="4_scrollytelling.html" class="nav-link-btn">4. 시네마틱 스크롤</a>
+      <a href="5_isometric_room.html" class="nav-link-btn">5. 아이소메트릭 룸</a>
+    </nav>
+  </header>
+
+  <!-- 메인 IDE 컨테이너 -->
+  <div class="ide-container">
+    
+    <!-- 타이틀 바 -->
+    <div class="ide-titlebar">
+      <div class="traffic-lights">
+        <span class="traffic-dot dot-close" title="닫기"></span>
+        <span class="traffic-dot dot-minimize" title="최소화"></span>
+        <span class="traffic-dot dot-maximize" title="최대화"></span>
+      </div>
+      <div class="ide-title-text">
+        <span>supianna-workspace</span> — <strong id="titlebar-filename">About_Me.py</strong> [Interactive IDE Mode]
+      </div>
+      <div class="ide-controls-quick">
+        <button class="btn-run-code" id="btn-run-current">
+          <span>▶</span>
+          <span>Run Code (F5)</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- IDE 바디 -->
+    <div class="ide-body">
+      
+      <!-- 액티비티 바 -->
+      <div class="activity-bar">
+        <div class="activity-btn active" title="Explorer (Ctrl+Shift+E)">📁</div>
+        <div class="activity-btn" title="Search">🔍</div>
+        <div class="activity-btn" title="Source Control (Git)">🌿</div>
+        <div class="activity-btn" title="Run & Debug">🐞</div>
+        <div class="activity-btn" title="Extensions">🧩</div>
+      </div>
+
+      <!-- 파일 탐색기 사이드바 -->
+      <div class="sidebar">
+        <div class="sidebar-header">
+          <span>Explorer</span>
+          <span style="font-size: 14px; cursor: pointer;">•••</span>
+        </div>
+        <div class="tree-view">
+          
+          <div class="tree-folder">
+            <div class="tree-folder-title">
+              <span>▼</span>
+              <span>SUPIANNA-PORTFOLIO</span>
+            </div>
+            
+            <div class="tree-item active" data-file="About_Me.py">
+              <span class="file-icon">🐍</span>
+              <span>About_Me.py</span>
+            </div>
+
+            <div class="tree-folder-title" style="padding-left: 24px; margin-top: 4px;">
+              <span>▼</span>
+              <span>📁 Projects</span>
+            </div>
+            <div class="tree-item" data-file="Aurora_Archive.js">
+              <span class="file-icon">✨</span>
+              <span>Aurora_Archive.js</span>
+            </div>
+            <div class="tree-item" data-file="Free_Board.ts">
+              <span class="file-icon">📝</span>
+              <span>Free_Board.ts</span>
+            </div>
+            <div class="tree-item" data-file="Task_Flow.js">
+              <span class="file-icon">📊</span>
+              <span>Task_Flow.js</span>
+            </div>
+            <div class="tree-item" data-file="Clean_Engine.sh">
+              <span class="file-icon">⚙️</span>
+              <span>Clean_Engine.sh</span>
+            </div>
+
+            <div class="tree-item" data-file="Skills.json" style="margin-top: 4px;">
+              <span class="file-icon">📦</span>
+              <span>Skills.json</span>
+            </div>
+            <div class="tree-item" data-file="Philosophy.md">
+              <span class="file-icon">📖</span>
+              <span>Philosophy.md</span>
+            </div>
+            <div class="tree-item" data-file="Contact.yaml">
+              <span class="file-icon">📬</span>
+              <span>Contact.yaml</span>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+
+      <!-- 에디터 & 터미널 스플릿 -->
+      <div class="editor-terminal-split">
+        
+        <!-- 상단 에디터 탭 바 -->
+        <div class="editor-tabs" id="editor-tabs-bar">
+          <div class="editor-tab active" data-file="About_Me.py">
+            <span>🐍</span>
+            <span>About_Me.py</span>
+            <span class="tab-close">×</span>
+          </div>
+        </div>
+
+        <!-- 에디터 컨텐츠 듀얼 영역 -->
+        <div class="editor-content-area">
+          
+          <!-- 좌측: 코드 하이라이트 패널 -->
+          <div class="code-view-panel" id="code-container">
+            <!-- 자바스크립트로 줄 번호와 코드 동적 주입 -->
+          </div>
+
+          <!-- 우측: 인터랙티브 비주얼 카드 프리뷰 -->
+          <div class="live-preview-panel" id="preview-panel">
+            <!-- 자바스크립트로 포트폴리오 비주얼 렌더링 -->
+          </div>
+
+        </div>
+
+        <!-- 하단 대화형 터미널 콘솔 -->
+        <div class="terminal-container">
+          <div class="terminal-header">
+            <div class="terminal-tabs">
+              <div class="terminal-tab-item active">
+                <span>⚡ TERMINAL</span>
+              </div>
+              <div class="terminal-tab-item">
+                <span>PROBLEMS (0)</span>
+              </div>
+              <div class="terminal-tab-item">
+                <span>OUTPUT</span>
+              </div>
+              <div class="terminal-tab-item">
+                <span>DEBUG CONSOLE</span>
+              </div>
+            </div>
+            <div class="terminal-actions-quick">
+              <span title="Clear" onclick="clearTerminal()">⊘</span>
+              <span title="Maximize">▲</span>
+              <span title="Close">✕</span>
+            </div>
+          </div>
+
+          <div class="terminal-body" id="terminal-body">
+            <!-- 터미널 출력 및 대화형 인풋 -->
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- 하단 상태 표시줄 -->
+    <footer class="status-bar">
+      <div class="status-left">
+        <span class="status-item status-git">🌿 main*</span>
+        <span class="status-item">⟳ Sync</span>
+        <span class="status-item">⊗ 0  ⚠ 0</span>
+      </div>
+      <div class="status-right">
+        <span class="status-item" id="status-lang">Python 3.12</span>
+        <span class="status-item">UTF-8</span>
+        <span class="status-item">LF</span>
+        <span class="status-item">Prettier</span>
+        <span class="status-item">🔔 Cosmic AI Agent: Online</span>
+      </div>
+    </footer>
+
+  </div>
+
+  <script>
+    // [데이터 정의] 각 파일별 소스코드 및 우측 비주얼 프리뷰 데이터
+    const FILES_DATA = {
+      "About_Me.py": {
+        icon: "🐍",
+        lang: "Python 3.12",
+        code: `"""
+개발자 Supianna의 프로필 매니페스트 (About_Me.py)
+INFJ의 섬세한 사색과 AI 에이전트 협업으로 단단한 코드를 짓습니다.
+"""
+from dataclasses import dataclass
+from typing import List
+
+@dataclass
+class Developer:
+    name: str = "Supianna (수피아나)"
+    role: str = "AI-Assisted Developer / Explorer"
+    mbti: str = "INFJ"
+    location: str = "대한민국 📍"
+    mindset: str = "밤하늘 오로라처럼 깊이 있는 사고와 단단한 아키텍처"
+    
+    def get_core_values(self) -> List[str]:
+        return [
+            "AI Agent 페어 프로그래밍 & 쾌속 프로토타이핑",
+            "단일 책임 원칙 (SRP) 및 읽기 좋은 클린 아키텍처",
+            "원자적 커밋 (Atomic Commits) 기반 정갈한 Git 형상 관리",
+            "사용자를 향한 따뜻한 시선과 직관적인 UX"
+        ]
+
+    def execute_mission(self) -> str:
+        return "기술을 통해 사람을 잇고 감동적인 인터랙션을 완성합니다."
+
+if __name__ == "__main__":
+    me = Developer()
+    print(f"Loading {me.name} profile... OK!")`,
+        preview: {
+          badge: "Developer Profile",
+          title: "Supianna (수피아나)",
+          subtitle: "AI-Assisted Developer · INFJ",
+          desc: "AI Agent를 페어 프로그래머 삼아 아이디어를 현실로 빠르게 구현하며, INFJ의 깊은 사색과 따뜻한 시선으로 가치 있는 코드를 짓는 개발자입니다.",
+          specs: [
+            { label: "역할", val: "AI-Native Web & Automation Developer" },
+            { label: "성향", val: "INFJ (성찰, 구조화, 공감)" },
+            { label: "주요 패러다임", val: "SRP, Clean Architecture, Atomic Git" },
+            { label: "배포 환경", val: "GitHub Pages / Cloud" }
+          ],
+          tags: ["Python", "JavaScript", "AI Workflow", "Modern Web", "Automation"],
+          actionText: "터미널에서 프로필 실행 (F5)",
+          actionCmd: "python About_Me.py"
+        }
+      },
+      "Aurora_Archive.js": {
+        icon: "✨",
+        lang: "JavaScript ES6+",
+        code: `/**
+ * [프로젝트] Mystic Aurora Portfolio & Cosmic Archive
+ * 신비로운 오로라 글로우와 글래스모피즘 기반 싱글 스크린 대시보드
+ */
+export const AuroraPortfolio = {
+  title: "Mystic Aurora Portfolio & Archive",
+  category: "Web & UI / Creative Branding",
+  year: 2026,
+  techStack: ["HTML5", "Deep Glassmorphism", "Canvas API", "Vanilla JS"],
+  features: [
+    "반응형 은하수 파티클 캔버스 실시간 애니메이션",
+    "스크롤 없는 한 화면 탭 전환 대시보드 구조",
+    "GPU 가속 부드러운 오로라 메쉬 블러 효과"
+  ],
+  renderLive() {
+    console.log("🌌 오로라 캔버스가 활성화되었습니다.");
+    return { status: 200, visual: "Cosmic Glow Effect" };
+  }
+};`,
+        preview: {
+          badge: "Featured Project",
+          title: "Mystic Aurora Portfolio & Archive",
+          subtitle: "Web & UI / Creative Branding",
+          desc: "신비로운 오로라 글로우와 글래스모피즘을 결합한 원스크린 대시보드 포트폴리오. 은하수 캔버스 파티클과 부드러운 오로라 메쉬 오브를 적용했습니다.",
+          specs: [
+            { label: "타입", val: "Interactive Single Screen App" },
+            { label: "캔버스", val: "Cosmic Sparkle Engine" },
+            { label: "스타일", val: "Deep Glassmorphism & Aurora" }
+          ],
+          tags: ["HTML5", "Deep Glassmorphism", "Vanilla JS", "Canvas API"],
+          actionText: "라이브 데모 보기 ↗",
+          actionUrl: "../portfolio/index.html"
+        }
+      },
+      "Free_Board.ts": {
+        icon: "📝",
+        lang: "TypeScript",
+        code: `/**
+ * [프로젝트] Interactive Free Board & Guestbook
+ * 브라우저 로컬 저장소와 연동된 반응형 포스트잇 게시판
+ */
+interface BoardPost {
+  id: string;
+  author: string;
+  message: string;
+  timestamp: Date;
+  colorTheme: 'violet' | 'cyan' | 'emerald';
+}
+
+export class GuestbookService {
+  private storageKey = "supianna_freeboard_data";
+
+  public savePost(post: Omit<BoardPost, 'id' | 'timestamp'>): BoardPost {
+    const newEntry: BoardPost = {
+      ...post,
+      id: crypto.randomUUID(),
+      timestamp: new Date()
+    };
+    // LocalStorage 및 실시간 UI 렌더링
+    return newEntry;
+  }
+}`,
+        preview: {
+          badge: "Interactive App",
+          title: "Interactive Free Board & Guestbook",
+          subtitle: "TypeScript / LocalStorage API",
+          desc: "로컬 저장소(localStorage)와 연동되어 실시간으로 생각의 조각과 감성 메시지를 남길 수 있는 반응형 포스트잇 게시판 및 방명록 애플리케이션입니다.",
+          specs: [
+            { label: "스토리지", val: "Browser LocalStorage" },
+            { label: "인터랙션", val: "Dynamic Card Animation & Post-it" },
+            { label: "유효성 검증", val: "실시간 클라이언트 유효성 검사" }
+          ],
+          tags: ["TypeScript", "LocalStorage", "CSS Animations", "UI Validation"],
+          actionText: "방명록 실행해보기",
+          actionCmd: "run guestbook"
+        }
+      },
+      "Task_Flow.js": {
+        icon: "📊",
+        lang: "JavaScript ES6+",
+        code: `/**
+ * [프로젝트] Task Flow & Routine Tracker
+ * 생산성 대시보드 및 드래그 앤 드롭 루틴 매니저
+ */
+class TaskFlowEngine {
+  constructor() {
+    this.tasks = [];
+    this.completionRate = 0;
+  }
+
+  calculateProductivity() {
+    const completed = this.tasks.filter(t => t.done).length;
+    this.completionRate = (completed / this.tasks.length) * 100;
+    return this.completionRate.toFixed(1) + "%";
+  }
+}`,
+        preview: {
+          badge: "Productivity & Data",
+          title: "Task Flow & Routine Tracker",
+          subtitle: "Productivity & Interactive Chart",
+          desc: "개발 목표와 일상의 루틴을 시각적인 차트와 체크리스트로 관리하는 생산성 도구. 드래그 앤 드롭 및 진행률 자동 계산 인터페이스를 제공합니다.",
+          specs: [
+            { label: "기능", val: "루틴 트래킹 & SVG 시각화" },
+            { label: "인터랙션", val: "Drag & Drop HTML5 API" }
+          ],
+          tags: ["Vanilla JS", "Drag & Drop", "CSS Grid", "SVG Charts"],
+          actionText: "컴포넌트 빌드",
+          actionCmd: "node Task_Flow.js"
+        }
+      },
+      "Clean_Engine.sh": {
+        icon: "⚙️",
+        lang: "Shell Script (Bash)",
+        code: `#!/usr/bin/env bash
+# [아키텍처 엔진] Clean Workflow Automation Engine
+# SRP(단일 책임 원칙) 및 Atomic Commit 검증 파이프라인
+
+set -euo pipefail
+
+echo "⚡ [Clean Workflow] 파이프라인 검증을 시작합니다..."
+echo "1. 환경설정 및 의존성 검사 (pyproject.toml, uv.lock)"
+echo "2. 단일 책임 원칙(SRP) 코드 모듈화 검사"
+echo "3. 직관적인 한국어 커밋 메시지 컨벤션 체크"
+echo "✨ All Checks Passed! 무결성 검증 완료."`,
+        preview: {
+          badge: "Architecture & Tooling",
+          title: "Clean Workflow Automation Engine",
+          subtitle: "CI/CD & Architecture Rules",
+          desc: "단일 책임 원칙(SRP)과 원자적 커밋(Atomic Commit) 규칙을 보장하는 자동화 파이프라인. 정적 파일 린트 및 배포 검증 워크플로우를 자동화합니다.",
+          specs: [
+            { label: "파이프라인", val: "GitHub Actions & Shell" },
+            { label: "철학", val: "Atomic Commit & SRP Rule" }
+          ],
+          tags: ["GitHub Actions", "Shell Script", "Clean Architecture", "CI/CD"],
+          actionText: "스크립트 실행하기",
+          actionCmd: "bash Clean_Engine.sh"
+        }
+      },
+      "Skills.json": {
+        icon: "📦",
+        lang: "JSON",
+        code: `{
+  "developer": "Supianna",
+  "technical_domains": {
+    "AI_and_Modern_Dev": [
+      "AI Agent Workflow & Prompt Engineering",
+      "Fast Functional Prototyping",
+      "Pair Programming"
+    ],
+    "Frontend_and_UI": [
+      "HTML5 / Semantic Web",
+      "CSS3 / Glassmorphism / Responsive Design",
+      "JavaScript (ES6+) / Canvas 2D API"
+    ],
+    "Workflow_and_Architecture": [
+      "Git & GitHub Pages",
+      "Single Responsibility Principle (SRP)",
+      "Atomic Commits Convention",
+      "Python uv Package Management"
+    ]
+  }
+}`,
+        preview: {
+          badge: "Tech Capabilities",
+          title: "핵심 기술 역량 스펙트럼",
+          subtitle: "Skills.json Configuration",
+          desc: "AI 도구를 유연하게 활용하는 실행력과, 모던 프론트엔드 및 탄탄한 아키텍처 원칙을 바탕으로 확장성 높은 시스템을 구축합니다.",
+          specs: [
+            { label: "메인 언어", val: "Python, JavaScript, TypeScript" },
+            { label: "패키지 관리", val: "uv / npm" },
+            { label: "스타일링", val: "Glassmorphism, Modern CSS" }
+          ],
+          tags: ["AI Agent", "Python", "JavaScript", "Canvas", "Git", "Clean Architecture"],
+          actionText: "JSON 스펙 파싱",
+          actionCmd: "cat Skills.json"
+        }
+      },
+      "Philosophy.md": {
+        icon: "📖",
+        lang: "Markdown",
+        code: `# 개발자 이야기 & 철학 (Philosophy.md)
+
+## 1. INFJ 성향이 이끄는 섬세함과 구조적 사고
+- 문제의 본질을 꿰뚫고 구조를 깔끔하게 정돈하는 것에 즐거움을 느낍니다.
+- 하나의 함수는 하나의 역할만 수행하는 **단일 책임 원칙(SRP)**을 소중히 여깁니다.
+
+## 2. AI 에이전트와 함께하는 배움
+- 단순히 AI에게 코드를 맡기는 것에 안주하지 않습니다.
+- "이 코드가 왜 이렇게 작동하는가?"를 깊이 파고들어 내재화합니다.
+
+## 3. 밤하늘 오로라처럼
+- 어두운 밤하늘을 수놓는 오로라처럼, 깊이 있는 사고와 고유한 빛을 지닌 개발자로 성장합니다.`,
+        preview: {
+          badge: "Mindset & Philosophy",
+          title: "개발 철학 및 스토리",
+          subtitle: "Philosophy.md",
+          desc: "INFJ의 통찰력과 단단한 모듈화 사고를 바탕으로, 동료가 읽기 편하고 사용자에게 온기를 주는 소프트웨어를 만들어 나갑니다.",
+          specs: [
+            { label: "핵심 키워드", val: "성찰, 단일 책임, 오로라, AI 러닝" },
+            { label: "태도", val: "지속적인 기록과 회고, 클린 코드" }
+          ],
+          tags: ["Philosophy", "INFJ", "SRP", "Continuous Learning"],
+          actionText: "철학 전문 읽기",
+          actionCmd: "cat Philosophy.md"
+        }
+      },
+      "Contact.yaml": {
+        icon: "📬",
+        lang: "YAML",
+        code: `# 소통 및 연락처 (Contact.yaml)
+author: "Supianna"
+github: "https://github.com/supianna"
+repository: "https://github.com/supianna/supianna.github.io"
+blog: "https://supianna.github.io"
+status: "Open to Collaborations & Lifelong Learning"
+message: "새로운 기술적 실험과 따뜻한 소통을 언제나 환영합니다!"`,
+        preview: {
+          badge: "Connect & Network",
+          title: "연락처 및 소통 창구",
+          subtitle: "Contact.yaml",
+          desc: "새로운 아이디어 교류, AI 개발 협업, 프로젝트 방명록 등 언제나 열려 있는 소통 창구입니다.",
+          specs: [
+            { label: "GitHub", val: "github.com/supianna" },
+            { label: "웹사이트", val: "supianna.github.io" },
+            { label: "상태", val: "열정적인 학습 및 개발 진행 중 ✨" }
+          ],
+          tags: ["GitHub", "Collaboration", "Open Source", "Networking"],
+          actionText: "GitHub 방문하기 ↗",
+          actionUrl: "https://github.com/supianna"
+        }
+      }
+    };
+
+    let currentFileName = "About_Me.py";
+    let openTabs = ["About_Me.py"];
+    let commandHistory = [];
+    let historyIndex = -1;
+
+    // 초기화
+    window.addEventListener("DOMContentLoaded", () => {
+      renderFile(currentFileName);
+      initTerminal();
+      setupEventListeners();
+    });
+
+    // 파일 렌더링 함수
+    function renderFile(filename) {
+      currentFileName = filename;
+      const data = FILES_DATA[filename];
+      if (!data) return;
+
+      // 타이틀바 & 상태바 업데이트
+      document.getElementById("titlebar-filename").textContent = filename;
+      document.getElementById("status-lang").textContent = data.lang;
+
+      // 트리 아이템 액티브 업데이트
+      document.querySelectorAll(".tree-item").forEach(item => {
+        item.classList.toggle("active", item.getAttribute("data-file") === filename);
+      });
+
+      // 탭 업데이트
+      if (!openTabs.includes(filename)) {
+        openTabs.push(filename);
+      }
+      renderTabs();
+
+      // 코드 하이라이팅 렌더링
+      const codeContainer = document.getElementById("code-container");
+      codeContainer.innerHTML = "";
+      const lines = data.code.split("\n");
+
+      lines.forEach((line, index) => {
+        const row = document.createElement("div");
+        row.className = "code-line";
+
+        const lineNum = document.createElement("span");
+        lineNum.className = "line-number";
+        lineNum.textContent = index + 1;
+
+        const lineText = document.createElement("span");
+        lineText.className = "line-text";
+        lineText.innerHTML = highlightSyntax(line, filename);
+
+        row.appendChild(lineNum);
+        row.appendChild(lineText);
+        codeContainer.appendChild(row);
+      });
+
+      // 비주얼 프리뷰 패널 렌더링
+      const preview = data.preview;
+      const previewPanel = document.getElementById("preview-panel");
+
+      let specsHtml = "";
+      preview.specs.forEach(s => {
+        specsHtml += `
+          <div class="spec-item">
+            <span class="spec-label">${s.label}</span>
+            <span class="spec-value">${s.val}</span>
+          </div>
+        `;
+      });
+
+      let tagsHtml = "";
+      preview.tags.forEach(t => {
+        tagsHtml += `<span class="tag-chip">#${t}</span>`;
+      });
+
+      let actionBtnHtml = "";
+      if (preview.actionUrl) {
+        actionBtnHtml = `<a href="${preview.actionUrl}" target="_blank" class="preview-action-btn">${preview.actionText}</a>`;
+      } else if (preview.actionCmd) {
+        actionBtnHtml = `<button class="preview-action-btn" onclick="executeCommand('${preview.actionCmd}')">${preview.actionText}</button>`;
+      }
+
+      previewPanel.innerHTML = `
+        <div class="preview-badge">${preview.badge}</div>
+        <h2 class="card-title">${preview.title}</h2>
+        <div class="card-subtitle">${preview.subtitle}</div>
+        <p class="card-desc">${preview.desc}</p>
+        
+        <div class="spec-box">
+          ${specsHtml}
+        </div>
+
+        <div style="font-size: 12px; color: var(--text-muted); font-weight: 600; margin-top: 4px;">핵심 키워드</div>
+        <div class="tags-list">
+          ${tagsHtml}
+        </div>
+
+        ${actionBtnHtml}
+      `;
+    }
+
+    // 간단한 신택스 하이라이팅
+    function highlightSyntax(text, filename) {
+      let escaped = text
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+
+      if (escaped.trim().startsWith("#") || escaped.trim().startsWith("//") || escaped.trim().startsWith("*") || escaped.trim().startsWith("/*")) {
+        return `<span class="token-comment">${escaped}</span>`;
+      }
+
+      // 문자열 하이라이트
+      escaped = escaped.replace(/(["'])(?:(?=(\\?))\2.)*?\1/g, '<span class="token-string">$&</span>');
+
+      // 키워드
+      const keywords = ["def", "class", "return", "import", "from", "if", "else", "elif", "const", "let", "var", "function", "export", "interface", "set", "echo"];
+      keywords.forEach(kw => {
+        const regex = new RegExp(`\\b(${kw})\\b`, "g");
+        escaped = escaped.replace(regex, '<span class="token-keyword">$1</span>');
+      });
+
+      return escaped;
+    }
+
+    // 탭 렌더링
+    function renderTabs() {
+      const tabsBar = document.getElementById("editor-tabs-bar");
+      tabsBar.innerHTML = "";
+
+      openTabs.forEach(file => {
+        const data = FILES_DATA[file];
+        const tab = document.createElement("div");
+        tab.className = `editor-tab ${file === currentFileName ? 'active' : ''}`;
+        tab.dataset.file = file;
+        tab.innerHTML = `
+          <span>${data.icon}</span>
+          <span>${file}</span>
+          <span class="tab-close" data-close="${file}">×</span>
+        `;
+
+        tab.addEventListener("click", (e) => {
+          if (e.target.classList.contains("tab-close")) {
+            e.stopPropagation();
+            closeTab(file);
+          } else {
+            renderFile(file);
+          }
+        });
+
+        tabsBar.appendChild(tab);
+      });
+    }
+
+    function closeTab(file) {
+      openTabs = openTabs.filter(f => f !== file);
+      if (openTabs.length === 0) {
+        openTabs = ["About_Me.py"];
+      }
+      if (currentFileName === file) {
+        renderFile(openTabs[openTabs.length - 1]);
+      } else {
+        renderTabs();
+      }
+    }
+
+    // 터미널 초기화 및 타이핑 애니메이션
+    function initTerminal() {
+      const terminalBody = document.getElementById("terminal-body");
+      terminalBody.innerHTML = "";
+
+      appendTerminalLine(`<span style="color: var(--accent-blue);">🌌 Cosmic Developer Shell v2.4 initialized. (OS: supianna-kernel)</span>`);
+      appendTerminalLine(`<span style="color: var(--text-muted);">Type '<span style="color: var(--accent-yellow);">help</span>' to see available interactive commands.</span>`);
+
+      // 자동 초기 실행 명령어 타이핑 효과
+      setTimeout(() => {
+        typeCommandAndRun("./init_profile.sh");
+      }, 500);
+    }
+
+    function appendTerminalLine(html) {
+      const terminalBody = document.getElementById("terminal-body");
+      const row = document.createElement("div");
+      row.className = "terminal-output-row";
+      row.innerHTML = html;
+      terminalBody.appendChild(row);
+      terminalBody.scrollTop = terminalBody.scrollHeight;
+    }
+
+    function renderPromptInput() {
+      const terminalBody = document.getElementById("terminal-body");
+      const existingPrompt = document.getElementById("current-prompt-row");
+      if (existingPrompt) existingPrompt.remove();
+
+      const promptRow = document.createElement("div");
+      promptRow.className = "terminal-prompt-line";
+      promptRow.id = "current-prompt-row";
+      promptRow.innerHTML = `
+        <span class="prompt-label">supianna@cosmic</span>:<span class="prompt-path">~/portfolio</span><span class="prompt-symbol">$</span>
+        <input type="text" class="terminal-input" id="terminal-cli" autofocus spellcheck="false" autocomplete="off">
+      `;
+      terminalBody.appendChild(promptRow);
+      terminalBody.scrollTop = terminalBody.scrollHeight;
+
+      const input = document.getElementById("terminal-cli");
+      input.focus();
+
+      input.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          const cmd = input.value.trim();
+          if (cmd) {
+            commandHistory.push(cmd);
+            historyIndex = commandHistory.length;
+          }
+          executeCommand(cmd);
+        } else if (e.key === "ArrowUp") {
+          if (historyIndex > 0) {
+            historyIndex--;
+            input.value = commandHistory[historyIndex];
+          }
+        } else if (e.key === "ArrowDown") {
+          if (historyIndex < commandHistory.length - 1) {
+            historyIndex++;
+            input.value = commandHistory[historyIndex];
+          } else {
+            historyIndex = commandHistory.length;
+            input.value = "";
+          }
+        }
+      });
+    }
+
+    function typeCommandAndRun(cmd) {
+      const terminalBody = document.getElementById("terminal-body");
+      const promptRow = document.createElement("div");
+      promptRow.className = "terminal-prompt-line";
+      promptRow.innerHTML = `
+        <span class="prompt-label">supianna@cosmic</span>:<span class="prompt-path">~/portfolio</span><span class="prompt-symbol">$</span>
+        <span id="typing-cmd-text" style="color: #fff;"></span>
+      `;
+      terminalBody.appendChild(promptRow);
+
+      let idx = 0;
+      const typingSpan = document.getElementById("typing-cmd-text");
+      const interval = setInterval(() => {
+        if (idx < cmd.length) {
+          typingSpan.textContent += cmd[idx];
+          idx++;
+        } else {
+          clearInterval(interval);
+          promptRow.remove();
+          executeCommand(cmd);
+        }
+      }, 40);
+    }
+
+    // 터미널 명령어 실행 엔진
+    function executeCommand(rawCmd) {
+      const cmd = rawCmd.trim();
+
+      // 프롬프트 에코
+      appendTerminalLine(`
+        <span class="prompt-label">supianna@cosmic</span>:<span class="prompt-path">~/portfolio</span><span class="prompt-symbol">$</span> <span style="color: #fff; font-weight: 500;">${cmd}</span>
+      `);
+
+      if (!cmd) {
+        renderPromptInput();
+        return;
+      }
+
+      const parts = cmd.split(" ");
+      const action = parts[0].toLowerCase();
+      const arg = parts.slice(1).join(" ");
+
+      switch (action) {
+        case "help":
+          appendTerminalLine(`
+<div style="color: var(--accent-cyan); margin: 4px 0;">[ 사용 가능한 콘솔 명령어 모음 ]</div>
+  <span style="color: var(--accent-yellow);">help</span>                - 사용 가능한 명령어 목록을 표시합니다.
+  <span style="color: var(--accent-yellow);">ls / dir</span>            - 현재 디렉토리의 파일 목록을 조회합니다.
+  <span style="color: var(--accent-yellow);">run portfolio</span>       - 포트폴리오 메인 소개 및 핵심 스펙을 브리핑합니다.
+  <span style="color: var(--accent-yellow);">cat &lt;filename&gt;</span>     - 지정한 파일의 소스 코드를 읽고 에디터로 엽니다.
+  <span style="color: var(--accent-yellow);">skills</span>              - 보유 기술 스택 요약본을 출력합니다.
+  <span style="color: var(--accent-yellow);">projects</span>            - 대표 프로젝트 리스트를 요약 브리핑합니다.
+  <span style="color: var(--accent-yellow);">whoami</span>              - 현재 접속한 개발자 정체성을 출력합니다.
+  <span style="color: var(--accent-yellow);">clear / cls</span>         - 터미널 화면을 깨끗하게 정리합니다.
+  <span style="color: var(--accent-yellow);">theme</span>               - 사이버 오로라 펄스 효과를 발생시킵니다.
+          `);
+          break;
+
+        case "ls":
+        case "dir":
+          appendTerminalLine(`
+<div style="color: var(--accent-blue); display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; padding: 4px 0;">
+  <span>📄 About_Me.py</span>
+  <span>✨ Aurora_Archive.js</span>
+  <span>📝 Free_Board.ts</span>
+  <span>📊 Task_Flow.js</span>
+  <span>⚙️ Clean_Engine.sh</span>
+  <span>📦 Skills.json</span>
+  <span>📖 Philosophy.md</span>
+  <span>📬 Contact.yaml</span>
+</div>
+          `);
+          break;
+
+        case "whoami":
+          appendTerminalLine(`
+<span style="color: var(--accent-green); font-weight: 600;">Supianna (수피아나)</span>
+<span style="color: var(--text-main);">AI-Assisted Developer · INFJ · 밤하늘 오로라처럼 깊이 있는 사고와 단단한 아키텍처를 지향합니다.</span>
+          `);
+          break;
+
+        case "run":
+        case "./init_profile.sh":
+          if (arg === "guestbook") {
+            appendTerminalLine(`<span style="color: var(--accent-cyan);">📝 방명록 애플리케이션 서비스가 활성화되었습니다. (localStorage 연동 완료)</span>`);
+            renderFile("Free_Board.ts");
+          } else {
+            appendTerminalLine(`
+<div style="padding: 6px 0; line-height: 1.6;">
+  <span style="color: var(--accent-cyan); font-weight: 700;">🚀 [System Boot] Supianna Profile Initialized</span><br>
+  <span style="color: var(--text-main);">• 포지션: AI-Assisted Developer / Explorer</span><br>
+  <span style="color: var(--text-main);">• 성향: INFJ (깊은 사색, SRP 원칙, 배려와 소통)</span><br>
+  <span style="color: var(--text-main);">• 무기: AI Agent Workflow, Python, Vanilla JS, Glassmorphism, Atomic Git</span><br>
+  <span style="color: var(--accent-green);">✔ 모든 시스템 정상 동작 중입니다. 좌측 파일 트리를 클릭하여 둘러보세요!</span>
+</div>
+            `);
+          }
+          break;
+
+        case "skills":
+          renderFile("Skills.json");
+          appendTerminalLine(`
+<div style="color: var(--accent-purple); font-weight: 600;">[ Supianna's Tech Spectrum ]</div>
+• <strong style="color: #fff;">AI & Workflow:</strong> AI Agent Workflow, Prompt Engineering, Rapid Prototyping
+• <strong style="color: #fff;">Frontend & Web:</strong> HTML5, CSS3, Modern JS (ES6+), Canvas API, Deep Glassmorphism
+• <strong style="color: #fff;">Architecture:</strong> Single Responsibility Principle (SRP), Atomic Commits, uv
+          `);
+          break;
+
+        case "projects":
+          appendTerminalLine(`
+<div style="color: var(--accent-blue); font-weight: 600;">[ Major Projects Archive ]</div>
+1. <strong style="color: #fff;">Mystic Aurora Portfolio:</strong> 오로라 글로우 & 글래스모피즘 싱글 스크린 대시보드
+2. <strong style="color: #fff;">Interactive Free Board:</strong> LocalStorage 기반 실시간 감성 포스트잇 방명록
+3. <strong style="color: #fff;">Task Flow Tracker:</strong> 드래그 앤 드롭 루틴 관리 및 시각적 SVG 진행률 차트
+4. <strong style="color: #fff;">Clean Automation Engine:</strong> SRP & 원자적 커밋 검증 파이프라인
+          `);
+          break;
+
+        case "cat":
+          if (FILES_DATA[arg]) {
+            renderFile(arg);
+            appendTerminalLine(`<span style="color: var(--accent-green);">Loaded ${arg} into main editor buffer.</span>`);
+          } else {
+            appendTerminalLine(`<span style="color: var(--accent-red);">cat: ${arg}: 파일이 존재하지 않습니다. ('ls' 로 목록을 확인하세요)</span>`);
+          }
+          break;
+
+        case "python":
+        case "node":
+        case "bash":
+          if (FILES_DATA[arg]) {
+            renderFile(arg);
+            appendTerminalLine(`<span style="color: var(--accent-green);">▶ Successfully executed ${arg}! (Exit Code: 0)</span>`);
+          } else {
+            appendTerminalLine(`<span style="color: var(--accent-red);">${action}: ${arg}: No such file</span>`);
+          }
+          break;
+
+        case "clear":
+        case "cls":
+          clearTerminal();
+          return;
+
+        case "theme":
+          document.body.style.filter = "hue-rotate(90deg)";
+          setTimeout(() => { document.body.style.filter = "none"; }, 1500);
+          appendTerminalLine(`<span style="color: var(--accent-cyan);">✨ Cosmic Aurora Pulse effect triggered!</span>`);
+          break;
+
+        default:
+          appendTerminalLine(`<span style="color: var(--accent-red);">명령어를 찾을 수 없습니다: '${cmd}'. 'help'를 입력하여 명령어 목록을 확인하세요.</span>`);
+          break;
+      }
+
+      renderPromptInput();
+    }
+
+    function clearTerminal() {
+      const terminalBody = document.getElementById("terminal-body");
+      terminalBody.innerHTML = "";
+      renderPromptInput();
+    }
+
+    // 이벤트 리스너 등록
+    function setupEventListeners() {
+      // 트리 아이템 클릭
+      document.querySelectorAll(".tree-item").forEach(item => {
+        item.addEventListener("click", () => {
+          const file = item.getAttribute("data-file");
+          renderFile(file);
+        });
+      });
+
+      // Run Current 버튼 클릭
+      document.getElementById("btn-run-current").addEventListener("click", () => {
+        executeCommand(`run current: ${currentFileName}`);
+      });
+    }
+  </script>
+</body>
+</html>
+

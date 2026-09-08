@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <!-- 파일명: gitblog/5_isometric_room.html -->
+  <!-- 목적: 컨셉 5 - 게임풍 2D/아이소메트릭 맵 (Pixel / Low-Poly Room) 포트폴리오 시각화 -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>컨셉 5: 게임풍 아이소메트릭 룸 | Supianna Portfolio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Pretendard:wght@400;500;600;700;800&family=Fira+Code:wght@400;600&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --pixel-bg: #121420;
+      --pixel-card: #1c2035;
+      --pixel-border: #434c75;
+      --pixel-highlight: #5de6de;
+      --pixel-yellow: #f5d76e;
+      --pixel-pink: #ff6b8b;
+      --pixel-green: #2ecc71;
+      --pixel-purple: #b57cff;
+      --font-pixel: 'Press Start 2P', monospace;
+      --font-sans: 'Pretendard', sans-serif;
+      --font-code: 'Fira Code', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--pixel-bg);
+      color: #e2e8f0;
+      font-family: var(--font-sans);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      user-select: none;
+      background-image: radial-gradient(circle, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+      background-size: 24px 24px;
+    }
+
+    /* 상단 글로벌 네비게이션 배너 */
+    .global-nav-bar {
+      background: #0d0f1a;
+      border-bottom: 3px solid var(--pixel-border);
+      padding: 8px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 12px;
+      z-index: 100;
+    }
+
+    .global-nav-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .nav-badge {
+      background: rgba(93, 230, 222, 0.2);
+      color: var(--pixel-highlight);
+      border: 2px solid var(--pixel-highlight);
+      padding: 2px 8px;
+      font-weight: 700;
+      font-size: 10px;
+      font-family: var(--font-pixel);
+      box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.5);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 8px;
+    }
+
+    .nav-link-btn {
+      color: #94a3b8;
+      text-decoration: none;
+      padding: 4px 10px;
+      border-radius: 4px;
+      font-size: 11px;
+      transition: all 0.2s;
+    }
+
+    .nav-link-btn:hover, .nav-link-btn.active {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .nav-link-btn.active {
+      color: var(--pixel-highlight);
+      font-weight: 600;
+      border-bottom: 2px solid var(--pixel-highlight);
+    }
+
+    /* 게임 룸 메인 레이아웃 */
+    .game-workspace {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* 상단 RPG 상태창 (Player Status HUD) */
+    .rpg-status-bar {
+      background: #181c2e;
+      border-bottom: 3px solid var(--pixel-border);
+      padding: 10px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-family: var(--font-pixel);
+      font-size: 10px;
+      letter-spacing: 0.5px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    }
+
+    .status-profile {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .avatar-icon {
+      font-size: 20px;
+      background: #252b45;
+      border: 2px solid var(--pixel-border);
+      border-radius: 8px;
+      padding: 4px;
+    }
+
+    .status-bars {
+      display: flex;
+      gap: 24px;
+    }
+
+    .gauge-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .gauge-label {
+      color: #cbd5e1;
+    }
+
+    .gauge-box {
+      width: 110px;
+      height: 12px;
+      background: #0b0d14;
+      border: 2px solid #333a59;
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .gauge-fill {
+      height: 100%;
+      border-radius: 1px;
+    }
+
+    .fill-hp { background: var(--pixel-pink); width: 100%; }
+    .fill-mp { background: var(--pixel-highlight); width: 96%; }
+    .fill-exp { background: var(--pixel-yellow); width: 88%; }
+
+    .sound-toggle-btn {
+      background: #252b45;
+      border: 2px solid var(--pixel-border);
+      color: #cbd5e1;
+      font-family: var(--font-pixel);
+      font-size: 9px;
+      padding: 6px 12px;
+      cursor: pointer;
+      border-radius: 4px;
+      box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.4);
+    }
+
+    .sound-toggle-btn:hover {
+      background: #333a59;
+      color: #fff;
+    }
+
+    /* 아이소메트릭 룸 스테이지 */
+    .isometric-stage {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      perspective: 1200px;
+      position: relative;
+    }
+
+    /* 3D 룸 플랫폼 */
+    .room-isometric-box {
+      width: 680px;
+      height: 480px;
+      position: relative;
+      transform-style: preserve-3d;
+      transform: rotateX(56deg) rotateZ(-45deg);
+      transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* 바닥 타일 */
+    .room-floor {
+      position: absolute;
+      inset: 0;
+      background: #1e243a;
+      border: 4px solid #3c466e;
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.8), -20px 20px 0px #131726, -40px 40px 0px #0b0e18;
+      display: grid;
+      grid-template-columns: repeat(8, 1fr);
+      grid-template-rows: repeat(8, 1fr);
+    }
+
+    .floor-tile {
+      border: 1px dashed rgba(255, 255, 255, 0.04);
+    }
+
+    .floor-rug {
+      position: absolute;
+      width: 240px;
+      height: 180px;
+      background: rgba(93, 230, 222, 0.12);
+      border: 3px dashed var(--pixel-highlight);
+      top: 150px;
+      left: 180px;
+      border-radius: 8px;
+    }
+
+    /* 벽면 (뒤쪽 2면) */
+    .room-wall-left {
+      position: absolute;
+      left: 0;
+      top: -240px;
+      width: 4px;
+      height: 480px;
+      background: #252d47;
+      transform-origin: left;
+      transform: rotateY(-90deg);
+    }
+
+    /* 가구 및 인터랙티브 오브젝트들 (2.5D 빌보드 형태) */
+    .room-object {
+      position: absolute;
+      transform-style: preserve-3d;
+      transform: rotateZ(45deg) rotateX(-56deg);
+      cursor: pointer;
+      transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      z-index: 10;
+    }
+
+    .room-object:hover {
+      transform: rotateZ(45deg) rotateX(-56deg) scale(1.15) translateY(-10px);
+      filter: drop-shadow(0 15px 20px rgba(93, 230, 222, 0.6));
+    }
+
+    .obj-sprite-box {
+      background: #1c2035;
+      border: 3px solid var(--pixel-border);
+      border-radius: 12px;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 4px 6px 0px rgba(0, 0, 0, 0.6);
+      position: relative;
+    }
+
+    .room-object:hover .obj-sprite-box {
+      border-color: var(--pixel-highlight);
+      background: #252c48;
+    }
+
+    .obj-icon {
+      font-size: 34px;
+    }
+
+    .obj-badge {
+      font-family: var(--font-pixel);
+      font-size: 8px;
+      color: #cbd5e1;
+      background: #0f121e;
+      padding: 3px 6px;
+      border-radius: 4px;
+      white-space: nowrap;
+    }
+
+    .obj-beacon-dot {
+      position: absolute;
+      top: -4px;
+      right: -4px;
+      width: 10px;
+      height: 10px;
+      background: var(--pixel-yellow);
+      border-radius: 50%;
+      box-shadow: 0 0 10px var(--pixel-yellow);
+      animation: pulse 1.5s infinite;
+    }
+
+    /* 각 오브젝트 위치 배치 */
+    #obj-desk { top: 60px; left: 160px; }
+    #obj-bookshelf { top: 30px; left: 420px; }
+    #obj-whiteboard { top: 220px; left: 40px; }
+    #obj-coffee { top: 320px; left: 180px; }
+    #obj-telescope { top: 320px; left: 440px; }
+    #obj-character { top: 160px; left: 240px; pointer-events: none; }
+    #obj-ai-pet { top: 120px; left: 340px; animation: floatPet 3s ease-in-out infinite; }
+
+    @keyframes floatPet {
+      0%, 100% { transform: rotateZ(45deg) rotateX(-56deg) translateY(0); }
+      50% { transform: rotateZ(45deg) rotateX(-56deg) translateY(-14px); }
+    }
+
+    /* 캐릭터 도트 스프라이트 박스 */
+    .character-box {
+      background: transparent;
+      border: none;
+      box-shadow: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .char-sprite {
+      font-size: 42px;
+      filter: drop-shadow(0 6px 8px rgba(0, 0, 0, 0.5));
+    }
+
+    .char-tag {
+      background: #000;
+      color: var(--pixel-highlight);
+      font-family: var(--font-pixel);
+      font-size: 8px;
+      padding: 3px 6px;
+      border-radius: 3px;
+      border: 1px solid var(--pixel-highlight);
+    }
+
+    /* 대화창 & 디테일 모달 다이얼로그 */
+    .pixel-modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(6px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+    }
+
+    .pixel-modal-backdrop.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .pixel-dialog-box {
+      width: 560px;
+      max-width: 90%;
+      background: #181c2e;
+      border: 4px solid var(--pixel-border);
+      border-radius: 12px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8), 6px 6px 0px rgba(0, 0, 0, 0.5);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      transform: scale(0.95);
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .pixel-modal-backdrop.open .pixel-dialog-box {
+      transform: scale(1);
+    }
+
+    .dialog-header {
+      background: #252b45;
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 3px solid var(--pixel-border);
+    }
+
+    .dialog-title {
+      font-family: var(--font-pixel);
+      font-size: 12px;
+      color: var(--pixel-yellow);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-dialog-close {
+      background: #e74c3c;
+      border: 2px solid #c0392b;
+      color: #fff;
+      font-family: var(--font-pixel);
+      font-size: 10px;
+      padding: 4px 8px;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+
+    .dialog-body {
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .dialog-avatar-row {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      background: rgba(0, 0, 0, 0.25);
+      padding: 14px;
+      border-radius: 8px;
+      border: 2px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .dialog-speaker-icon {
+      font-size: 32px;
+    }
+
+    .dialog-speaker-meta h4 {
+      font-size: 16px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .dialog-speaker-meta p {
+      font-size: 12px;
+      color: var(--pixel-highlight);
+      font-family: var(--font-code);
+    }
+
+    .dialog-text-content {
+      font-size: 14.5px;
+      line-height: 1.7;
+      color: #e2e8f0;
+      word-break: keep-all;
+    }
+
+    .dialog-specs-box {
+      background: rgba(0, 0, 0, 0.2);
+      border: 1px dashed var(--pixel-border);
+      border-radius: 8px;
+      padding: 12px;
+      font-size: 13px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .dialog-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 8px;
+    }
+
+    .btn-pixel-action {
+      background: var(--pixel-highlight);
+      border: 2px solid #3bb8b1;
+      color: #0d1117;
+      font-family: var(--font-pixel);
+      font-size: 10px;
+      padding: 10px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      text-decoration: none;
+      font-weight: 700;
+      box-shadow: 3px 3px 0px rgba(0, 0, 0, 0.4);
+      transition: all 0.15s;
+    }
+
+    .btn-pixel-action:hover {
+      transform: translate(-1px, -1px);
+      box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.6);
+    }
+
+    /* 하단 안내 텍스트 */
+    .room-bottom-hud {
+      background: #0f121e;
+      border-top: 2px solid var(--pixel-border);
+      padding: 10px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: var(--font-code);
+      font-size: 12px;
+      color: #94a3b8;
+    }
+
+    .hud-help-keys {
+      display: flex;
+      gap: 16px;
+    }
+
+    .key-badge {
+      background: #252b45;
+      color: var(--pixel-yellow);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 11px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 상단 글로벌 네비게이션 배너 -->
+  <header class="global-nav-bar">
+    <div class="global-nav-left">
+      <span class="nav-badge">Concept 5 of 5</span>
+      <span style="font-weight: 600; color: #fff;">게임풍 2D/아이소메트릭 맵</span>
+      <span style="color: #94a3b8; font-size: 11px;">(Pixel / Low-Poly Lab Room)</span>
+    </div>
+    <nav class="nav-links">
+      <a href="index.html" class="nav-link-btn">← 5개 컨셉 허브</a>
+      <a href="1_ide_terminal.html" class="nav-link-btn">1. IDE/터미널</a>
+      <a href="2_constellation_graph.html" class="nav-link-btn">2. 3D 성좌 그래프</a>
+      <a href="3_data_dashboard.html" class="nav-link-btn">3. 데이터 대시보드</a>
+      <a href="4_scrollytelling.html" class="nav-link-btn">4. 시네마틱 스크롤</a>
+      <a href="5_isometric_room.html" class="nav-link-btn active">5. 아이소메트릭 룸</a>
+    </nav>
+  </header>
+
+  <div class="game-workspace">
+    
+    <!-- 상단 RPG 상태창 (Player Status HUD) -->
+    <section class="rpg-status-bar">
+      <div class="status-profile">
+        <span class="avatar-icon">👩‍💻</span>
+        <div>
+          <span style="color: var(--pixel-highlight);">LV.26</span>
+          <strong style="color: #fff; margin-left: 4px;">SUPIANNA</strong>
+          <span style="color: #94a3b8; font-size: 8px;">[INFJ · ARCHITECT]</span>
+        </div>
+      </div>
+
+      <div class="status-bars">
+        <div class="gauge-group">
+          <span class="gauge-label">HP</span>
+          <div class="gauge-box">
+            <div class="gauge-fill fill-hp"></div>
+          </div>
+          <span style="color: var(--pixel-pink);">100%</span>
+        </div>
+
+        <div class="gauge-group">
+          <span class="gauge-label">MP</span>
+          <div class="gauge-box">
+            <div class="gauge-fill fill-mp"></div>
+          </div>
+          <span style="color: var(--pixel-highlight);">96%</span>
+        </div>
+
+        <div class="gauge-group">
+          <span class="gauge-label">EXP</span>
+          <div class="gauge-box">
+            <div class="gauge-fill fill-exp"></div>
+          </div>
+          <span style="color: var(--pixel-yellow);">88%</span>
+        </div>
+      </div>
+
+      <button class="sound-toggle-btn" id="btn-sound-toggle">🔊 SOUND: ON</button>
+    </section>
+
+    <!-- 아이소메트릭 룸 뷰포트 -->
+    <div class="isometric-stage">
+      
+      <div class="room-isometric-box">
+        
+        <!-- 바닥 그리드 및 러그 -->
+        <div class="room-floor">
+          <div class="floor-rug"></div>
+          <!-- 64개 타일 그리드 -->
+          <div class="floor-tile"></div><div class="floor-tile"></div><div class="floor-tile"></div><div class="floor-tile"></div>
+          <div class="floor-tile"></div><div class="floor-tile"></div><div class="floor-tile"></div><div class="floor-tile"></div>
+          <div class="floor-tile"></div><div class="floor-tile"></div><div class="floor-tile"></div><div class="floor-tile"></div>
+          <div class="floor-tile"></div><div class="floor-tile"></div><div class="floor-tile"></div><div class="floor-tile"></div>
+          <div class="floor-tile"></div><div class="floor-tile"></div><div class="floor-tile"></div><div class="floor-tile"></div>
+          <div class="floor-tile"></div><div class="floor-tile"></div><div class="floor-tile"></div><div class="floor-tile"></div>
+          <div class="floor-tile"></div><div class="floor-tile"></div><div class="floor-tile"></div><div class="floor-tile"></div>
+          <div class="floor-tile"></div><div class="floor-tile"></div><div class="floor-tile"></div><div class="floor-tile"></div>
+        </div>
+
+        <!-- 1. 코딩 듀얼 모니터 & 데스크 -->
+        <div class="room-object" id="obj-desk" data-type="desk">
+          <div class="obj-sprite-box">
+            <span class="obj-beacon-dot"></span>
+            <span class="obj-icon">🖥️</span>
+            <span class="obj-badge">프로젝트 갤러리</span>
+          </div>
+        </div>
+
+        <!-- 2. 기술 책장 (Bookshelf) -->
+        <div class="room-object" id="obj-bookshelf" data-type="bookshelf">
+          <div class="obj-sprite-box">
+            <span class="obj-beacon-dot"></span>
+            <span class="obj-icon">📚</span>
+            <span class="obj-badge">기술 서재 & 학습</span>
+          </div>
+        </div>
+
+        <!-- 3. 아키텍처 화이트보드 (Whiteboard) -->
+        <div class="room-object" id="obj-whiteboard" data-type="whiteboard">
+          <div class="obj-sprite-box">
+            <span class="obj-beacon-dot"></span>
+            <span class="obj-icon">📋</span>
+            <span class="obj-badge">SRP & 원자적 커밋</span>
+          </div>
+        </div>
+
+        <!-- 4. 커피 머신 & 머그잔 -->
+        <div class="room-object" id="obj-coffee" data-type="coffee">
+          <div class="obj-sprite-box">
+            <span class="obj-icon">☕</span>
+            <span class="obj-badge">INFJ 쉼터 & 루틴</span>
+          </div>
+        </div>
+
+        <!-- 5. 천체 망원경 (Telescope) -->
+        <div class="room-object" id="obj-telescope" data-type="telescope">
+          <div class="obj-sprite-box">
+            <span class="obj-beacon-dot"></span>
+            <span class="obj-icon">🔭</span>
+            <span class="obj-badge">오로라 & 천체 관측</span>
+          </div>
+        </div>
+
+        <!-- 개발자 메인 캐릭터 -->
+        <div class="room-object" id="obj-character">
+          <div class="character-box">
+            <span class="char-sprite">👩‍💻</span>
+            <span class="char-tag">Supianna</span>
+          </div>
+        </div>
+
+        <!-- AI 조력자 로봇 펫 -->
+        <div class="room-object" id="obj-ai-pet" data-type="aipet">
+          <div class="obj-sprite-box" style="border-color: var(--pixel-purple);">
+            <span class="obj-icon">🤖</span>
+            <span class="obj-badge" style="color: var(--pixel-purple);">AI Agent Bot</span>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- 하단 상태 HUD -->
+    <footer class="room-bottom-hud">
+      <div class="hud-help-keys">
+        <span>💡 가구와 소품을 클릭하여 상호작용하세요!</span>
+        <span><span class="key-badge">클릭</span> 대화창 오픈</span>
+        <span><span class="key-badge">ESC</span> 창 닫기</span>
+      </div>
+      <div>
+        <span>ROOM: <strong>Cosmic Dev Lab 101</strong></span>
+      </div>
+    </footer>
+
+  </div>
+
+  <!-- 대화창 & 모달 팝업 템플릿 -->
+  <div class="pixel-modal-backdrop" id="modal-backdrop">
+    <div class="pixel-dialog-box" id="pixel-dialog">
+      <div class="dialog-header">
+        <span class="dialog-title" id="dialog-title">🖥️ WORKSTATION ARCHIVE</span>
+        <button class="btn-dialog-close" id="btn-dialog-close">ESC ✕</button>
+      </div>
+      <div class="dialog-body">
+        <div class="dialog-avatar-row">
+          <span class="dialog-speaker-icon" id="dialog-icon">💻</span>
+          <div class="dialog-speaker-meta">
+            <h4 id="dialog-heading">프로젝트 작업 스테이션</h4>
+            <p id="dialog-sub">Production Environment & Active Artifacts</p>
+          </div>
+        </div>
+        <p class="dialog-text-content" id="dialog-desc">
+          수피아나가 제작한 살아 숨 쉬는 주요 프로젝트들이 듀얼 모니터에 실행되고 있습니다.
+        </p>
+        <div class="dialog-specs-box" id="dialog-specs">
+          <!-- 스펙 주입 -->
+        </div>
+        <div class="dialog-actions">
+          <a href="#" class="btn-pixel-action" id="dialog-action-btn">자세히 확인하기 ↗</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // [1. 인터랙티브 오브젝트 데이터 정의]
+    const ROOM_DATA = {
+      desk: {
+        icon: "🖥️",
+        title: "🖥️ 듀얼 모니터 & 코딩 데스크",
+        heading: "프로젝트 작업 스테이션",
+        sub: "Production & Deployments",
+        desc: "최신 웹 표준과 반응형 오로라 글래스모피즘이 담긴 포트폴리오 및 웹 애플리케이션들을 실시간으로 코딩하고 검증하는 공간입니다.",
+        specs: `
+          <div>• <strong>Mystic Aurora Portfolio:</strong> 신비로운 캔버스 파티클 대시보드</div>
+          <div>• <strong>Interactive Free Board:</strong> 로컬 스토리지 기반 반응형 방명록</div>
+          <div>• <strong>Task Flow Tracker:</strong> 드래그 앤 드롭 및 SVG 진행률 차트 엔진</div>
+        `,
+        actionText: "메인 포트폴리오 열기 ↗",
+        actionUrl: "../portfolio/index.html"
+      },
+      bookshelf: {
+        icon: "📚",
+        title: "📚 기술 서재 & 학습 기록실",
+        heading: "지속적 배움과 탐구의 책장",
+        sub: "Knowledge & Continuous Reading",
+        desc: "새로운 기술의 물결 앞에서도 흔들리지 않도록, 컴퓨터 과학의 기본 원리와 클린 아키텍처 철학을 꾸준히 기록하고 회고하는 지식 보관소입니다.",
+        specs: `
+          <div>• <strong>소프트웨어 공학:</strong> 단일 책임 원칙 (SRP), 클린 코드</div>
+          <div>• <strong>모던 개발 도구:</strong> Astral uv, Python 3.12, Git Atomic Workflow</div>
+          <div>• <strong>웹 테크놀로지:</strong> Semantic HTML5, CSS Glassmorphism, Modern JS</div>
+        `,
+        actionText: "기술 스펙 둘러보기",
+        actionUrl: "3_data_dashboard.html"
+      },
+      whiteboard: {
+        icon: "📋",
+        title: "📋 문제 해결 & 아키텍처 보드",
+        heading: "단일 책임 & 원자적 커밋 철학",
+        sub: "Architecture & Troubleshooting",
+        desc: "복잡한 요구사항을 마주했을 때 성급하게 코드를 작성하지 않고, 역할을 작은 단위로 쪼개고 직관적인 한국어 커밋 로그 컨벤션을 계획하는 화이트보드입니다.",
+        specs: `
+          <div>• <strong>원칙 1:</strong> 하나의 모듈/함수는 단 하나의 일만 수행한다.</div>
+          <div>• <strong>원칙 2:</strong> 환경설정, 소스코드, 문서를 분리하여 커밋한다.</div>
+          <div>• <strong>원칙 3:</strong> 직관적인 한국어 커밋 메시지로 협업 효율을 극대화한다.</div>
+        `,
+        actionText: "아키텍처 파이프라인 확인",
+        actionUrl: "1_ide_terminal.html"
+      },
+      coffee: {
+        icon: "☕",
+        title: "☕ 커피 머신 & INFJ 쉼터",
+        heading: "깊은 사색과 커피 한 잔",
+        sub: "Mindset & Daily Routine",
+        desc: "향긋한 원두 커피 한 잔과 함께 오늘의 개발을 회고하고, 기술을 통해 사람들에게 어떤 따뜻한 온기를 전할 수 있을지 사색하는 휴식 코너입니다.",
+        specs: `
+          <div>• <strong>취향:</strong> 핸드드립 커피, 조용한 앰비언트 음악</div>
+          <div>• <strong>MBTI:</strong> INFJ (통찰력, 진정성, 따뜻한 배려)</div>
+          <div>• <strong>충전 효과:</strong> 창의적 영감(MP) +100% 즉시 회복!</div>
+        `,
+        actionText: "방명록에 인사 남기기 ↗",
+        actionUrl: "../portfolio/index.html#free-board"
+      },
+      telescope: {
+        icon: "🔭",
+        title: "🔭 우주 천체 망원경",
+        heading: "밤하늘 관측 & 오로라의 영감",
+        sub: "Inspiration & Stargazing",
+        desc: "창밖으로 쏟아지는 밤하늘의 은하수와 별빛, 오로라를 관측하며 깊은 영감을 얻습니다. 수피아나의 포트폴리오 디자인에 은하수와 별빛이 깃든 이유입니다.",
+        specs: `
+          <div>• <strong>관측 대상:</strong> 은하수(Milky Way), 오로라 보레알리스, 안드로메다</div>
+          <div>• <strong>디자인 반영:</strong> Cosmic Aurora Palette, Starfield Particles</div>
+        `,
+        actionText: "3D 성좌 그래프 보러가기 ↗",
+        actionUrl: "2_constellation_graph.html"
+      },
+      aipet: {
+        icon: "🤖",
+        title: "🤖 AI 조력자 로봇 (Cosmic Companion)",
+        heading: "언제나 함께하는 페어 프로그래머",
+        sub: "Autonomous AI Partner",
+        desc: "수피아나 곁에서 24시간 아이디어를 검증하고 코드 리팩토링을 제안하며, 끊임없는 에너지로 함께 프로젝트를 완주하는 든든한 조력자입니다.",
+        specs: `
+          <div>• <strong>현재 상태:</strong> 100% 동기화 (Optimal Synergy)</div>
+          <div>• <strong>오늘의 한마디:</strong> \"밤하늘 오로라처럼 빛나는 완벽한 코드가 완성되었어요! 🚀\"</div>
+        `,
+        actionText: "AI 협업 매트릭스 보기",
+        actionUrl: "3_data_dashboard.html"
+      }
+    };
+
+    // [2. Web Audio API 기반 8비트 레트로 사운드 신시사이저]
+    let soundEnabled = true;
+    let audioCtx = null;
+
+    function play8BitSound(type) {
+      if (!soundEnabled) return;
+      try {
+        if (!audioCtx) {
+          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (audioCtx.state === "suspended") {
+          audioCtx.resume();
+        }
+
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        const now = audioCtx.currentTime;
+
+        if (type === "click") {
+          // 경쾌한 8비트 삐빅음
+          osc.type = "square";
+          osc.frequency.setValueAtTime(440, now);
+          osc.frequency.setValueAtTime(880, now + 0.05);
+          gain.gain.setValueAtTime(0.12, now);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.12);
+          osc.start(now);
+          osc.stop(now + 0.12);
+        } else if (type === "close") {
+          // 닫기음
+          osc.type = "sawtooth";
+          osc.frequency.setValueAtTime(300, now);
+          osc.frequency.setValueAtTime(150, now + 0.08);
+          gain.gain.setValueAtTime(0.1, now);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
+          osc.start(now);
+          osc.stop(now + 0.15);
+        }
+      } catch (e) {
+        // 오디오 미지원 환경 무시
+      }
+    }
+
+    // [3. 모달 제어]
+    const backdrop = document.getElementById("modal-backdrop");
+    const closeBtn = document.getElementById("btn-dialog-close");
+
+    function openDialog(type) {
+      const data = ROOM_DATA[type];
+      if (!data) return;
+
+      play8BitSound("click");
+
+      document.getElementById("dialog-title").textContent = data.title;
+      document.getElementById("dialog-icon").textContent = data.icon;
+      document.getElementById("dialog-heading").textContent = data.heading;
+      document.getElementById("dialog-sub").textContent = data.sub;
+      document.getElementById("dialog-desc").textContent = data.desc;
+      document.getElementById("dialog-specs").innerHTML = data.specs;
+
+      const actionBtn = document.getElementById("dialog-action-btn");
+      actionBtn.textContent = data.actionText;
+      actionBtn.href = data.actionUrl;
+
+      backdrop.classList.add("open");
+    }
+
+    function closeDialog() {
+      play8BitSound("close");
+      backdrop.classList.remove("open");
+    }
+
+    // 이벤트 리스너
+    window.addEventListener("DOMContentLoaded", () => {
+      // 방 오브젝트 클릭
+      document.querySelectorAll(".room-object[data-type]").forEach(el => {
+        el.addEventListener("click", () => {
+          const type = el.getAttribute("data-type");
+          openDialog(type);
+        });
+      });
+
+      // 닫기 버튼 및 배경 클릭
+      closeBtn.addEventListener("click", closeDialog);
+      backdrop.addEventListener("click", (e) => {
+        if (e.target === backdrop) closeDialog();
+      });
+
+      window.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") closeDialog();
+      });
+
+      // 사운드 토글
+      const soundBtn = document.getElementById("btn-sound-toggle");
+      soundBtn.addEventListener("click", () => {
+        soundEnabled = !soundEnabled;
+        soundBtn.textContent = soundEnabled ? "🔊 SOUND: ON" : "🔇 SOUND: OFF";
+      });
+    });
+  </script>
+</body>
+</html>
+

@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <!-- 파일명: gitblog/10_curated_gallery.html -->
+  <!-- 목적: 컨셉 10 - 캔버스 갤러리 슬라이더 (Curated Exhibition) 미니멀 전시관 포트폴리오 -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>컨셉 10: 캔버스 갤러리 슬라이더 | Supianna Portfolio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Pretendard:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --gallery-wall: #f7f7f8;
+      --gallery-floor: #ececee;
+      --frame-border: #1a1a1a;
+      --text-dark: #121212;
+      --text-muted: #737373;
+      --spotlight-color: rgba(255, 255, 255, 0.7);
+      --font-serif: 'Cinzel', serif;
+      --font-sans: 'Pretendard', sans-serif;
+      --font-mono: 'Fira Code', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--gallery-wall);
+      color: var(--text-dark);
+      font-family: var(--font-sans);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      user-select: none;
+      position: relative;
+    }
+
+    /* 상단 글로벌 네비게이션 배너 */
+    .global-nav-bar {
+      width: 100%;
+      background: rgba(247, 247, 248, 0.9);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+      padding: 12px 36px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 12px;
+      z-index: 1000;
+    }
+
+    .nav-brand {
+      font-family: var(--font-serif);
+      font-size: 14px;
+      letter-spacing: 2.5px;
+      font-weight: 600;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 14px;
+    }
+
+    .nav-link-btn {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 12px;
+      transition: color 0.15s;
+    }
+
+    .nav-link-btn:hover, .nav-link-btn.active {
+      color: #000;
+    }
+
+    .nav-link-btn.active {
+      border-bottom: 1px solid #000;
+    }
+
+    /* 상단 큐레이터 룸 컨트롤 바 */
+    .curator-controls-bar {
+      padding: 10px 36px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      font-family: var(--font-mono);
+      color: var(--text-muted);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+      z-index: 100;
+    }
+
+    .lighting-adjuster {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .spotlight-slider {
+      accent-color: #111;
+      cursor: pointer;
+      width: 120px;
+    }
+
+    .btn-ambient-audio {
+      background: none;
+      border: 1px solid rgba(0, 0, 0, 0.15);
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-dark);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    .btn-ambient-audio:hover {
+      background: #000;
+      color: #fff;
+    }
+
+    /* 미술관 벽면 & 가로 갤러리 레일 */
+    .gallery-stage {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      position: relative;
+      overflow-x: auto;
+      overflow-y: hidden;
+      scroll-behavior: smooth;
+      scrollbar-width: none; /* Firefox */
+      background: linear-gradient(to bottom, var(--gallery-wall) 0%, var(--gallery-wall) 80%, var(--gallery-floor) 80%, var(--gallery-floor) 100%);
+    }
+
+    .gallery-stage::-webkit-scrollbar {
+      display: none; /* Chrome, Safari */
+    }
+
+    /* 실시간 상단 스포트라이트 조명 원 */
+    .gallery-spotlight-layer {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: radial-gradient(circle at 50% 35%, rgba(255, 255, 255, 0.8) 0%, transparent 65%);
+      transition: background 0.3s ease;
+      z-index: 1;
+    }
+
+    /* 액자들을 담고 있는 가로 트랙 */
+    .frames-track {
+      display: flex;
+      align-items: center;
+      padding: 0 45vw;
+      gap: 120px;
+      z-index: 10;
+    }
+
+    /* 대형 전시 액자 프레임 */
+    .artwork-frame {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 28px;
+      cursor: pointer;
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
+      opacity: 0.4;
+      transform: scale(0.9);
+    }
+
+    .artwork-frame.in-focus {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .canvas-outer-box {
+      width: 480px;
+      height: 340px;
+      background: #ffffff;
+      border: 12px solid #ffffff;
+      box-shadow: 
+        0 30px 60px rgba(0, 0, 0, 0.12),
+        0 10px 20px rgba(0, 0, 0, 0.05),
+        inset 0 0 0 1px rgba(0, 0, 0, 0.06);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: box-shadow 0.3s ease;
+    }
+
+    .artwork-frame:hover .canvas-outer-box {
+      box-shadow: 
+        0 40px 80px rgba(0, 0, 0, 0.18),
+        0 14px 28px rgba(0, 0, 0, 0.08);
+    }
+
+    /* 작품 내부 비주얼 아트워크 */
+    .art-visual {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      position: relative;
+    }
+
+    .art-icon {
+      font-size: 56px;
+      filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.15));
+      margin-bottom: 12px;
+    }
+
+    .art-title {
+      font-family: var(--font-serif);
+      font-size: 22px;
+      font-weight: 700;
+      color: #111;
+      text-align: center;
+      letter-spacing: 0.5px;
+    }
+
+    .art-medium {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+      margin-top: 6px;
+    }
+
+    /* 작품 하단 알루미늄/아크릴 캡션 명패 */
+    .artwork-plaque {
+      background: rgba(255, 255, 255, 0.85);
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      padding: 12px 18px;
+      border-radius: 4px;
+      width: 280px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .plaque-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-dark);
+    }
+
+    .plaque-sub {
+      font-size: 10px;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+    }
+
+    .plaque-desc {
+      font-size: 11px;
+      color: #4b5563;
+      line-height: 1.5;
+      margin-top: 4px;
+    }
+
+    /* 작품 줌인 도슨트 해설 모달 */
+    .docent-modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(247, 247, 248, 0.85);
+      backdrop-filter: blur(16px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    .docent-modal-backdrop.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .docent-dialog {
+      width: 600px;
+      max-width: 90%;
+      background: #ffffff;
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      border-radius: 12px;
+      padding: 36px;
+      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.1);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .docent-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      border-bottom: 1px solid #f0f0f0;
+      padding-bottom: 14px;
+    }
+
+    .docent-title {
+      font-family: var(--font-serif);
+      font-size: 24px;
+      font-weight: 700;
+    }
+
+    .btn-close-modal {
+      background: none;
+      border: none;
+      font-size: 20px;
+      cursor: pointer;
+      color: var(--text-muted);
+    }
+
+    .docent-body {
+      font-size: 14.5px;
+      line-height: 1.8;
+      color: #374151;
+    }
+
+    .docent-specs {
+      background: #f9fafb;
+      border-radius: 8px;
+      padding: 14px;
+      font-size: 12px;
+      font-family: var(--font-mono);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .docent-action-btn {
+      align-self: flex-start;
+      margin-top: 8px;
+      background: #111;
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: background 0.15s;
+    }
+
+    .docent-action-btn:hover {
+      background: #333;
+    }
+
+    /* 하단 가이드 */
+    .gallery-footer-hud {
+      padding: 12px 36px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+      background: var(--gallery-floor);
+      border-top: 1px solid rgba(0, 0, 0, 0.05);
+      z-index: 100;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 상단 글로벌 네비게이션 배너 -->
+  <header class="global-nav-bar">
+    <div class="nav-brand">SUPIANNA EXHIBITION HALL · MOMA 2026</div>
+    <nav class="nav-links">
+      <a href="index.html" class="nav-link-btn">← 허브</a>
+      <a href="7_editorial_magazine.html" class="nav-link-btn">7. 매거진</a>
+      <a href="8_sticker_canvas.html" class="nav-link-btn">8. 스티커</a>
+      <a href="9_macos_white_popup.html" class="nav-link-btn">9. 맥OS 팝업</a>
+      <a href="10_curated_gallery.html" class="nav-link-btn active">10. 갤러리</a>
+    </nav>
+  </header>
+
+  <!-- 상단 조명 & 오디오 컨트롤 바 -->
+  <div class="curator-controls-bar">
+    <div class="lighting-adjuster">
+      <span>💡 GALLERY LIGHTING:</span>
+      <input type="range" class="spotlight-slider" id="light-slider" min="20" max="80" value="50">
+    </div>
+    <button class="btn-ambient-audio" id="btn-audio">
+      <span>🎵</span> AMBIENT SOUND: OFF
+    </button>
+  </div>
+
+  <!-- 가로 갤러리 전시 스테이지 -->
+  <main class="gallery-stage" id="gallery-stage">
+    
+    <div class="gallery-spotlight-layer" id="spotlight-layer"></div>
+
+    <div class="frames-track" id="track">
+      
+      <!-- 작품 1 -->
+      <article class="artwork-frame in-focus" data-idx="0">
+        <div class="canvas-outer-box">
+          <div class="art-visual" style="background: linear-gradient(135deg, #f0fdfa, #e0e7ff);">
+            <div class="art-icon">🌌</div>
+            <h2 class="art-title">MYSTIC AURORA</h2>
+            <div class="art-medium">HTML5 Canvas & Glassmorphism, 2026</div>
+          </div>
+        </div>
+        <div class="artwork-plaque">
+          <div class="plaque-title">Plate I. Mystic Aurora</div>
+          <div class="plaque-sub">Curated Archive · Supianna</div>
+          <p class="plaque-desc">은하수 캔버스 파티클과 부드러운 오로라 메쉬 오브의 호흡.</p>
+        </div>
+      </article>
+
+      <!-- 작품 2 -->
+      <article class="artwork-frame" data-idx="1">
+        <div class="canvas-outer-box">
+          <div class="art-visual" style="background: linear-gradient(135deg, #fdf4ff, #e0f2fe);">
+            <div class="art-icon">📝</div>
+            <h2 class="art-title">FREE BOARD & GUESTBOOK</h2>
+            <div class="art-medium">TypeScript & LocalStorage, 2026</div>
+          </div>
+        </div>
+        <div class="artwork-plaque">
+          <div class="plaque-title">Plate II. Free Board</div>
+          <div class="plaque-sub">Interactive App · Supianna</div>
+          <p class="plaque-desc">로컬 저장소 연동 감성 포스트잇 방명록 애플리케이션.</p>
+        </div>
+      </article>
+
+      <!-- 작품 3 -->
+      <article class="artwork-frame" data-idx="2">
+        <div class="canvas-outer-box">
+          <div class="art-visual" style="background: linear-gradient(135deg, #ecfdf5, #fef3c7);">
+            <div class="art-icon">📊</div>
+            <h2 class="art-title">TASK FLOW TRACKER</h2>
+            <div class="art-medium">SVG Charts & Drag & Drop, 2026</div>
+          </div>
+        </div>
+        <div class="artwork-plaque">
+          <div class="plaque-title">Plate III. Routine Tracker</div>
+          <div class="plaque-sub">Productivity Tool · Supianna</div>
+          <p class="plaque-desc">드래그 앤 드롭 및 진행률 자동 계산 루틴 관리 엔진.</p>
+        </div>
+      </article>
+
+      <!-- 작품 4 -->
+      <article class="artwork-frame" data-idx="3">
+        <div class="canvas-outer-box">
+          <div class="art-visual" style="background: linear-gradient(135deg, #f8fafc, #e2e8f0);">
+            <div class="art-icon">⚙️</div>
+            <h2 class="art-title">CLEAN ARCHITECTURE</h2>
+            <div class="art-medium">CI/CD & Shell Automation, 2026</div>
+          </div>
+        </div>
+        <div class="artwork-plaque">
+          <div class="plaque-title">Plate IV. Clean Workflow</div>
+          <div class="plaque-sub">Pipeline Engine · Supianna</div>
+          <p class="plaque-desc">단일 책임 원칙(SRP)과 원자적 커밋 무결성 검증 자동화.</p>
+        </div>
+      </article>
+
+      <!-- 작품 5 -->
+      <article class="artwork-frame" data-idx="4">
+        <div class="canvas-outer-box">
+          <div class="art-visual" style="background: linear-gradient(135deg, #fff1f2, #e0e7ff);">
+            <div class="art-icon">👩‍💻</div>
+            <h2 class="art-title">THE EXPLORER (INFJ)</h2>
+            <div class="art-medium">Philosophy & Continuous Learning, 2026</div>
+          </div>
+        </div>
+        <div class="artwork-plaque">
+          <div class="plaque-title">Plate V. The Contemplator</div>
+          <div class="plaque-sub">Developer Identity · Supianna</div>
+          <p class="plaque-desc">밤하늘 오로라처럼 깊이 있는 사고로 코드를 짓는 사람.</p>
+        </div>
+      </article>
+
+    </div>
+
+  </main>
+
+  <!-- 하단 상태 HUD -->
+  <footer class="gallery-footer-hud">
+    <div>SCROLL HORIZONTALLY (WHEEL OR ARROW KEYS) TO WALK THE EXHIBITION</div>
+    <div id="gallery-counter">EXHIBIT 1 OF 5</div>
+  </footer>
+
+  <!-- 도슨트 상세 해설 모달 -->
+  <div class="docent-modal-backdrop" id="docent-modal">
+    <div class="docent-dialog">
+      <div class="docent-header">
+        <div>
+          <span style="font-size: 11px; color: var(--text-muted); font-family: var(--font-mono);">DOCENT CURATOR NOTE</span>
+          <h3 class="docent-title" id="modal-title">Mystic Aurora Portfolio</h3>
+        </div>
+        <button class="btn-close-modal" id="btn-close-modal">✕</button>
+      </div>
+      <p class="docent-body" id="modal-desc">
+        신비로운 오로라 글로우와 글래스모피즘을 결합한 원스크린 대시보드 포트폴리오. 은하수 캔버스 파티클과 부드러운 오로라 메쉬 오브를 적용했습니다.
+      </p>
+      <div class="docent-specs" id="modal-specs">
+        <div>• <strong>매체:</strong> HTML5, Canvas API, Modern JS</div>
+        <div>• <strong>철학:</strong> 스크롤 없는 한 화면 속의 정갈한 몰입</div>
+      </div>
+      <a href="../portfolio/index.html" target="_blank" class="docent-action-btn" id="modal-link">
+        작품 라이브 감상하기 ↗
+      </a>
+    </div>
+  </div>
+
+  <script>
+    // [1. 도슨트 데이터]
+    const EXHIBITS = [
+      {
+        title: "Mystic Aurora Portfolio & Archive",
+        desc: "오로라의 신비로운 빛과 우주의 은하수 캔버스를 글래스모피즘과 결합한 원스크린 대시보드 포트폴리오입니다. 화면의 번잡함을 걷어내고 사용자에게 깊은 몰입감을 선사합니다.",
+        specs: "• MEDIUM: HTML5, Canvas 2D, Vanilla JS\n• CONTEXT: Single-Screen Dashboard Experience",
+        url: "../portfolio/index.html"
+      },
+      {
+        title: "Interactive Free Board & Guestbook",
+        desc: "브라우저 로컬 저장소와 연동되어 실시간으로 생각의 조각을 남길 수 있는 반응형 포스트잇 게시판입니다. 따뜻한 메시지가 공간에 머물며 소통을 완성합니다.",
+        specs: "• MEDIUM: TypeScript, LocalStorage API, CSS Animation\n• CONTEXT: Persistent Client-Side State",
+        url: "../portfolio/index.html#free-board"
+      },
+      {
+        title: "Task Flow & Routine Tracker",
+        desc: "개발 목표와 일상의 루틴을 시각적인 차트와 체크리스트로 관리하는 생산성 도구입니다. 드래그 앤 드롭 및 진행률 자동 계산 인터페이스를 제공합니다.",
+        specs: "• MEDIUM: Vanilla JS, Drag & Drop API, SVG Charts\n• CONTEXT: Dynamic Routine & Velocity Tracking",
+        url: "#"
+      },
+      {
+        title: "Clean Workflow Automation Engine",
+        desc: "단일 책임 원칙(SRP)과 원자적 커밋(Atomic Commit) 규칙을 보장하는 자동화 파이프라인 엔진입니다. 정적 파일 린트 및 배포 검증 워크플로우를 체계화했습니다.",
+        specs: "• MEDIUM: GitHub Actions, Shell Scripts, Architecture Linter\n• CONTEXT: Zero-defect Modularity Standards",
+        url: "1_ide_terminal.html"
+      },
+      {
+        title: "The Contemplator: Supianna Profile",
+        desc: "AI Agent와 함께 가능성을 현실로 빚어내며, INFJ의 깊은 사색과 따뜻한 시선으로 가치 있는 코드를 짓는 개발자 수피아나의 정체성과 철학을 담은 헌정 판넬입니다.",
+        specs: "• MEDIUM: Pure Thought, Continuous Learning, Code Craftsmanship\n• CONTEXT: AI-Assisted Lifelong Explorer",
+        url: "../portfolio/index.html#who-am-i"
+      }
+    ];
+
+    // [2. 가로 스크롤 & 초점 감지]
+    const stage = document.getElementById("gallery-stage");
+    const frames = document.querySelectorAll(".artwork-frame");
+    const counterEl = document.getElementById("gallery-counter");
+    const spotlightLayer = document.getElementById("spotlight-layer");
+
+    stage.addEventListener("scroll", () => {
+      const stageCenter = stage.scrollLeft + stage.clientWidth / 2;
+
+      let closestIdx = 0;
+      let minDistance = Infinity;
+
+      frames.forEach((frame, idx) => {
+        const frameCenter = frame.offsetLeft + frame.clientWidth / 2;
+        const dist = Math.abs(stageCenter - frameCenter);
+
+        if (dist < minDistance) {
+          minDistance = dist;
+          closestIdx = idx;
+        }
+      });
+
+      frames.forEach((frame, idx) => {
+        frame.classList.toggle("in-focus", idx === closestIdx);
+      });
+
+      counterEl.textContent = `EXHIBIT ${closestIdx + 1} OF ${frames.length}`;
+    });
+
+    // 휠 스크롤을 가로 스크롤로 변환
+    stage.addEventListener("wheel", (e) => {
+      e.preventDefault();
+      stage.scrollLeft += e.deltaY;
+    });
+
+    // [3. 조명 슬라이더]
+    const lightSlider = document.getElementById("light-slider");
+    lightSlider.addEventListener("input", (e) => {
+      const val = e.target.value;
+      spotlightLayer.style.background = `radial-gradient(circle at ${val}% 35%, rgba(255, 255, 255, 0.8) 0%, transparent 65%)`;
+    });
+
+    // [4. Web Audio 앰비언트 사운드 드론]
+    let audioCtx = null;
+    let isPlaying = false;
+    let osc1, osc2, gainNode;
+
+    const audioBtn = document.getElementById("btn-audio");
+
+    audioBtn.addEventListener("click", () => {
+      if (!isPlaying) {
+        startAmbientDrone();
+        audioBtn.textContent = "🎵 AMBIENT SOUND: ON";
+        isPlaying = true;
+      } else {
+        stopAmbientDrone();
+        audioBtn.textContent = "🎵 AMBIENT SOUND: OFF";
+        isPlaying = false;
+      }
+    });
+
+    function startAmbientDrone() {
+      try {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (audioCtx.state === "suspended") audioCtx.resume();
+
+        gainNode = audioCtx.createGain();
+        gainNode.gain.setValueAtTime(0.04, audioCtx.currentTime);
+
+        // 조용한 미술관 앰비언트 패드 드론
+        osc1 = audioCtx.createOscillator();
+        osc1.type = "sine";
+        osc1.frequency.setValueAtTime(110, audioCtx.currentTime); // A2
+
+        osc2 = audioCtx.createOscillator();
+        osc2.type = "triangle";
+        osc2.frequency.setValueAtTime(165, audioCtx.currentTime); // E3
+
+        osc1.connect(gainNode);
+        osc2.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+
+        osc1.start();
+        osc2.start();
+      } catch(e) {}
+    }
+
+    function stopAmbientDrone() {
+      if (gainNode && audioCtx) {
+        gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.5);
+        setTimeout(() => {
+          if (osc1) osc1.stop();
+          if (osc2) osc2.stop();
+        }, 500);
+      }
+    }
+
+    // [5. 도슨트 모달 오픈]
+    const modal = document.getElementById("docent-modal");
+    const btnClose = document.getElementById("btn-close-modal");
+
+    frames.forEach(frame => {
+      frame.addEventListener("click", () => {
+        const idx = parseInt(frame.getAttribute("data-idx"));
+        const data = EXHIBITS[idx];
+        if (!data) return;
+
+        document.getElementById("modal-title").textContent = data.title;
+        document.getElementById("modal-desc").textContent = data.desc;
+        document.getElementById("modal-specs").innerHTML = data.specs.replace(/\n/g, "<br>");
+        document.getElementById("modal-link").href = data.url;
+
+        modal.classList.add("open");
+      });
+    });
+
+    btnClose.addEventListener("click", () => modal.classList.remove("open"));
+    modal.addEventListener("click", (e) => {
+      if (e.target === modal) modal.classList.remove("open");
+    });
+  </script>
+</body>
+</html>
+

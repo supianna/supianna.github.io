@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <!-- 파일명: gitblog/4_scrollytelling.html -->
+  <!-- 목적: 컨셉 4 - 시네마틱 스크롤텔링(Scrollytelling 타임라인) 포트폴리오 시각화 -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>컨셉 4: 시네마틱 스크롤텔링 타임라인 | Supianna Portfolio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Pretendard:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;600&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-space: #060810;
+      --accent-cyan: #00f2fe;
+      --accent-purple: #9d4edd;
+      --accent-emerald: #00f5d4;
+      --accent-gold: #ffbe0b;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --font-serif: 'Cinzel', serif;
+      --font-sans: 'Pretendard', sans-serif;
+      --font-code: 'Fira Code', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-space);
+      color: var(--text-main);
+      font-family: var(--font-sans);
+      overflow-x: hidden;
+    }
+
+    /* 상단 글로벌 네비게이션 배너 */
+    .global-nav-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      background: rgba(6, 8, 16, 0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 8px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 13px;
+      z-index: 1000;
+    }
+
+    .global-nav-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .nav-badge {
+      background: rgba(157, 78, 221, 0.2);
+      color: #d8b4fe;
+      border: 1px solid rgba(157, 78, 221, 0.4);
+      padding: 2px 10px;
+      border-radius: 20px;
+      font-weight: 700;
+      font-size: 11px;
+      letter-spacing: 0.5px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 8px;
+    }
+
+    .nav-link-btn {
+      color: var(--text-muted);
+      text-decoration: none;
+      padding: 4px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      transition: all 0.2s;
+    }
+
+    .nav-link-btn:hover, .nav-link-btn.active {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .nav-link-btn.active {
+      color: #d8b4fe;
+      font-weight: 600;
+      border: 1px solid rgba(157, 78, 221, 0.4);
+    }
+
+    /* 상단 스크롤 진행도 바 */
+    .scroll-progress-bar {
+      position: fixed;
+      top: 48px;
+      left: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--accent-cyan), var(--accent-purple), var(--accent-emerald));
+      width: 0%;
+      z-index: 999;
+      box-shadow: 0 0 10px var(--accent-cyan);
+      transition: width 0.1s ease-out;
+    }
+
+    /* 우측 타임라인 도트 네비게이션 */
+    .timeline-nav-dots {
+      position: fixed;
+      right: 28px;
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      z-index: 100;
+    }
+
+    .nav-dot-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      flex-direction: row-reverse;
+    }
+
+    .nav-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.25);
+      border: 2px solid transparent;
+      transition: all 0.3s;
+    }
+
+    .nav-dot-label {
+      font-size: 11px;
+      color: var(--text-muted);
+      opacity: 0;
+      transform: translateX(10px);
+      transition: all 0.3s;
+      white-space: nowrap;
+      font-family: var(--font-code);
+    }
+
+    .nav-dot-item:hover .nav-dot-label,
+    .nav-dot-item.active .nav-dot-label {
+      opacity: 1;
+      transform: translateX(0);
+      color: #fff;
+    }
+
+    .nav-dot-item.active .nav-dot {
+      background: var(--accent-cyan);
+      box-shadow: 0 0 12px var(--accent-cyan);
+      transform: scale(1.4);
+    }
+
+    /* 고정된 시네마틱 배경 캔버스 */
+    .cinematic-bg {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      transition: background 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .aurora-layer {
+      position: absolute;
+      inset: -20%;
+      background: radial-gradient(circle at 30% 40%, rgba(0, 242, 254, 0.15), transparent 50%),
+                  radial-gradient(circle at 70% 60%, rgba(157, 78, 221, 0.18), transparent 50%),
+                  radial-gradient(circle at 50% 80%, rgba(0, 245, 212, 0.12), transparent 50%);
+      filter: blur(80px);
+      opacity: 0.8;
+      transition: all 1.2s ease;
+      animation: auroraFloat 18s ease-in-out infinite alternate;
+    }
+
+    @keyframes auroraFloat {
+      0% { transform: translate(0, 0) scale(1); }
+      100% { transform: translate(-3%, 3%) scale(1.08); }
+    }
+
+    #sparkle-canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* 스크롤 섹션 컨테이너 */
+    .scrolly-container {
+      position: relative;
+      z-index: 10;
+      padding-top: 50px;
+    }
+
+    /* 각 액트 섹션 */
+    .story-act-section {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 80px 40px;
+      position: relative;
+    }
+
+    .story-wrapper {
+      max-width: 1300px;
+      width: 100%;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      align-items: center;
+    }
+
+    /* 스토리 내러티브 텍스트 블록 */
+    .narrative-box {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      opacity: 0;
+      transform: translateY(40px);
+      transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .story-act-section.is-visible .narrative-box {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .act-tag {
+      font-family: var(--font-code);
+      font-size: 12px;
+      color: var(--accent-cyan);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .act-tag::before {
+      content: '';
+      width: 24px;
+      height: 1px;
+      background: var(--accent-cyan);
+    }
+
+    .act-title {
+      font-size: 38px;
+      font-weight: 800;
+      line-height: 1.25;
+      letter-spacing: -0.5px;
+    }
+
+    .act-title span.glow {
+      background: linear-gradient(135deg, #fff, var(--accent-cyan));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .act-desc {
+      font-size: 16px;
+      color: var(--text-muted);
+      line-height: 1.8;
+      word-break: keep-all;
+    }
+
+    .act-quote {
+      border-left: 2px solid var(--accent-purple);
+      padding-left: 16px;
+      font-style: italic;
+      color: #cbd5e1;
+      font-size: 14px;
+      margin-top: 6px;
+    }
+
+    /* 시각적 목업 & 인터랙티브 그래픽 쇼케이스 프레임 */
+    .visual-stage {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      perspective: 1000px;
+      opacity: 0;
+      transform: scale(0.9) translateY(40px);
+      transition: all 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.15s;
+    }
+
+    .story-act-section.is-visible .visual-stage {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+
+    /* 목업 카드 스타일 */
+    .mockup-window {
+      width: 100%;
+      max-width: 540px;
+      background: rgba(15, 20, 32, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 16px;
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6), 0 0 40px rgba(0, 242, 254, 0.1);
+      overflow: hidden;
+      backdrop-filter: blur(20px);
+      transition: transform 0.4s ease;
+    }
+
+    .mockup-window:hover {
+      transform: rotateY(-3deg) rotateX(2deg) translateY(-4px);
+    }
+
+    .mockup-header {
+      background: rgba(255, 255, 255, 0.04);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 12px 18px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .mockup-dots {
+      display: flex;
+      gap: 6px;
+    }
+
+    .mockup-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+
+    .mockup-title {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-family: var(--font-code);
+    }
+
+    .mockup-content {
+      padding: 24px;
+      min-height: 280px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    /* Act 1 비주얼: 미니멀 터미널 타이핑 */
+    .terminal-mockup-text {
+      font-family: var(--font-code);
+      font-size: 13.5px;
+      line-height: 1.8;
+      color: #98c379;
+    }
+
+    /* Act 2 비주얼: SRP 아키텍처 블록 결합 애니메이션 */
+    .architecture-diagram {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .arch-block {
+      background: rgba(0, 245, 212, 0.08);
+      border: 1px solid rgba(0, 245, 212, 0.3);
+      border-radius: 8px;
+      padding: 12px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: var(--font-code);
+      font-size: 12px;
+      transition: all 0.3s;
+    }
+
+    .arch-block:hover {
+      background: rgba(0, 245, 212, 0.16);
+      transform: translateX(6px);
+    }
+
+    /* Act 3 비주얼: AI 에이전트 협업 스트림 */
+    .ai-chat-bubble {
+      background: rgba(157, 78, 221, 0.12);
+      border: 1px solid rgba(157, 78, 221, 0.3);
+      border-radius: 12px;
+      padding: 14px 18px;
+      font-size: 13px;
+      line-height: 1.6;
+      margin-bottom: 12px;
+    }
+
+    .ai-response-bubble {
+      background: rgba(0, 242, 254, 0.1);
+      border: 1px solid rgba(0, 242, 254, 0.25);
+      border-radius: 12px;
+      padding: 14px 18px;
+      font-size: 13px;
+      line-height: 1.6;
+      font-family: var(--font-code);
+      color: #38bdf8;
+    }
+
+    /* Act 4 비주얼: 완성된 결과물 라이브 카드 */
+    .project-showcase-box {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .project-live-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255, 190, 11, 0.15);
+      color: var(--accent-gold);
+      border: 1px solid rgba(255, 190, 11, 0.3);
+      font-size: 11px;
+      padding: 3px 10px;
+      border-radius: 20px;
+      align-self: flex-start;
+      font-weight: 700;
+    }
+
+    .project-cta-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+      color: #fff;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      text-decoration: none;
+      margin-top: 8px;
+      box-shadow: 0 4px 20px rgba(0, 242, 254, 0.3);
+      transition: opacity 0.2s;
+    }
+
+    .project-cta-btn:hover {
+      opacity: 0.9;
+    }
+
+    /* 하단 피날레 섹션 */
+    .finale-act {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 80vh;
+      gap: 24px;
+      padding: 60px 20px;
+    }
+
+    .finale-title {
+      font-size: 42px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      background: linear-gradient(135deg, #fff 30%, var(--accent-cyan) 80%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .finale-actions {
+      display: flex;
+      gap: 16px;
+      margin-top: 12px;
+    }
+
+    .btn-finale-primary {
+      background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+      color: #fff;
+      padding: 14px 28px;
+      border-radius: 30px;
+      font-size: 14px;
+      font-weight: 700;
+      text-decoration: none;
+      box-shadow: 0 10px 30px rgba(0, 242, 254, 0.35);
+      transition: all 0.2s;
+    }
+
+    .btn-finale-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 14px 40px rgba(0, 242, 254, 0.5);
+    }
+
+    .btn-finale-secondary {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #fff;
+      padding: 14px 28px;
+      border-radius: 30px;
+      font-size: 14px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+
+    .btn-finale-secondary:hover {
+      background: rgba(255, 255, 255, 0.16);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 상단 글로벌 네비게이션 배너 -->
+  <header class="global-nav-bar">
+    <div class="global-nav-left">
+      <span class="nav-badge">Concept 4 of 5</span>
+      <span style="font-weight: 600; color: #fff;">시네마틱 스크롤텔링 타임라인</span>
+      <span style="color: var(--text-muted); font-size: 11px;">(Scrollytelling Journey & Storytelling)</span>
+    </div>
+    <nav class="nav-links">
+      <a href="index.html" class="nav-link-btn">← 5개 컨셉 허브</a>
+      <a href="1_ide_terminal.html" class="nav-link-btn">1. IDE/터미널</a>
+      <a href="2_constellation_graph.html" class="nav-link-btn">2. 3D 성좌 그래프</a>
+      <a href="3_data_dashboard.html" class="nav-link-btn">3. 데이터 대시보드</a>
+      <a href="4_scrollytelling.html" class="nav-link-btn active">4. 시네마틱 스크롤</a>
+      <a href="5_isometric_room.html" class="nav-link-btn">5. 아이소메트릭 룸</a>
+    </nav>
+  </header>
+
+  <!-- 상단 스크롤 진행도 바 -->
+  <div class="scroll-progress-bar" id="progress-bar"></div>
+
+  <!-- 우측 타임라인 도트 네비게이션 -->
+  <nav class="timeline-nav-dots" aria-label="타임라인 단계 네비게이션">
+    <div class="nav-dot-item active" data-target="act1">
+      <span class="nav-dot"></span>
+      <span class="nav-dot-label">01. The Spark</span>
+    </div>
+    <div class="nav-dot-item" data-target="act2">
+      <span class="nav-dot"></span>
+      <span class="nav-dot-label">02. Clean Architecture</span>
+    </div>
+    <div class="nav-dot-item" data-target="act3">
+      <span class="nav-dot"></span>
+      <span class="nav-dot-label">03. AI Synergy</span>
+    </div>
+    <div class="nav-dot-item" data-target="act4">
+      <span class="nav-dot"></span>
+      <span class="nav-dot-label">04. The Artifacts</span>
+    </div>
+    <div class="nav-dot-item" data-target="act5">
+      <span class="nav-dot"></span>
+      <span class="nav-dot-label">05. Endless Horizon</span>
+    </div>
+  </nav>
+
+  <!-- 고정 시네마틱 오로라 & 별빛 배경 -->
+  <div class="cinematic-bg" id="cinematic-bg">
+    <div class="aurora-layer" id="aurora-layer"></div>
+    <canvas id="sparkle-canvas"></canvas>
+  </div>
+
+  <!-- 스크롤텔링 메인 스토리 영역 -->
+  <main class="scrolly-container">
+
+    <!-- Act 1: The Spark (호기심과 기초) -->
+    <section class="story-act-section is-visible" id="act1" data-bg="rgba(0, 242, 254, 0.12)">
+      <div class="story-wrapper">
+        <div class="narrative-box">
+          <div class="act-tag">Chapter 01 · The Spark</div>
+          <h2 class="act-title">
+            어두운 밤하늘 속<br>
+            <span class="glow">첫 번째 별빛을 켜다</span>
+          </h2>
+          <p class="act-desc">
+            컴퓨터 과학의 기초와 알고리즘적 사고를 처음 마주했을 때, 
+            화면에 깜빡이는 작은 커서는 마치 나만의 별자리를 그리기 위한 첫 점과 같았습니다.
+            언어의 문법을 외우는 것에 그치지 않고, "어떻게 컴퓨터가 생각하고 문제를 풀어내는가"를 집요하게 탐구했습니다.
+          </p>
+          <div class="act-quote">
+            "작은 호기심 한 조각이 모여, 마침내 광활한 디지털 우주를 탐험하는 나침반이 되었습니다."
+          </div>
+        </div>
+
+        <div class="visual-stage">
+          <div class="mockup-window">
+            <div class="mockup-header">
+              <div class="mockup-dots">
+                <span class="mockup-dot" style="background: #ff5f56;"></span>
+                <span class="mockup-dot" style="background: #ffbd2e;"></span>
+                <span class="mockup-dot" style="background: #27c93f;"></span>
+              </div>
+              <span class="mockup-title">bash — cosmos_genesis.sh</span>
+            </div>
+            <div class="mockup-content">
+              <div class="terminal-mockup-text">
+                <span style="color: #61afef;">$</span> git init cosmos-portfolio<br>
+                <span style="color: #abb2bf;">Initialized empty Git repository in /space/supianna/.git/</span><br><br>
+                <span style="color: #61afef;">$</span> cat &lt;&lt; 'EOF' &gt; dream.py<br>
+                <span style="color: #c678dd;">def</span> <span style="color: #61afef;">illuminate</span>():<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #c678dd;">return</span> <span style="color: #98c379;">"밤하늘 오로라처럼 깊이 있는 사고를 빚다"</span><br><br>
+                <span style="color: #61afef;">$</span> python dream.py<br>
+                <span style="color: #00f2fe; font-weight: 600;">✨ [Output] Supianna's Journey Begins...</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Act 2: Architecture (구조와 원칙) -->
+    <section class="story-act-section" id="act2" data-bg="rgba(0, 245, 212, 0.15)">
+      <div class="story-wrapper">
+        <div class="narrative-box">
+          <div class="act-tag">Chapter 02 · Clean Architecture</div>
+          <h2 class="act-title">
+            단일 책임과<br>
+            <span class="glow">원자적 커밋의 미학</span>
+          </h2>
+          <p class="act-desc">
+            INFJ 특유의 성찰과 구조적 사고는 무분별하게 뒤섞인 코드를 견디지 못합니다.
+            함수 하나에는 오직 하나의 역할만을 부여하는 <strong>단일 책임 원칙(SRP)</strong>,
+            그리고 변경사항을 논리적으로 분리하고 정갈한 한국어 로그로 남기는 <strong>원자적 커밋(Atomic Commits)</strong>을
+            몸에 익히며 단단한 소프트웨어의 기초를 다졌습니다.
+          </p>
+          <div class="act-quote">
+            "좋은 아키텍처란 복잡함을 뽐내는 것이 아니라, 동료가 편안하게 숨 쉴 수 있는 공간을 만드는 것입니다."
+          </div>
+        </div>
+
+        <div class="visual-stage">
+          <div class="mockup-window">
+            <div class="mockup-header">
+              <div class="mockup-dots">
+                <span class="mockup-dot" style="background: #ff5f56;"></span>
+                <span class="mockup-dot" style="background: #ffbd2e;"></span>
+                <span class="mockup-dot" style="background: #27c93f;"></span>
+              </div>
+              <span class="mockup-title">Architecture Pipeline Inspector</span>
+            </div>
+            <div class="mockup-content">
+              <div class="architecture-diagram">
+                <div class="arch-block">
+                  <span>📦 1. 환경설정 및 의존성 격리</span>
+                  <span style="color: #00f5d4;">uv add / pyproject.toml</span>
+                </div>
+                <div class="arch-block">
+                  <span>🧩 2. 단일 책임 원칙 (SRP) 모듈</span>
+                  <span style="color: #00f5d4;">Decoupled Services</span>
+                </div>
+                <div class="arch-block">
+                  <span>🌿 3. 원자적 커밋 분리 및 스테이징</span>
+                  <span style="color: #00f5d4;">Atomic Git Staging</span>
+                </div>
+                <div class="arch-block">
+                  <span>✨ 4. 직관적인 한국어 커밋 로그</span>
+                  <span style="color: #00f5d4;">Transparent History</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Act 3: AI Synergy (AI와의 시너지) -->
+    <section class="story-act-section" id="act3" data-bg="rgba(157, 78, 221, 0.18)">
+      <div class="story-wrapper">
+        <div class="narrative-box">
+          <div class="act-tag">Chapter 03 · AI Agent Synergy</div>
+          <h2 class="act-title">
+            지평의 확장,<br>
+            <span class="glow">AI를 페어 프로그래머로</span>
+          </h2>
+          <p class="act-desc">
+            AI 에이전트를 단순한 자동완성 도구가 아닌, 능동적으로 논리를 검증하고 
+            다각도의 아이디어를 제시하는 <strong>최고의 페어 프로그래밍 파트너</strong>로 받아들였습니다.
+            초고속 프로토타이핑으로 아이디어를 당일 실행에 옮기면서도,
+            코드의 원리와 작동 방식을 깊이 파고들어 스스로의 역량으로 체화했습니다.
+          </p>
+          <div class="act-quote">
+            "AI와 함께할 때 개발자는 단순 타이피스트가 아닌, 시스템 전체를 지휘하는 오케스트라 마에스트로가 됩니다."
+          </div>
+        </div>
+
+        <div class="visual-stage">
+          <div class="mockup-window">
+            <div class="mockup-header">
+              <div class="mockup-dots">
+                <span class="mockup-dot" style="background: #ff5f56;"></span>
+                <span class="mockup-dot" style="background: #ffbd2e;"></span>
+                <span class="mockup-dot" style="background: #27c93f;"></span>
+              </div>
+              <span class="mockup-title">AI Pair Programming Stream</span>
+            </div>
+            <div class="mockup-content">
+              <div class="ai-chat-bubble">
+                <strong style="color: #d8b4fe;">👩‍💻 Supianna:</strong> "단일 책임 원칙(SRP)을 철저히 지키며 은하수 파티클 렌더러 모듈을 분리하고 싶어."
+              </div>
+              <div class="ai-response-bubble">
+                <strong style="color: #00f2fe;">🤖 AI Agent:</strong> "렌더링 루프와 파티클 물리 연산을 독립 클래스로 분리했습니다. 테스트 무결성 100% 검증 완료!"
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Act 4: The Artifacts (결과물 쇼케이스) -->
+    <section class="story-act-section" id="act4" data-bg="rgba(255, 190, 11, 0.12)">
+      <div class="story-wrapper">
+        <div class="narrative-box">
+          <div class="act-tag">Chapter 04 · The Artifacts</div>
+          <h2 class="act-title">
+            고민의 결실,<br>
+            <span class="glow">현실이 된 프로젝트들</span>
+          </h2>
+          <p class="act-desc">
+            신비로운 오로라 글로우와 글래스모피즘을 집약한 <strong>Mystic Aurora Portfolio</strong>,
+            브라우저 로컬 저장소와 감성 카드를 결합한 <strong>Interactive Free Board</strong>,
+            그리고 지속 가능한 코드를 위한 <strong>Clean Workflow Engine</strong>까지.
+            생각의 조각들은 실제 살아 숨 쉬는 웹 애플리케이션으로 완성되었습니다.
+          </p>
+          <div class="act-quote">
+            "기술의 진정한 가치는 코드를 넘어, 사용하는 사람의 마음에 와닿는 순간 피어납니다."
+          </div>
+        </div>
+
+        <div class="visual-stage">
+          <div class="mockup-window">
+            <div class="mockup-header">
+              <div class="mockup-dots">
+                <span class="mockup-dot" style="background: #ff5f56;"></span>
+                <span class="mockup-dot" style="background: #ffbd2e;"></span>
+                <span class="mockup-dot" style="background: #27c93f;"></span>
+              </div>
+              <span class="mockup-title">Portfolio Showcase — Live Artifact</span>
+            </div>
+            <div class="mockup-content">
+              <div class="project-showcase-box">
+                <div class="project-live-badge">🌟 Featured Deployment</div>
+                <h3 style="font-size: 20px; font-weight: 700; color: #fff;">Mystic Aurora Portfolio & Archive</h3>
+                <p style="font-size: 13px; color: var(--text-muted); line-height: 1.6;">
+                  은하수 캔버스 파티클과 부드러운 오로라 메쉬 오브를 적용한 원스크린 대시보드 포트폴리오.
+                </p>
+                <a href="../portfolio/index.html" target="_blank" class="project-cta-btn">
+                  <span>라이브 아카이브 방문하기 ↗</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Act 5: Endless Horizon (피날레 & 미래 비전) -->
+    <section class="story-act-section finale-act" id="act5">
+      <div class="act-tag" style="justify-content: center;">Chapter 05 · Endless Horizon</div>
+      <h2 class="finale-title">
+        밤하늘 오로라처럼<br>
+        빛을 더하는 개발자
+      </h2>
+      <p style="max-width: 640px; font-size: 16px; color: var(--text-muted); line-height: 1.8;">
+        단단한 아키텍처와 INFJ의 따뜻한 시선, 그리고 AI 에이전트와의 거침없는 시너지로<br>
+        매일 어제보다 더 가치 있고 아름다운 소프트웨어를 만들어가겠습니다.
+      </p>
+      <div class="finale-actions">
+        <a href="../portfolio/index.html" class="btn-finale-primary">메인 포트폴리오 둘러보기</a>
+        <a href="https://github.com/supianna" target="_blank" class="btn-finale-secondary">GitHub 프로필 ↗</a>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    // [1. 스크롤 진행도 & 도트 네비게이션 동기화]
+    const progressBar = document.getElementById("progress-bar");
+    const sections = document.querySelectorAll(".story-act-section");
+    const navDots = document.querySelectorAll(".nav-dot-item");
+    const auroraLayer = document.getElementById("aurora-layer");
+
+    window.addEventListener("scroll", () => {
+      const scrollTop = window.scrollY;
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const scrollPercent = (scrollTop / docHeight) * 100;
+      progressBar.style.width = `${scrollPercent}%`;
+
+      // Intersection 판별
+      sections.forEach(sec => {
+        const rect = sec.getBoundingClientRect();
+        if (rect.top <= window.innerHeight * 0.5 && rect.bottom >= window.innerHeight * 0.2) {
+          sec.classList.add("is-visible");
+          
+          const actId = sec.id;
+          navDots.forEach(d => {
+            d.classList.toggle("active", d.getAttribute("data-target") === actId);
+          });
+
+          const bgGlow = sec.getAttribute("data-bg");
+          if (bgGlow) {
+            auroraLayer.style.background = `radial-gradient(circle at 50% 50%, ${bgGlow}, transparent 70%)`;
+          }
+        }
+      });
+    });
+
+    // 도트 클릭 시 부드러운 스크롤 이동
+    navDots.forEach(dot => {
+      dot.addEventListener("click", () => {
+        const targetId = dot.getAttribute("data-target");
+        const targetSec = document.getElementById(targetId);
+        if (targetSec) {
+          targetSec.scrollIntoView({ behavior: "smooth" });
+        }
+      });
+    });
+
+    // [2. 배경 별빛 캔버스 애니메이션]
+    const canvas = document.getElementById("sparkle-canvas");
+    const ctx = canvas.getContext("2d");
+    let stars = [];
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      initStars();
+    }
+
+    function initStars() {
+      stars = [];
+      const count = Math.floor((canvas.width * canvas.height) / 8000);
+      for (let i = 0; i < count; i++) {
+        stars.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          radius: Math.random() * 1.5 + 0.3,
+          alpha: Math.random(),
+          speed: Math.random() * 0.02 + 0.005,
+          color: Math.random() > 0.5 ? "rgba(0, 242, 254, " : "rgba(157, 78, 221, "
+        });
+      }
+    }
+
+    function drawStars() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      stars.forEach(s => {
+        s.alpha += s.speed;
+        if (s.alpha > 1 || s.alpha < 0.1) {
+          s.speed = -s.speed;
+        }
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, s.radius, 0, Math.PI * 2);
+        ctx.fillStyle = s.color + Math.abs(s.alpha) + ")";
+        ctx.shadowBlur = 6;
+        ctx.shadowColor = "#00f2fe";
+        ctx.fill();
+      });
+      requestAnimationFrame(drawStars);
+    }
+
+    window.addEventListener("resize", resizeCanvas);
+    resizeCanvas();
+    drawStars();
+  </script>
+</body>
+</html>
+

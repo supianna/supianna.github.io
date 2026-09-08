@@ -1,0 +1,1005 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <!-- 파일명: gitblog/3_data_dashboard.html -->
+  <!-- 목적: 컨셉 3 - 인터랙티브 데이터 대시보드 (Personal Metrics) 관제 센터 포트폴리오 시각화 -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>컨셉 3: 인터랙티브 데이터 대시보드 | Supianna Portfolio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=Fira+Code:wght@400;500;600&family=Pretendard:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+    :root {
+      --bg-darkest: #090c10;
+      --bg-card: #0f141c;
+      --bg-card-hover: #141b26;
+      --border-hud: rgba(0, 240, 255, 0.2);
+      --border-light: rgba(255, 255, 255, 0.08);
+      --neon-cyan: #00f0ff;
+      --neon-emerald: #00ffaa;
+      --neon-purple: #b026ff;
+      --neon-amber: #ffaa00;
+      --neon-pink: #ff0055;
+      --text-main: #e6edf3;
+      --text-muted: #7d8590;
+      --font-display: 'Chakra Petch', sans-serif;
+      --font-code: 'Fira Code', monospace;
+      --font-sans: 'Pretendard', sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-darkest);
+      color: var(--text-main);
+      font-family: var(--font-sans);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background-image: 
+        radial-gradient(circle at 50% 0%, rgba(0, 240, 255, 0.08) 0%, transparent 60%),
+        linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+      background-size: 100% 100%, 40px 40px, 40px 40px;
+    }
+
+    /* 상단 글로벌 네비게이션 배너 */
+    .global-nav-bar {
+      background: rgba(9, 12, 16, 0.95);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border-hud);
+      padding: 8px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 13px;
+      z-index: 100;
+      position: sticky;
+      top: 0;
+    }
+
+    .global-nav-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .nav-badge {
+      background: rgba(0, 240, 255, 0.15);
+      color: var(--neon-cyan);
+      border: 1px solid rgba(0, 240, 255, 0.3);
+      padding: 2px 10px;
+      border-radius: 4px;
+      font-weight: 700;
+      font-size: 11px;
+      letter-spacing: 0.5px;
+      font-family: var(--font-display);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 8px;
+    }
+
+    .nav-link-btn {
+      color: var(--text-muted);
+      text-decoration: none;
+      padding: 4px 12px;
+      border-radius: 4px;
+      font-size: 12px;
+      transition: all 0.2s;
+    }
+
+    .nav-link-btn:hover, .nav-link-btn.active {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .nav-link-btn.active {
+      color: var(--neon-cyan);
+      font-weight: 600;
+      border: 1px solid var(--neon-cyan);
+    }
+
+    /* 관제 센터 메인 컨테이너 */
+    .dashboard-container {
+      flex: 1;
+      padding: 24px 32px;
+      max-width: 1600px;
+      margin: 0 auto;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    /* 상단 관제 헤더 (HUD Style) */
+    .hud-header {
+      background: var(--bg-card);
+      border: 1px solid var(--border-hud);
+      border-radius: 12px;
+      padding: 18px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    }
+
+    .hud-header::before {
+      content: '';
+      position: absolute;
+      top: -1px;
+      left: 30px;
+      width: 120px;
+      height: 2px;
+      background: var(--neon-cyan);
+      box-shadow: 0 0 10px var(--neon-cyan);
+    }
+
+    .hud-title-box h1 {
+      font-family: var(--font-display);
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .live-beacon {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--neon-emerald);
+      box-shadow: 0 0 12px var(--neon-emerald);
+      animation: pulse 1.8s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.85); }
+    }
+
+    .hud-subtitle {
+      color: var(--text-muted);
+      font-size: 13px;
+      margin-top: 4px;
+      font-family: var(--font-code);
+    }
+
+    .hud-right-telemetry {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      font-family: var(--font-code);
+      font-size: 12px;
+    }
+
+    .telemetry-item {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+    }
+
+    .telemetry-label {
+      color: var(--text-muted);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .telemetry-val {
+      color: var(--neon-cyan);
+      font-weight: 600;
+      font-size: 13px;
+    }
+
+    .btn-diagnostics {
+      background: rgba(0, 240, 255, 0.12);
+      border: 1px solid var(--neon-cyan);
+      color: var(--neon-cyan);
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-family: var(--font-display);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-diagnostics:hover {
+      background: var(--neon-cyan);
+      color: #000;
+      box-shadow: 0 0 16px rgba(0, 240, 255, 0.4);
+    }
+
+    /* 4대 핵심 정량 지표 카드 그리드 */
+    .metrics-summary-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 18px;
+    }
+
+    .metric-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-light);
+      border-radius: 12px;
+      padding: 20px;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.25s;
+    }
+
+    .metric-card:hover {
+      border-color: var(--border-hud);
+      background: var(--bg-card-hover);
+      transform: translateY(-2px);
+    }
+
+    .metric-card::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: var(--card-accent, var(--neon-cyan));
+    }
+
+    .metric-icon-box {
+      font-size: 20px;
+      margin-bottom: 10px;
+      display: inline-block;
+    }
+
+    .metric-label {
+      font-size: 12px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-weight: 600;
+    }
+
+    .metric-value-row {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      margin: 8px 0;
+    }
+
+    .metric-num {
+      font-family: var(--font-display);
+      font-size: 36px;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: 0.5px;
+    }
+
+    .metric-unit {
+      color: var(--card-accent, var(--neon-cyan));
+      font-family: var(--font-code);
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .metric-trend {
+      font-size: 11px;
+      color: var(--neon-emerald);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-family: var(--font-code);
+    }
+
+    /* 대시보드 2단 그리드 레이아웃 */
+    .dashboard-main-split {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .panel-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border-light);
+      border-radius: 12px;
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      padding-bottom: 12px;
+    }
+
+    .panel-title {
+      font-family: var(--font-display);
+      font-size: 16px;
+      font-weight: 700;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .panel-badge {
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-muted);
+      font-family: var(--font-code);
+    }
+
+    .chart-wrapper {
+      position: relative;
+      height: 280px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* 인터랙티브 필터 & 슬라이더 컨트롤 바 */
+    .filter-controller-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border-hud);
+      border-radius: 12px;
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .filter-btn-group {
+      display: flex;
+      gap: 8px;
+    }
+
+    .hud-filter-btn {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-light);
+      color: var(--text-muted);
+      padding: 6px 14px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .hud-filter-btn:hover {
+      color: #fff;
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .hud-filter-btn.active {
+      background: rgba(0, 240, 255, 0.15);
+      border-color: var(--neon-cyan);
+      color: #fff;
+      font-weight: 700;
+    }
+
+    .slider-container {
+      flex: 1;
+      max-width: 420px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .slider-label {
+      font-size: 12px;
+      color: var(--text-muted);
+      white-space: nowrap;
+      font-family: var(--font-code);
+    }
+
+    .slider-input {
+      flex: 1;
+      accent-color: var(--neon-cyan);
+      cursor: pointer;
+    }
+
+    .slider-val-badge {
+      font-family: var(--font-code);
+      color: var(--neon-cyan);
+      font-weight: 700;
+      font-size: 13px;
+      min-width: 48px;
+      text-align: right;
+    }
+
+    /* 실시간 연계 프로젝트 매트릭스 그리드 */
+    .projects-matrix-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+
+    .project-metric-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-light);
+      border-radius: 10px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 12px;
+      transition: all 0.25s;
+    }
+
+    .project-metric-card:hover {
+      border-color: var(--neon-cyan);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    }
+
+    .pm-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+
+    .pm-domain-tag {
+      font-size: 10px;
+      font-family: var(--font-code);
+      padding: 2px 6px;
+      border-radius: 4px;
+      background: rgba(0, 240, 255, 0.1);
+      color: var(--neon-cyan);
+    }
+
+    .pm-score {
+      font-family: var(--font-display);
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--neon-emerald);
+    }
+
+    .pm-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .pm-desc {
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    .progress-bar-bg {
+      height: 6px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--neon-cyan), var(--neon-purple));
+      border-radius: 3px;
+      transition: width 0.4s ease;
+    }
+
+    .pm-footer {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: var(--text-muted);
+      font-family: var(--font-code);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 상단 글로벌 네비게이션 배너 -->
+  <header class="global-nav-bar">
+    <div class="global-nav-left">
+      <span class="nav-badge">Concept 3 of 5</span>
+      <span style="font-weight: 600; color: #fff;">인터랙티브 데이터 대시보드</span>
+      <span style="color: var(--text-muted); font-size: 11px;">(Personal Metrics & Mission Control UI)</span>
+    </div>
+    <nav class="nav-links">
+      <a href="index.html" class="nav-link-btn">← 5개 컨셉 허브</a>
+      <a href="1_ide_terminal.html" class="nav-link-btn">1. IDE/터미널</a>
+      <a href="2_constellation_graph.html" class="nav-link-btn">2. 3D 성좌 그래프</a>
+      <a href="3_data_dashboard.html" class="nav-link-btn active">3. 데이터 대시보드</a>
+      <a href="4_scrollytelling.html" class="nav-link-btn">4. 시네마틱 스크롤</a>
+      <a href="5_isometric_room.html" class="nav-link-btn">5. 아이소메트릭 룸</a>
+    </nav>
+  </header>
+
+  <!-- 관제 센터 대시보드 메인 -->
+  <main class="dashboard-container">
+
+    <!-- 상단 HUD 관제 헤더 -->
+    <section class="hud-header">
+      <div class="hud-title-box">
+        <h1>
+          <span class="live-beacon"></span>
+          SUPIANNA TELEMETRY & METRICS CENTER
+        </h1>
+        <div class="hud-subtitle">
+          SYSTEM: ACTIVE // OPERATOR: Supianna (INFJ) // PARADIGM: SRP & Clean Architecture
+        </div>
+      </div>
+      <div class="hud-right-telemetry">
+        <div class="telemetry-item">
+          <span class="telemetry-label">Mission Clock</span>
+          <span class="telemetry-val" id="telemetry-clock">00:00:00 KST</span>
+        </div>
+        <div class="telemetry-item">
+          <span class="telemetry-label">AI Agent Synergy</span>
+          <span class="telemetry-val" style="color: var(--neon-emerald);">98.4% (Optimal)</span>
+        </div>
+        <div class="telemetry-item">
+          <span class="telemetry-label">Clean Code Index</span>
+          <span class="telemetry-val" style="color: var(--neon-amber);">Grade A+</span>
+        </div>
+        <button class="btn-diagnostics" id="btn-run-diag">⚡ RUN DIAGNOSTICS</button>
+      </div>
+    </section>
+
+    <!-- 4대 정량 지표 라이브 카운터 그리드 -->
+    <section class="metrics-summary-grid">
+      
+      <article class="metric-card" style="--card-accent: var(--neon-cyan);">
+        <span class="metric-icon-box">🐛</span>
+        <div class="metric-label">Resolved Bugs & Issues</div>
+        <div class="metric-value-row">
+          <span class="metric-num" data-target="1482">0</span>
+          <span class="metric-unit">Fixed</span>
+        </div>
+        <div class="metric-trend">
+          <span>▲ +14.2%</span>
+          <span style="color: var(--text-muted); margin-left: 4px;">vs previous cycle</span>
+        </div>
+      </article>
+
+      <article class="metric-card" style="--card-accent: var(--neon-emerald);">
+        <span class="metric-icon-box">⚡</span>
+        <div class="metric-label">Automated Saved Hours</div>
+        <div class="metric-value-row">
+          <span class="metric-num" data-target="386">0</span>
+          <span class="metric-unit">Hours</span>
+        </div>
+        <div class="metric-trend">
+          <span>▲ +38 hrs</span>
+          <span style="color: var(--text-muted); margin-left: 4px;">via CI & AI script</span>
+        </div>
+      </article>
+
+      <article class="metric-card" style="--card-accent: var(--neon-purple);">
+        <span class="metric-icon-box">💻</span>
+        <div class="metric-label">Validated Production Code</div>
+        <div class="metric-value-row">
+          <span class="metric-num" data-target="52430">0</span>
+          <span class="metric-unit">LOC</span>
+        </div>
+        <div class="metric-trend">
+          <span>▲ SRP Certified</span>
+          <span style="color: var(--text-muted); margin-left: 4px;">100% modularized</span>
+        </div>
+      </article>
+
+      <article class="metric-card" style="--card-accent: var(--neon-amber);">
+        <span class="metric-icon-box">🌿</span>
+        <div class="metric-label">Atomic Commits Integrity</div>
+        <div class="metric-value-row">
+          <span class="metric-num" data-target="99.8">0</span>
+          <span class="metric-unit">%</span>
+        </div>
+        <div class="metric-trend">
+          <span>✔ Korean Conventional</span>
+          <span style="color: var(--text-muted); margin-left: 4px;">Clear Logs</span>
+        </div>
+      </article>
+
+    </section>
+
+    <!-- 고대비 차트 2분할 패널 -->
+    <section class="dashboard-main-split">
+      
+      <!-- 레이더 역량 차트 -->
+      <div class="panel-box">
+        <div class="panel-header">
+          <div class="panel-title">
+            <span>🎯</span>
+            <span>Developer Core Competency (Radar)</span>
+          </div>
+          <span class="panel-badge">6-Axis Assessment</span>
+        </div>
+        <div class="chart-wrapper">
+          <canvas id="competencyRadarChart"></canvas>
+        </div>
+      </div>
+
+      <!-- 개발 속도 및 배포 안정성 타임라인 차트 -->
+      <div class="panel-box">
+        <div class="panel-header">
+          <div class="panel-title">
+            <span>📈</span>
+            <span>Velocity & Build Success Flow</span>
+          </div>
+          <span class="panel-badge">Weekly Telemetry</span>
+        </div>
+        <div class="chart-wrapper">
+          <canvas id="velocityLineChart"></canvas>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- 인터랙티브 필터 & 슬라이더 컨트롤러 -->
+    <section class="filter-controller-box">
+      <div class="filter-btn-group">
+        <button class="hud-filter-btn active" data-domain="all">전체 도메인 (All)</button>
+        <button class="hud-filter-btn" data-domain="ai">AI & 자동화</button>
+        <button class="hud-filter-btn" data-domain="frontend">프론트엔드 UI</button>
+        <button class="hud-filter-btn" data-domain="arch">클린 아키텍처</button>
+      </div>
+
+      <div class="slider-container">
+        <span class="slider-label">최소 완성도 필터:</span>
+        <input type="range" class="slider-input" id="maturity-slider" min="50" max="100" value="70">
+        <span class="slider-val-badge" id="slider-val-text">70% 이상</span>
+      </div>
+    </section>
+
+    <!-- 필터링에 반응하는 실시간 프로젝트 매트릭스 -->
+    <section class="projects-matrix-grid" id="projects-grid">
+      <!-- 자바스크립트로 동적 렌더링 -->
+    </section>
+
+  </main>
+
+  <script>
+    // [프로젝트 데이터 정의]
+    const PROJECTS_DATA = [
+      {
+        id: "p1",
+        title: "Mystic Aurora Portfolio",
+        domain: "frontend",
+        domainLabel: "Frontend & UI",
+        maturity: 98,
+        desc: "오로라 메쉬 글로우와 은하수 캔버스 파티클을 결합한 원스크린 대시보드 포트폴리오.",
+        loc: "3,820",
+        link: "../portfolio/index.html"
+      },
+      {
+        id: "p2",
+        title: "Interactive Free Board",
+        domain: "frontend",
+        domainLabel: "Frontend & LocalStorage",
+        maturity: 95,
+        desc: "로컬 스토리지 연동 및 감성 포스트잇 실시간 렌더링을 지원하는 인터랙티브 방명록.",
+        loc: "1,450",
+        link: "../portfolio/index.html#free-board"
+      },
+      {
+        id: "p3",
+        title: "Task Flow & Routine Tracker",
+        domain: "ai",
+        domainLabel: "AI & Productivity",
+        maturity: 86,
+        desc: "드래그 앤 드롭 및 진행률 자동 계산 엔진을 탑재한 생산성 루틴 관리 애플리케이션.",
+        loc: "2,600",
+        link: "#"
+      },
+      {
+        id: "p4",
+        title: "Clean Automation Engine",
+        domain: "arch",
+        domainLabel: "Architecture & CI",
+        maturity: 92,
+        desc: "단일 책임 원칙(SRP)과 원자적 커밋(Atomic Commit) 무결성을 검증하는 자동화 셸 파이프라인.",
+        loc: "1,180",
+        link: "#"
+      },
+      {
+        id: "p5",
+        title: "Astral uv Environment Suite",
+        domain: "ai",
+        domainLabel: "AI & Modern Python",
+        maturity: 88,
+        desc: "초고속 uv 기반 의존성 격리와 PEP 8 표준 검증을 위한 파이썬 개발 키트.",
+        loc: "940",
+        link: "#"
+      },
+      {
+        id: "p6",
+        title: "Atomic Commit Git Hook",
+        domain: "arch",
+        domainLabel: "Architecture & Git",
+        maturity: 94,
+        desc: "변경 성격별 스테이징 분리 및 직관적 한국어 커밋 로그를 강제하는 Git 훅 스크립트.",
+        loc: "620",
+        link: "#"
+      },
+      {
+        id: "p7",
+        title: "Cosmic Sparkle 2D Canvas",
+        domain: "frontend",
+        domainLabel: "Frontend & Canvas",
+        maturity: 96,
+        desc: "GPU 부담을 최소화하며 영롱한 밤하늘 별빛 반짝임을 구현하는 모던 Canvas 2D 엔진.",
+        loc: "780",
+        link: "#"
+      },
+      {
+        id: "p8",
+        title: "INFJ Thought Archive",
+        domain: "arch",
+        domainLabel: "Architecture & Story",
+        maturity: 80,
+        desc: "개발 철학 및 지속적 학습 기록을 정갈하게 관리하는 마크다운 기반 사색 아카이브.",
+        loc: "1,200",
+        link: "#"
+      }
+    ];
+
+    let currentDomainFilter = "all";
+    let currentMaturityFilter = 70;
+    let radarChartInstance = null;
+    let lineChartInstance = null;
+
+    // 초기화
+    window.addEventListener("DOMContentLoaded", () => {
+      initClock();
+      animateCounters();
+      initCharts();
+      renderProjects();
+      setupEventListeners();
+    });
+
+    // 실시간 디지털 시계
+    function initClock() {
+      const clockEl = document.getElementById("telemetry-clock");
+      function update() {
+        const now = new Date();
+        clockEl.textContent = now.toTimeString().split(" ")[0] + " KST";
+      }
+      update();
+      setInterval(update, 1000);
+    }
+
+    // 라이브 카운터 숫자 롤링 애니메이션
+    function animateCounters() {
+      document.querySelectorAll(".metric-num").forEach(numEl => {
+        const target = parseFloat(numEl.getAttribute("data-target"));
+        const isDecimal = target % 1 !== 0;
+        const duration = 1500;
+        const startTime = performance.now();
+
+        function step(currentTime) {
+          const progress = Math.min((currentTime - startTime) / duration, 1);
+          // Ease-out
+          const easeProgress = 1 - Math.pow(1 - progress, 3);
+          const currentVal = target * easeProgress;
+
+          numEl.textContent = isDecimal 
+            ? currentVal.toFixed(1) 
+            : Math.floor(currentVal).toLocaleString();
+
+          if (progress < 1) {
+            requestAnimationFrame(step);
+          }
+        }
+        requestAnimationFrame(step);
+      });
+    }
+
+    // Chart.js 고대비 다크 차트 생성
+    function initCharts() {
+      // 1. Radar Chart (역량 다각형)
+      const radarCtx = document.getElementById("competencyRadarChart").getContext("2d");
+      radarChartInstance = new Chart(radarCtx, {
+        type: "radar",
+        data: {
+          labels: [
+            "AI Agent 협업",
+            "SRP 아키텍처",
+            "모던 프론트엔드 UI",
+            "자동화 파이프라인",
+            "문제 분석 & 해결",
+            "정갈한 Git 커밋"
+          ],
+          datasets: [{
+            label: "현재 역량 스펙트럼",
+            data: [96, 94, 95, 90, 92, 98],
+            backgroundColor: "rgba(0, 240, 255, 0.2)",
+            borderColor: "#00f0ff",
+            borderWidth: 2,
+            pointBackgroundColor: "#00ffaa",
+            pointBorderColor: "#fff",
+            pointHoverBackgroundColor: "#fff",
+            pointHoverBorderColor: "#00f0ff",
+            pointRadius: 4
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            r: {
+              angleLines: { color: "rgba(255, 255, 255, 0.08)" },
+              grid: { color: "rgba(255, 255, 255, 0.08)" },
+              pointLabels: {
+                color: "#e6edf3",
+                font: { family: "'Pretendard', sans-serif", size: 12, weight: "600" }
+              },
+              ticks: {
+                display: false,
+                min: 0,
+                max: 100,
+                stepSize: 20
+              }
+            }
+          },
+          plugins: {
+            legend: { display: false }
+          }
+        }
+      });
+
+      // 2. Line Chart (개발 속도 및 빌드 성공률)
+      const lineCtx = document.getElementById("velocityLineChart").getContext("2d");
+      lineChartInstance = new Chart(lineCtx, {
+        type: "line",
+        data: {
+          labels: ["W1", "W2", "W3", "W4", "W5", "W6", "W7", "W8"],
+          datasets: [
+            {
+              label: "유효 커밋 속도 (Velocity)",
+              data: [14, 22, 28, 35, 42, 58, 64, 76],
+              borderColor: "#00f0ff",
+              backgroundColor: "rgba(0, 240, 255, 0.1)",
+              borderWidth: 2,
+              fill: true,
+              tension: 0.35,
+              pointRadius: 4,
+              pointBackgroundColor: "#00f0ff"
+            },
+            {
+              label: "CI/CD 빌드 무결성 (%)",
+              data: [92, 94, 95, 98, 97, 100, 99, 100],
+              borderColor: "#00ffaa",
+              borderWidth: 2,
+              borderDash: [4, 4],
+              pointRadius: 3,
+              pointBackgroundColor: "#00ffaa",
+              tension: 0.2
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            x: {
+              grid: { color: "rgba(255, 255, 255, 0.05)" },
+              ticks: { color: "#7d8590", font: { family: "'Fira Code', monospace" } }
+            },
+            y: {
+              grid: { color: "rgba(255, 255, 255, 0.05)" },
+              ticks: { color: "#7d8590", font: { family: "'Fira Code', monospace" } }
+            }
+          },
+          plugins: {
+            legend: {
+              labels: {
+                color: "#e6edf3",
+                font: { family: "'Pretendard', sans-serif", size: 11 }
+              }
+            }
+          }
+        }
+      });
+    }
+
+    // 프로젝트 매트릭스 렌더링
+    function renderProjects() {
+      const container = document.getElementById("projects-grid");
+      container.innerHTML = "";
+
+      const filtered = PROJECTS_DATA.filter(p => {
+        const matchesDomain = (currentDomainFilter === "all" || p.domain === currentDomainFilter);
+        const matchesMaturity = p.maturity >= currentMaturityFilter;
+        return matchesDomain && matchesMaturity;
+      });
+
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div style="grid-column: 1 / -1; padding: 40px; text-align: center; color: var(--text-muted); font-family: var(--font-code);">
+            ⚠ 조건에 일치하는 텔레메트리 프로젝트 데이터가 없습니다. (슬라이더 수치를 낮춰보세요)
+          </div>
+        `;
+        return;
+      }
+
+      filtered.forEach(p => {
+        const card = document.createElement("div");
+        card.className = "project-metric-card";
+        card.innerHTML = `
+          <div>
+            <div class="pm-top">
+              <span class="pm-domain-tag">${p.domainLabel}</span>
+              <span class="pm-score">${p.maturity}% READY</span>
+            </div>
+            <h3 class="pm-title" style="margin-top: 8px;">${p.title}</h3>
+            <p class="pm-desc" style="margin-top: 6px;">${p.desc}</p>
+          </div>
+          <div>
+            <div class="progress-bar-bg" style="margin-bottom: 8px;">
+              <div class="progress-bar-fill" style="width: ${p.maturity}%;"></div>
+            </div>
+            <div class="pm-footer">
+              <span>LOC: ${p.loc}</span>
+              <a href="${p.link}" target="_blank" style="color: var(--neon-cyan); text-decoration: none; font-weight: 600;">상세 보기 ↗</a>
+            </div>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    // 이벤트 리스너 설정
+    function setupEventListeners() {
+      // 진단 재실행 버튼
+      document.getElementById("btn-run-diag").addEventListener("click", () => {
+        animateCounters();
+        // 차트 데이터 미세 펄스
+        if (radarChartInstance) {
+          radarChartInstance.data.datasets[0].data = [
+            Math.floor(92 + Math.random() * 8),
+            Math.floor(90 + Math.random() * 10),
+            Math.floor(93 + Math.random() * 7),
+            Math.floor(88 + Math.random() * 10),
+            Math.floor(90 + Math.random() * 8),
+            99
+          ];
+          radarChartInstance.update();
+        }
+      });
+
+      // 도메인 필터 버튼들
+      document.querySelectorAll(".hud-filter-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+          document.querySelectorAll(".hud-filter-btn").forEach(b => b.classList.remove("active"));
+          btn.classList.add("active");
+          currentDomainFilter = btn.getAttribute("data-domain");
+          renderProjects();
+        });
+      });
+
+      // 슬라이더 조작
+      const slider = document.getElementById("maturity-slider");
+      const sliderValText = document.getElementById("slider-val-text");
+      slider.addEventListener("input", (e) => {
+        currentMaturityFilter = parseInt(e.target.value);
+        sliderValText.textContent = `${currentMaturityFilter}% 이상`;
+        renderProjects();
+      });
+    }
+  </script>
+</body>
+</html>
+

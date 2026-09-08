@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <!-- 파일명: gitblog/9_macos_white_popup.html -->
+  <!-- 목적: 컨셉 9 - 윈도우/맥 OS 화이트 팝업 미니멀리즘 (Spotlight & Frosted Window) -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>컨셉 9: macOS 화이트 팝업 미니멀리즘 | Supianna Portfolio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --desktop-bg: #f1f3f7;
+      --window-bg: rgba(255, 255, 255, 0.88);
+      --window-border: rgba(0, 0, 0, 0.08);
+      --dock-bg: rgba(255, 255, 255, 0.7);
+      --text-main: #1f2937;
+      --text-muted: #6b7280;
+      --accent-blue: #2563eb;
+      --font-sans: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono: 'Fira Code', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--desktop-bg);
+      color: var(--text-main);
+      font-family: var(--font-sans);
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      user-select: none;
+      background-image: 
+        radial-gradient(circle at 10% 20%, rgba(219, 234, 254, 0.5) 0%, transparent 40%),
+        radial-gradient(circle at 90% 80%, rgba(243, 232, 255, 0.5) 0%, transparent 40%);
+    }
+
+    /* 상단 메뉴바 (Menu Bar) */
+    .macos-menubar {
+      height: 32px;
+      background: rgba(255, 255, 255, 0.75);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+      padding: 0 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 12px;
+      font-weight: 500;
+      z-index: 1000;
+    }
+
+    .menu-left, .menu-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .apple-icon {
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .menu-app-name {
+      font-weight: 700;
+    }
+
+    .menu-item {
+      color: var(--text-muted);
+      cursor: pointer;
+    }
+
+    .menu-item:hover {
+      color: #000;
+    }
+
+    .global-nav-links {
+      display: flex;
+      gap: 8px;
+    }
+
+    .global-nav-link {
+      color: var(--text-muted);
+      text-decoration: none;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+    }
+
+    .global-nav-link:hover, .global-nav-link.active {
+      color: #000;
+      background: rgba(0, 0, 0, 0.05);
+    }
+
+    .global-nav-link.active {
+      font-weight: 700;
+      color: var(--accent-blue);
+    }
+
+    /* 데스크톱 작업 영역 */
+    .desktop-area {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* 중앙 Spotlight 검색창 */
+    .spotlight-center-box {
+      position: absolute;
+      top: 25%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 580px;
+      max-width: 90%;
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(24px);
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      border-radius: 16px;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(0, 0, 0, 0.04);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      z-index: 100;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .spotlight-input-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 16px 20px;
+    }
+
+    .spotlight-icon {
+      font-size: 20px;
+      color: var(--text-muted);
+    }
+
+    .spotlight-input {
+      flex: 1;
+      border: none;
+      outline: none;
+      background: transparent;
+      font-family: var(--font-sans);
+      font-size: 18px;
+      font-weight: 500;
+      color: var(--text-main);
+    }
+
+    .spotlight-input::placeholder {
+      color: #9ca3af;
+      font-weight: 400;
+    }
+
+    .spotlight-results {
+      border-top: 1px solid rgba(0, 0, 0, 0.06);
+      padding: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      max-height: 240px;
+      overflow-y: auto;
+    }
+
+    .result-item {
+      padding: 10px 14px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      font-size: 13px;
+      transition: background 0.15s;
+    }
+
+    .result-item:hover, .result-item.active {
+      background: var(--accent-blue);
+      color: #fff;
+    }
+
+    .result-item:hover .result-category,
+    .result-item.active .result-category {
+      color: rgba(255, 255, 255, 0.8);
+    }
+
+    .result-item-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .result-category {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+    }
+
+    /* 맥 OS 서류철 윈도우 창 */
+    .macos-window {
+      position: absolute;
+      width: 520px;
+      background: var(--window-bg);
+      backdrop-filter: blur(28px);
+      border: 1px solid rgba(255, 255, 255, 0.7);
+      border-radius: 12px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1), 0 0 0 1px var(--window-border);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      opacity: 0;
+      transform: scale(0.95) translateY(20px);
+      pointer-events: none;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 50;
+    }
+
+    .macos-window.open {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+      pointer-events: auto;
+    }
+
+    .window-header {
+      height: 40px;
+      background: rgba(255, 255, 255, 0.5);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      cursor: grab;
+    }
+
+    .traffic-lights {
+      display: flex;
+      gap: 8px;
+    }
+
+    .t-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      cursor: pointer;
+    }
+
+    .t-close { background: #ff5f56; border: 1px solid #e0443e; }
+    .t-min { background: #ffbd2e; border: 1px solid #dea123; }
+    .t-max { background: #27c93f; border: 1px solid #1aab29; }
+
+    .window-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .window-body {
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      font-size: 13.5px;
+      line-height: 1.7;
+      color: #374151;
+      max-height: 380px;
+      overflow-y: auto;
+    }
+
+    .window-meta-box {
+      background: rgba(0, 0, 0, 0.03);
+      border-radius: 8px;
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-size: 12px;
+      font-family: var(--font-mono);
+    }
+
+    .window-action-btn {
+      align-self: flex-start;
+      background: var(--accent-blue);
+      color: #fff;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: background 0.15s;
+    }
+
+    .window-action-btn:hover {
+      background: #1d4ed8;
+    }
+
+    /* 하단 미니멀 독 (Dock) */
+    .macos-dock {
+      position: absolute;
+      bottom: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--dock-bg);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      border-radius: 20px;
+      padding: 8px 14px;
+      display: flex;
+      gap: 12px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+      z-index: 1000;
+    }
+
+    .dock-item {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: #ffffff;
+      border: 1px solid rgba(0, 0, 0, 0.06);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      cursor: pointer;
+      position: relative;
+      transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .dock-item:hover {
+      transform: translateY(-8px) scale(1.18);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .dock-item.has-open::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: #374151;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 상단 메뉴바 -->
+  <header class="macos-menubar">
+    <div class="menu-left">
+      <span class="apple-icon"></span>
+      <span class="menu-app-name">Supianna OS</span>
+      <span class="menu-item" id="menu-focus-spotlight">Search (⌘K)</span>
+      <span class="menu-item" onclick="openWindow('about')">About Me</span>
+      <span class="menu-item" onclick="openWindow('projects')">Projects</span>
+      <span class="menu-item" onclick="openWindow('principles')">Principles</span>
+    </div>
+    <div class="menu-right">
+      <div class="global-nav-links">
+        <a href="index.html" class="global-nav-link">← 허브</a>
+        <a href="7_editorial_magazine.html" class="global-nav-link">7. 매거진</a>
+        <a href="8_sticker_canvas.html" class="global-nav-link">8. 스티커</a>
+        <a href="9_macos_white_popup.html" class="global-nav-link active">9. 맥OS 팝업</a>
+        <a href="10_curated_gallery.html" class="global-nav-link">10. 갤러리</a>
+      </div>
+      <span id="menubar-clock">16:55</span>
+    </div>
+  </header>
+
+  <!-- 데스크톱 작업 영역 -->
+  <main class="desktop-area" id="desktop">
+    
+    <!-- 중앙 Spotlight 검색창 -->
+    <div class="spotlight-center-box" id="spotlight-box">
+      <div class="spotlight-input-row">
+        <span class="spotlight-icon">🔍</span>
+        <input type="text" class="spotlight-input" id="spotlight-input" placeholder="검색 또는 키워드 입력 (예: aurora, clean, ai, about...)" autofocus spellcheck="false">
+      </div>
+      <div class="spotlight-results" id="spotlight-results">
+        <!-- 검색 결과 자동 주입 -->
+      </div>
+    </div>
+
+    <!-- 윈도우 1: About Me -->
+    <div class="macos-window" id="win-about" style="top: 140px; left: 160px;">
+      <div class="window-header">
+        <div class="traffic-lights">
+          <span class="t-dot t-close" onclick="closeWindow('about')"></span>
+          <span class="t-dot t-min"></span>
+          <span class="t-dot t-max"></span>
+        </div>
+        <span class="window-title">About Me — Supianna</span>
+        <span style="width: 36px;"></span>
+      </div>
+      <div class="window-body">
+        <h2 style="font-size: 20px; font-weight: 800;">Supianna (수피아나)</h2>
+        <p>
+          AI Agent를 든든한 페어 프로그래머 삼아 깊이 있는 사색과 단단한 아키텍처로 가치 있는 코드를 짓는 개발자입니다.
+        </p>
+        <div class="window-meta-box">
+          <div>• <strong>Role:</strong> AI-Native Web Developer & Explorer</div>
+          <div>• <strong>Personality:</strong> INFJ (Insight, Structure, Empathy)</div>
+          <div>• <strong>Location:</strong> Seoul, Republic of Korea</div>
+        </div>
+        <a href="../portfolio/index.html#who-am-i" target="_blank" class="window-action-btn">포트폴리오 프로필 열기 ↗</a>
+      </div>
+    </div>
+
+    <!-- 윈도우 2: Projects Overview -->
+    <div class="macos-window" id="win-projects" style="top: 100px; left: 420px;">
+      <div class="window-header">
+        <div class="traffic-lights">
+          <span class="t-dot t-close" onclick="closeWindow('projects')"></span>
+          <span class="t-dot t-min"></span>
+          <span class="t-dot t-max"></span>
+        </div>
+        <span class="window-title">Projects Showcase</span>
+        <span style="width: 36px;"></span>
+      </div>
+      <div class="window-body">
+        <h2 style="font-size: 18px; font-weight: 800;">주요 프로젝트 아카이브</h2>
+        <div>
+          <h4 style="font-weight: 700;">1. Mystic Aurora Portfolio & Archive</h4>
+          <p style="font-size: 12.5px; color: var(--text-muted);">오로라 글로우와 글래스모피즘 싱글 스크린 대시보드</p>
+        </div>
+        <div>
+          <h4 style="font-weight: 700;">2. Interactive Free Board & Guestbook</h4>
+          <p style="font-size: 12.5px; color: var(--text-muted);">LocalStorage 연동 실시간 감성 포스트잇 방명록</p>
+        </div>
+        <div>
+          <h4 style="font-weight: 700;">3. Clean Workflow Automation Engine</h4>
+          <p style="font-size: 12.5px; color: var(--text-muted);">단일 책임 원칙(SRP) 및 원자적 커밋 검증 파이프라인</p>
+        </div>
+        <a href="../portfolio/index.html#projects" target="_blank" class="window-action-btn">프로젝트 전체 둘러보기 ↗</a>
+      </div>
+    </div>
+
+    <!-- 윈도우 3: Principles & Architecture -->
+    <div class="macos-window" id="win-principles" style="top: 220px; left: 280px;">
+      <div class="window-header">
+        <div class="traffic-lights">
+          <span class="t-dot t-close" onclick="closeWindow('principles')"></span>
+          <span class="t-dot t-min"></span>
+          <span class="t-dot t-max"></span>
+        </div>
+        <span class="window-title">Architecture Principles</span>
+        <span style="width: 36px;"></span>
+      </div>
+      <div class="window-body">
+        <h2 style="font-size: 18px; font-weight: 800;">클린 아키텍처 & Git 컨벤션</h2>
+        <div class="window-meta-box">
+          <div><strong>1. 단일 책임 원칙 (SRP)</strong>: 하나의 함수는 단 하나의 일만 수행.</div>
+          <div><strong>2. 원자적 커밋 (Atomic Commits)</strong>: 환경, 소스, 문서를 철저히 분리.</div>
+          <div><strong>3. 직관적인 한국어 로그</strong>: 변경 목적이 명확한 커밋 메시지.</div>
+        </div>
+        <a href="1_ide_terminal.html" class="window-action-btn">CI 엔진 확인 ↗</a>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- 하단 독 (Dock) -->
+  <footer class="macos-dock">
+    <div class="dock-item" id="dock-about" onclick="openWindow('about')" title="About Me">
+      <span>👩‍💻</span>
+    </div>
+    <div class="dock-item" id="dock-projects" onclick="openWindow('projects')" title="Projects">
+      <span>🌌</span>
+    </div>
+    <div class="dock-item" id="dock-principles" onclick="openWindow('principles')" title="Principles">
+      <span>🧩</span>
+    </div>
+    <div class="dock-item" onclick="toggleSpotlight()" title="Spotlight Search">
+      <span>🔍</span>
+    </div>
+    <div class="dock-item" onclick="window.open('../portfolio/index.html', '_blank')" title="Live Portfolio">
+      <span>🌐</span>
+    </div>
+  </footer>
+
+  <script>
+    // [1. Web Audio 글래스 사운드]
+    let audioCtx = null;
+    function playChime() {
+      try {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (audioCtx.state === "suspended") audioCtx.resume();
+
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        const now = audioCtx.currentTime;
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(1046.5, now); // C6
+        osc.frequency.exponentialRampToValueAtTime(1318.5, now + 0.08); // E6
+        gain.gain.setValueAtTime(0.12, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+
+        osc.start(now);
+        osc.stop(now + 0.25);
+      } catch(e) {}
+    }
+
+    // [2. 윈도우 창 제어]
+    let highestZ = 50;
+
+    function openWindow(id) {
+      playChime();
+      const win = document.getElementById(`win-${id}`);
+      if (!win) return;
+
+      highestZ++;
+      win.style.zIndex = highestZ;
+      win.classList.add("open");
+
+      const dockItem = document.getElementById(`dock-${id}`);
+      if (dockItem) dockItem.classList.add("has-open");
+    }
+
+    function closeWindow(id) {
+      const win = document.getElementById(`win-${id}`);
+      if (!win) return;
+      win.classList.remove("open");
+
+      const dockItem = document.getElementById(`dock-${id}`);
+      if (dockItem) dockItem.classList.remove("has-open");
+    }
+
+    // [3. 윈도우 드래그 구현]
+    document.querySelectorAll(".macos-window").forEach(win => {
+      const header = win.querySelector(".window-header");
+      let isDragging = false;
+      let startX, startY, initLeft, initTop;
+
+      header.addEventListener("mousedown", (e) => {
+        if (e.target.classList.contains("t-dot")) return;
+        isDragging = true;
+        highestZ++;
+        win.style.zIndex = highestZ;
+
+        startX = e.clientX;
+        startY = e.clientY;
+        const rect = win.getBoundingClientRect();
+        initLeft = rect.left;
+        initTop = rect.top;
+
+        function onMouseMove(moveEvent) {
+          if (!isDragging) return;
+          const dx = moveEvent.clientX - startX;
+          const dy = moveEvent.clientY - startY;
+          win.style.left = `${initLeft + dx}px`;
+          win.style.top = `${initTop + dy}px`;
+        }
+
+        function onMouseUp() {
+          isDragging = false;
+          window.removeEventListener("mousemove", onMouseMove);
+          window.removeEventListener("mouseup", onMouseUp);
+        }
+
+        window.addEventListener("mousemove", onMouseMove);
+        window.addEventListener("mouseup", onMouseUp);
+      });
+    });
+
+    // [4. Spotlight 검색 엔진]
+    const SEARCH_ITEMS = [
+      { title: "About Me (Supianna)", cat: "PROFILE", win: "about" },
+      { title: "Mystic Aurora Portfolio", cat: "PROJECT", win: "projects" },
+      { title: "Interactive Free Board", cat: "PROJECT", win: "projects" },
+      { title: "Clean Workflow Automation", cat: "ARCHITECTURE", win: "principles" },
+      { title: "Single Responsibility Principle", cat: "PRINCIPLE", win: "principles" },
+      { title: "Atomic Commits Strategy", cat: "GIT", win: "principles" }
+    ];
+
+    const searchInput = document.getElementById("spotlight-input");
+    const resultsBox = document.getElementById("spotlight-results");
+
+    function renderSearchResults(query = "") {
+      resultsBox.innerHTML = "";
+      const filtered = SEARCH_ITEMS.filter(item => 
+        item.title.toLowerCase().includes(query.toLowerCase()) || 
+        item.cat.toLowerCase().includes(query.toLowerCase())
+      );
+
+      filtered.forEach((item, idx) => {
+        const row = document.createElement("div");
+        row.className = `result-item ${idx === 0 ? 'active' : ''}`;
+        row.innerHTML = `
+          <div class="result-item-left">
+            <span>📄</span>
+            <span>${item.title}</span>
+          </div>
+          <span class="result-category">${item.cat}</span>
+        `;
+        row.addEventListener("click", () => {
+          openWindow(item.win);
+        });
+        resultsBox.appendChild(row);
+      });
+    }
+
+    searchInput.addEventListener("input", (e) => {
+      renderSearchResults(e.target.value.trim());
+    });
+
+    searchInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        const first = resultsBox.querySelector(".result-item");
+        if (first) first.click();
+      }
+    });
+
+    function toggleSpotlight() {
+      const box = document.getElementById("spotlight-box");
+      if (box.style.display === "none") {
+        box.style.display = "flex";
+        searchInput.focus();
+      } else {
+        searchInput.focus();
+      }
+    }
+
+    document.getElementById("menu-focus-spotlight").addEventListener("click", () => {
+      searchInput.focus();
+    });
+
+    // 초기 시계
+    function updateClock() {
+      const now = new Date();
+      document.getElementById("menubar-clock").textContent = 
+        now.toTimeString().substring(0, 5);
+    }
+    updateClock();
+    setInterval(updateClock, 1000);
+
+    // 시작 시 기본 결과 렌더링
+    renderSearchResults("");
+  </script>
+</body>
+</html>
+

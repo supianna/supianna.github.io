@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <!-- 파일명: gitblog/6_receipt_barcode.html -->
+  <!-- 목적: 컨셉 6 - 디지털 아카이브 ‘영수증/바코드’ UI (미니멀 화이트 서멀 프린터 & 스캐너) -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>컨셉 6: 디지털 아카이브 영수증 & 바코드 | Supianna Portfolio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&family=Pretendard:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-white: #f8f9fa;
+      --paper-white: #ffffff;
+      --ink-black: #111111;
+      --ink-gray: #666666;
+      --ink-light: #999999;
+      --laser-red: #ff3b30;
+      --border-gray: #e5e7eb;
+      --font-mono: 'Fira Code', Consolas, Monaco, monospace;
+      --font-sans: 'Pretendard', -apple-system, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-white);
+      color: var(--ink-black);
+      font-family: var(--font-mono);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* 상단 글로벌 네비게이션 배너 */
+    .global-nav-bar {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border-gray);
+      padding: 8px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 12px;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+
+    .nav-badge {
+      background: #000;
+      color: #fff;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 10px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 12px;
+    }
+
+    .nav-link-btn {
+      color: var(--ink-gray);
+      text-decoration: none;
+      padding: 4px 8px;
+      border-radius: 4px;
+      transition: color 0.15s;
+    }
+
+    .nav-link-btn:hover, .nav-link-btn.active {
+      color: #000;
+      font-weight: 600;
+    }
+
+    .nav-link-btn.active {
+      text-decoration: underline;
+      text-underline-offset: 4px;
+    }
+
+    /* 프린터 슬롯 헤더 & 컨트롤 */
+    .printer-rig-container {
+      width: 100%;
+      max-width: 520px;
+      margin-top: 40px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+    }
+
+    .printer-slot-head {
+      width: 100%;
+      height: 24px;
+      background: #e2e4e9;
+      border-radius: 12px 12px 0 0;
+      border: 2px solid #111;
+      border-bottom: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      z-index: 20;
+    }
+
+    .printer-slot-slit {
+      width: 80%;
+      height: 6px;
+      background: #111;
+      border-radius: 3px;
+    }
+
+    .printer-actions-bar {
+      margin-bottom: 20px;
+      display: flex;
+      gap: 12px;
+      z-index: 30;
+    }
+
+    .btn-receipt-action {
+      background: #fff;
+      border: 1.5px solid #111;
+      color: #111;
+      padding: 8px 16px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      border-radius: 6px;
+      box-shadow: 2px 2px 0px #111;
+      transition: all 0.15s;
+    }
+
+    .btn-receipt-action:hover {
+      transform: translate(-1px, -1px);
+      box-shadow: 3px 3px 0px #111;
+    }
+
+    .btn-receipt-action:active {
+      transform: translate(1px, 1px);
+      box-shadow: 1px 1px 0px #111;
+    }
+
+    /* 영수증 종이 본체 */
+    .receipt-paper {
+      width: 100%;
+      background: var(--paper-white);
+      border: 2px solid #111;
+      border-top: none;
+      padding: 36px 32px 50px;
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.06);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      transform-origin: top center;
+      animation: printFeed 1.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      background-image: radial-gradient(#ececec 1px, transparent 0);
+      background-size: 16px 16px;
+    }
+
+    /* 지그재그 영수증 찢김 바닥선 */
+    .receipt-paper::after {
+      content: '';
+      position: absolute;
+      bottom: -12px;
+      left: -2px;
+      right: -2px;
+      height: 12px;
+      background: linear-gradient(135deg, transparent 5px, var(--paper-white) 5px),
+                  linear-gradient(-135deg, transparent 5px, var(--paper-white) 5px);
+      background-size: 12px 12px;
+      filter: drop-shadow(0 2px 0 #111);
+    }
+
+    @keyframes printFeed {
+      0% {
+        transform: translateY(-80px) scaleY(0.2);
+        opacity: 0;
+      }
+      30% {
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(0) scaleY(1);
+        opacity: 1;
+      }
+    }
+
+    /* 영수증 타이포그래피 */
+    .receipt-header {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      border-bottom: 2px dashed #111;
+      padding-bottom: 18px;
+    }
+
+    .receipt-logo {
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: 2px;
+    }
+
+    .receipt-sub {
+      font-size: 11px;
+      color: var(--ink-gray);
+      letter-spacing: 0.5px;
+    }
+
+    .receipt-meta-grid {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: var(--ink-gray);
+      border-bottom: 1px solid #111;
+      padding-bottom: 10px;
+    }
+
+    /* 영수증 항목 테이블 */
+    .items-table {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .receipt-item-row {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      padding: 8px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+      position: relative;
+      transition: all 0.2s;
+    }
+
+    .receipt-item-row:hover {
+      background: #111;
+      color: #fff;
+    }
+
+    .receipt-item-row:hover .item-desc,
+    .receipt-item-row:hover .item-tags {
+      color: #aaa;
+    }
+
+    .item-line-main {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .item-desc {
+      font-size: 11px;
+      color: var(--ink-gray);
+      font-family: var(--font-sans);
+    }
+
+    .item-tags {
+      font-size: 10px;
+      color: var(--ink-light);
+      margin-top: 2px;
+    }
+
+    /* 합계 요약 영역 */
+    .receipt-calc-section {
+      border-top: 2px dashed #111;
+      border-bottom: 2px dashed #111;
+      padding: 14px 0;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      font-size: 12px;
+    }
+
+    .calc-row {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .calc-total {
+      font-size: 16px;
+      font-weight: 700;
+      padding-top: 6px;
+      border-top: 1px solid #111;
+    }
+
+    /* 바코드 & 푸터 영역 */
+    .barcode-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      padding-top: 10px;
+      position: relative;
+      cursor: crosshair;
+    }
+
+    .barcode-container {
+      width: 80%;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      background: #fff;
+      padding: 6px;
+      border: 1px solid #eee;
+    }
+
+    /* 레이저 스캔 빔 효과 */
+    .laser-beam {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: var(--laser-red);
+      box-shadow: 0 0 10px var(--laser-red);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s;
+    }
+
+    .barcode-container:hover .laser-beam {
+      opacity: 1;
+      animation: scanLaser 1.2s infinite alternate ease-in-out;
+    }
+
+    @keyframes scanLaser {
+      0% { top: 10%; }
+      100% { top: 90%; }
+    }
+
+    .barcode-svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    .barcode-digits {
+      font-size: 11px;
+      letter-spacing: 4px;
+      font-weight: 600;
+    }
+
+    .receipt-notice {
+      text-align: center;
+      font-size: 10.5px;
+      color: var(--ink-gray);
+      line-height: 1.6;
+      font-family: var(--font-sans);
+    }
+
+    /* 스캔 시 나타나는 미니멀 디테일 팝업 카드 */
+    .scan-detail-card {
+      position: fixed;
+      right: 40px;
+      top: 120px;
+      width: 360px;
+      background: #ffffff;
+      border: 2px solid #111;
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: 8px 8px 0px #111;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      opacity: 0;
+      transform: translateY(20px);
+      pointer-events: none;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 500;
+    }
+
+    .scan-detail-card.active {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    .card-scan-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #111;
+      padding-bottom: 10px;
+    }
+
+    .card-scan-tag {
+      font-size: 10px;
+      font-weight: 700;
+      background: #111;
+      color: #fff;
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+
+    .btn-close-popup {
+      background: none;
+      border: none;
+      font-family: var(--font-mono);
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .card-scan-title {
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+
+    .card-scan-desc {
+      font-size: 13px;
+      color: var(--ink-gray);
+      line-height: 1.6;
+      font-family: var(--font-sans);
+    }
+
+    .card-scan-meta {
+      background: #f4f4f5;
+      padding: 10px 12px;
+      border-radius: 6px;
+      font-size: 11px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .card-scan-btn {
+      background: #111;
+      color: #fff;
+      text-decoration: none;
+      text-align: center;
+      padding: 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      transition: background 0.15s;
+    }
+
+    .card-scan-btn:hover {
+      background: #333;
+    }
+
+    /* 플로팅 스캔 가이드 힌트 */
+    .scan-hint-toast {
+      margin-top: 30px;
+      margin-bottom: 60px;
+      font-size: 12px;
+      color: var(--ink-gray);
+      background: #fff;
+      border: 1px solid var(--border-gray);
+      padding: 8px 18px;
+      border-radius: 30px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 상단 글로벌 네비게이션 배너 -->
+  <header class="global-nav-bar">
+    <div class="nav-brand">
+      <span class="nav-badge">Concept 06</span>
+      <span>디지털 아카이브 영수증 & 바코드</span>
+    </div>
+    <nav class="nav-links">
+      <a href="index.html" class="nav-link-btn">← 허브</a>
+      <a href="1_ide_terminal.html" class="nav-link-btn">1. IDE</a>
+      <a href="2_constellation_graph.html" class="nav-link-btn">2. 성좌</a>
+      <a href="3_data_dashboard.html" class="nav-link-btn">3. 대시보드</a>
+      <a href="4_scrollytelling.html" class="nav-link-btn">4. 스크롤</a>
+      <a href="5_isometric_room.html" class="nav-link-btn">5. 아이소메트릭</a>
+      <a href="6_receipt_barcode.html" class="nav-link-btn active">6. 영수증</a>
+    </nav>
+  </header>
+
+  <!-- 프린터 리그 및 영수증 컨테이너 -->
+  <div class="printer-rig-container">
+    
+    <!-- 액션 툴바 -->
+    <div class="printer-actions-bar">
+      <button class="btn-receipt-action" id="btn-reprint">
+        <span>🖨️</span> 영수증 다시 출력
+      </button>
+      <button class="btn-receipt-action" id="btn-print-window">
+        <span>📄</span> 브라우저 인쇄
+      </button>
+    </div>
+
+    <!-- 프린터 슬롯 입구 -->
+    <div class="printer-slot-head">
+      <div class="printer-slot-slit"></div>
+    </div>
+
+    <!-- 출력된 영수증 본체 -->
+    <article class="receipt-paper" id="receipt-paper">
+      
+      <!-- 상단 매장 헤더 -->
+      <header class="receipt-header">
+        <h1 class="receipt-logo">SUPIANNA STORE</h1>
+        <div class="receipt-sub">DEVELOPER CAPABILITIES & ARTIFACTS ARCHIVE</div>
+        <div class="receipt-sub">STATION: SEOUL, KR · TERMINAL #01</div>
+      </header>
+
+      <!-- 일시 및 영수증 메타 -->
+      <div class="receipt-meta-grid">
+        <span id="receipt-date">DATE: 2026-09-08 16:50</span>
+        <span>REC: #SP-88219</span>
+      </div>
+
+      <!-- 항목 리스트 -->
+      <div class="items-table">
+        
+        <div class="receipt-item-row" data-item="aurora">
+          <div class="item-line-main">
+            <span>01. MYSTIC AURORA PORTFOLIO</span>
+            <span>$2,026.00</span>
+          </div>
+          <div class="item-desc">신비로운 오로라 글로우 & 글래스모피즘 싱글 스크린 웹</div>
+          <div class="item-tags">[HTML5 / Canvas API / Vanilla JS]</div>
+        </div>
+
+        <div class="receipt-item-row" data-item="freeboard">
+          <div class="item-line-main">
+            <span>02. INTERACTIVE FREE BOARD</span>
+            <span>$1,450.00</span>
+          </div>
+          <div class="item-desc">LocalStorage 기반 실시간 반응형 감성 포스트잇 방명록</div>
+          <div class="item-tags">[TypeScript / LocalStorage / CSS Animation]</div>
+        </div>
+
+        <div class="receipt-item-row" data-item="taskflow">
+          <div class="item-line-main">
+            <span>03. TASK FLOW & ROUTINE TRACKER</span>
+            <span>$1,890.00</span>
+          </div>
+          <div class="item-desc">드래그 앤 드롭 및 SVG 진행률 자동 계산 루틴 관리 엔진</div>
+          <div class="item-tags">[Drag & Drop / SVG Charts / Productivity]</div>
+        </div>
+
+        <div class="receipt-item-row" data-item="cleanengine">
+          <div class="item-line-main">
+            <span>04. CLEAN WORKFLOW AUTOMATION</span>
+            <span>$2,400.00</span>
+          </div>
+          <div class="item-desc">단일 책임 원칙(SRP) 및 원자적 커밋 무결성 검증 CI 파이프라인</div>
+          <div class="item-tags">[GitHub Actions / Shell / Atomic Commits]</div>
+        </div>
+
+        <div class="receipt-item-row" data-item="aispirit">
+          <div class="item-line-main">
+            <span>05. AI AGENT PAIR WORKFLOW</span>
+            <span>$9,999.00</span>
+          </div>
+          <div class="item-desc">AI 에이전트와 페어 프로그래밍을 통한 초고속 프로토타이핑</div>
+          <div class="item-tags">[Prompt Engineering / Rapid Prototyping]</div>
+        </div>
+
+        <div class="receipt-item-row" data-item="infjmind">
+          <div class="item-line-main">
+            <span>06. INFJ CONTEMPLATION CORE</span>
+            <span>PRICELESS</span>
+          </div>
+          <div class="item-desc">사용자와 동료를 배려하는 깊은 사색과 견고한 아키텍처 철학</div>
+          <div class="item-tags">[Single Responsibility / Empathy / Clean Code]</div>
+        </div>
+
+      </div>
+
+      <!-- 계산 요약 -->
+      <div class="receipt-calc-section">
+        <div class="calc-row">
+          <span>SUBTOTAL ITEMS (6)</span>
+          <span>$17,765.00</span>
+        </div>
+        <div class="calc-row">
+          <span>PASSION DISCOUNT</span>
+          <span>-$17,765.00</span>
+        </div>
+        <div class="calc-row">
+          <span>TAX (VAT 0%)</span>
+          <span>$0.00</span>
+        </div>
+        <div class="calc-row calc-total">
+          <span>TOTAL PAYABLE</span>
+          <span>$0.00 (OPEN SOURCE)</span>
+        </div>
+      </div>
+
+      <!-- 바코드 및 스캔 영역 -->
+      <div class="barcode-section" id="barcode-box">
+        <div class="barcode-container">
+          <div class="laser-beam"></div>
+          <!-- 정교한 SVG 바코드 -->
+          <svg class="barcode-svg" viewBox="0 0 200 50" preserveAspectRatio="none">
+            <rect x="0" y="0" width="4" height="50" fill="#111" />
+            <rect x="6" y="0" width="2" height="50" fill="#111" />
+            <rect x="12" y="0" width="6" height="50" fill="#111" />
+            <rect x="22" y="0" width="2" height="50" fill="#111" />
+            <rect x="28" y="0" width="8" height="50" fill="#111" />
+            <rect x="40" y="0" width="4" height="50" fill="#111" />
+            <rect x="48" y="0" width="2" height="50" fill="#111" />
+            <rect x="54" y="0" width="6" height="50" fill="#111" />
+            <rect x="64" y="0" width="4" height="50" fill="#111" />
+            <rect x="72" y="0" width="2" height="50" fill="#111" />
+            <rect x="78" y="0" width="8" height="50" fill="#111" />
+            <rect x="90" y="0" width="4" height="50" fill="#111" />
+            <rect x="98" y="0" width="6" height="50" fill="#111" />
+            <rect x="108" y="0" width="2" height="50" fill="#111" />
+            <rect x="114" y="0" width="4" height="50" fill="#111" />
+            <rect x="122" y="0" width="8" height="50" fill="#111" />
+            <rect x="134" y="0" width="2" height="50" fill="#111" />
+            <rect x="140" y="0" width="6" height="50" fill="#111" />
+            <rect x="150" y="0" width="4" height="50" fill="#111" />
+            <rect x="158" y="0" width="2" height="50" fill="#111" />
+            <rect x="164" y="0" width="8" height="50" fill="#111" />
+            <rect x="176" y="0" width="4" height="50" fill="#111" />
+            <rect x="184" y="0" width="2" height="50" fill="#111" />
+            <rect x="190" y="0" width="6" height="50" fill="#111" />
+          </svg>
+        </div>
+        <div class="barcode-digits">8809420 202609</div>
+        <div class="receipt-notice">
+          THANK YOU FOR VISITING SUPIANNA ARCHIVE.<br>
+          ALL SKILLS & CODE ARE VERIFIED BY ATOMIC QUALITY STANDARDS.
+        </div>
+      </div>
+
+    </article>
+
+  </div>
+
+  <!-- 하단 힌트 토스트 -->
+  <div class="scan-hint-toast">
+    <span>💡</span> 영수증의 <strong>항목</strong>이나 <strong>바코드</strong>에 마우스를 올리거나 클릭하면 상세 스펙이 스캔됩니다.
+  </div>
+
+  <!-- 바코드 / 항목 스캔 시 팝업 카드 -->
+  <div class="scan-detail-card" id="scan-popup">
+    <div class="card-scan-header">
+      <span class="card-scan-tag" id="popup-tag">SCANNED ARTIFACT</span>
+      <button class="btn-close-popup" id="btn-close-popup">✕</button>
+    </div>
+    <h2 class="card-scan-title" id="popup-title">Mystic Aurora Portfolio</h2>
+    <p class="card-scan-desc" id="popup-desc">
+      신비로운 오로라 글로우와 글래스모피즘을 결합한 원스크린 대시보드 포트폴리오. 은하수 캔버스 파티클과 부드러운 오로라 메쉬 오브를 적용했습니다.
+    </p>
+    <div class="card-scan-meta" id="popup-meta">
+      <div>• <strong>Tech:</strong> HTML5, Canvas 2D, Vanilla JS</div>
+      <div>• <strong>Status:</strong> Deployed & Live on GitHub Pages</div>
+    </div>
+    <a href="../portfolio/index.html" target="_blank" class="card-scan-btn" id="popup-btn">
+      라이브 작업물 확인하기 ↗
+    </a>
+  </div>
+
+  <script>
+    // [데이터 정의]
+    const RECEIPT_DATA = {
+      aurora: {
+        tag: "PROJECT #01",
+        title: "Mystic Aurora Portfolio",
+        desc: "어두운 밤하늘을 수놓는 오로라와 은하수를 시각화한 원스크린 인터랙티브 포트폴리오 웹사이트입니다.",
+        meta: `
+          <div>• <strong>카테고리:</strong> Creative Web / Branding</div>
+          <div>• <strong>스택:</strong> HTML5, Canvas API, Deep Glassmorphism</div>
+        `,
+        url: "../portfolio/index.html"
+      },
+      freeboard: {
+        tag: "PROJECT #02",
+        title: "Interactive Free Board",
+        desc: "브라우저 로컬 저장소와 연동되어 실시간으로 생각의 조각을 남길 수 있는 반응형 포스트잇 게시판입니다.",
+        meta: `
+          <div>• <strong>스토리지:</strong> Browser LocalStorage API</div>
+          <div>• <strong>스택:</strong> TypeScript, CSS Animations, UI Validation</div>
+        `,
+        url: "../portfolio/index.html#free-board"
+      },
+      taskflow: {
+        tag: "PROJECT #03",
+        title: "Task Flow & Routine Tracker",
+        desc: "개발 목표와 일상의 루틴을 시각적인 차트와 체크리스트로 관리하는 직관적 생산성 도구입니다.",
+        meta: `
+          <div>• <strong>기능:</strong> Drag & Drop HTML5 API, SVG Charts</div>
+          <div>• <strong>스택:</strong> Vanilla JS, CSS Grid Layout</div>
+        `,
+        url: "#"
+      },
+      cleanengine: {
+        tag: "ARCHITECTURE #04",
+        title: "Clean Workflow Automation",
+        desc: "단일 책임 원칙(SRP)과 원자적 커밋 컨벤션을 보장하는 자동화 검증 CI 파이프라인 엔진입니다.",
+        meta: `
+          <div>• <strong>파이프라인:</strong> GitHub Actions, Shell Scripts</div>
+          <div>• <strong>원칙:</strong> Single Responsibility & Atomic Staging</div>
+        `,
+        url: "#"
+      },
+      aispirit: {
+        tag: "COMPETENCY #05",
+        title: "AI Agent Synergy & Workflow",
+        desc: "최신 AI Agent 도구를 페어 프로그래머 삼아 높은 속도감과 논리적 완성도로 아이디어를 현실화합니다.",
+        meta: `
+          <div>• <strong>강점:</strong> 프롬프트 엔지니어링, 코드 원리 내재화</div>
+          <div>• <strong>효율:</strong> 기존 대비 개발 속도 300% 이상 증대</div>
+        `,
+        url: "#"
+      },
+      infjmind: {
+        tag: "PHILOSOPHY #06",
+        title: "INFJ Insight & Contemplation",
+        desc: "깊은 사색과 공감을 바탕으로 동료가 읽기 편한 코드와 사용자에게 온기를 주는 소프트웨어를 만듭니다.",
+        meta: `
+          <div>• <strong>철학:</strong> 혼란을 질서로, 복잡함을 명쾌함으로</div>
+          <div>• <strong>성향:</strong> INFJ (통찰, 구조화, 배려)</div>
+        `,
+        url: "#"
+      },
+      barcode: {
+        tag: "BARCODE SCAN COMPLETE",
+        title: "Supianna Certified ID: 8809420",
+        desc: "모든 프로젝트와 역량 항목이 단일 책임 원칙(SRP)과 원자적 커밋(Atomic Commits) 규격으로 검증되었습니다.",
+        meta: `
+          <div>• <strong>검증자:</strong> Cosmic Architecture Linter</div>
+          <div>• <strong>결과:</strong> Pass (Grade A+)</div>
+        `,
+        url: "../portfolio/index.html"
+      }
+    };
+
+    // [Web Audio API 사운드]
+    let audioCtx = null;
+    function playBeep(freq = 880, dur = 0.08) {
+      try {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (audioCtx.state === "suspended") audioCtx.resume();
+
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        const now = audioCtx.currentTime;
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(freq, now);
+        gain.gain.setValueAtTime(0.12, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + dur);
+
+        osc.start(now);
+        osc.stop(now + dur);
+      } catch(e) {}
+    }
+
+    // 팝업 제어
+    const popup = document.getElementById("scan-popup");
+    const closeBtn = document.getElementById("btn-close-popup");
+
+    function showPopup(key) {
+      const data = RECEIPT_DATA[key];
+      if (!data) return;
+
+      playBeep(1200, 0.07);
+
+      document.getElementById("popup-tag").textContent = data.tag;
+      document.getElementById("popup-title").textContent = data.title;
+      document.getElementById("popup-desc").textContent = data.desc;
+      document.getElementById("popup-meta").innerHTML = data.meta;
+
+      const btn = document.getElementById("popup-btn");
+      btn.href = data.url;
+
+      popup.classList.add("active");
+    }
+
+    closeBtn.addEventListener("click", () => {
+      popup.classList.remove("active");
+    });
+
+    // 항목 클릭 이벤트
+    document.querySelectorAll(".receipt-item-row").forEach(row => {
+      row.addEventListener("click", () => {
+        const itemKey = row.getAttribute("data-item");
+        showPopup(itemKey);
+      });
+    });
+
+    // 바코드 호버 및 클릭
+    const barcodeBox = document.getElementById("barcode-box");
+    barcodeBox.addEventListener("click", () => {
+      showPopup("barcode");
+    });
+
+    // 영수증 다시 출력 버튼
+    document.getElementById("btn-reprint").addEventListener("click", () => {
+      playBeep(440, 0.15);
+      const paper = document.getElementById("receipt-paper");
+      paper.style.animation = "none";
+      void paper.offsetWidth; // trigger reflow
+      paper.style.animation = "printFeed 1.6s cubic-bezier(0.16, 1, 0.3, 1) forwards";
+    });
+
+    // 브라우저 인쇄
+    document.getElementById("btn-print-window").addEventListener("click", () => {
+      window.print();
+    });
+
+    // 실시간 날짜
+    const dateEl = document.getElementById("receipt-date");
+    const now = new Date();
+    dateEl.textContent = `DATE: ${now.toISOString().replace("T", " ").substring(0, 16)}`;
+  </script>
+</body>
+</html>
+

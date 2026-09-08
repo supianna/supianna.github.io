@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <!-- 파일명: gitblog/index.html -->
+  <!-- 목적: 포트폴리오 비주얼라이제이션 12대 컨셉 통합 쇼케이스 허브 (최신 발전안 A & B 포함) -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Supianna 포트폴리오 인터랙티브 비주얼라이제이션 쇼케이스 | GitBlog</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;600&family=Cinzel:wght@600;700;800&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-dark: #070913;
+      --bg-card: rgba(16, 22, 38, 0.78);
+      --border-glass: rgba(255, 255, 255, 0.1);
+      --accent-cyan: #00f2fe;
+      --accent-purple: #9d4edd;
+      --accent-emerald: #00f5d4;
+      --accent-gold: #ffbe0b;
+      --accent-pink: #ff007f;
+      --accent-blue: #61afef;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --font-sans: 'Pretendard', sans-serif;
+      --font-code: 'Fira Code', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: var(--font-sans);
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* 오로라 배경 오브 */
+    .aurora-container {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .aurora-blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(100px);
+      opacity: 0.35;
+      animation: floatAurora 18s ease-in-out infinite alternate;
+    }
+
+    .blob-1 {
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, var(--accent-cyan), transparent 60%);
+      top: -150px;
+      left: 10%;
+    }
+
+    .blob-2 {
+      width: 650px;
+      height: 650px;
+      background: radial-gradient(circle, var(--accent-purple), transparent 60%);
+      bottom: -100px;
+      right: 10%;
+      animation-delay: -5s;
+    }
+
+    .blob-3 {
+      width: 450px;
+      height: 450px;
+      background: radial-gradient(circle, var(--accent-emerald), transparent 60%);
+      top: 40%;
+      left: 60%;
+      animation-delay: -9s;
+    }
+
+    @keyframes floatAurora {
+      0% { transform: translate(0, 0) scale(1); }
+      100% { transform: translate(50px, 40px) scale(1.1); }
+    }
+
+    /* 메인 래퍼 */
+    .hub-wrapper {
+      position: relative;
+      z-index: 10;
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 50px 32px 100px;
+      display: flex;
+      flex-direction: column;
+      gap: 36px;
+    }
+
+    /* 헤더 히어로 */
+    .hub-hero {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .hub-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(0, 242, 254, 0.12);
+      border: 1px solid rgba(0, 242, 254, 0.3);
+      color: var(--accent-cyan);
+      padding: 6px 16px;
+      border-radius: 30px;
+      font-size: 13px;
+      font-weight: 600;
+      font-family: var(--font-code);
+    }
+
+    .hub-title {
+      font-size: 44px;
+      font-weight: 800;
+      line-height: 1.25;
+      letter-spacing: -0.5px;
+    }
+
+    .hub-title span.gradient {
+      background: linear-gradient(135deg, #fff 20%, var(--accent-cyan) 60%, var(--accent-purple) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hub-desc {
+      font-size: 16.5px;
+      color: var(--text-muted);
+      max-width: 820px;
+      line-height: 1.7;
+      word-break: keep-all;
+    }
+
+
+
+    /* 필터 탭 바 */
+    .filter-tabs-bar {
+      align-self: center;
+      background: rgba(16, 22, 38, 0.85);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--border-glass);
+      padding: 6px;
+      border-radius: 30px;
+      display: flex;
+      gap: 6px;
+      margin-top: 10px;
+    }
+
+    .tab-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      padding: 8px 18px;
+      border-radius: 20px;
+      font-size: 12.5px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .tab-btn:hover {
+      color: #fff;
+    }
+
+    .tab-btn.active {
+      background: rgba(255, 255, 255, 0.12);
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    /* 섹션 헤더 */
+    .section-header-box {
+      margin-top: 14px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .section-title-text {
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+    }
+
+    .section-badge {
+      font-size: 11px;
+      font-family: var(--font-code);
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-weight: 600;
+    }
+
+    /* 10대 컨셉 그리드 */
+    .concepts-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+      gap: 24px;
+    }
+
+    .concept-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-glass);
+      border-radius: 20px;
+      padding: 26px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 16px;
+      backdrop-filter: blur(16px);
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.35);
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .concept-card:hover {
+      transform: translateY(-5px);
+      border-color: var(--card-glow, var(--accent-cyan));
+      box-shadow: 0 24px 50px rgba(0, 0, 0, 0.5), 0 0 24px var(--card-glow-alpha, rgba(0, 242, 254, 0.2));
+    }
+
+    .concept-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+
+    .concept-num {
+      font-family: var(--font-code);
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--card-glow, var(--accent-cyan));
+      background: rgba(255, 255, 255, 0.05);
+      padding: 3px 8px;
+      border-radius: 6px;
+      border: 1px solid var(--border-glass);
+    }
+
+    .concept-icon {
+      font-size: 32px;
+    }
+
+    .concept-body {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .concept-title {
+      font-size: 20px;
+      font-weight: 800;
+      color: #fff;
+    }
+
+    .concept-subtitle {
+      font-size: 12px;
+      color: var(--card-glow, var(--accent-cyan));
+      font-family: var(--font-code);
+      font-weight: 600;
+    }
+
+    .concept-desc {
+      font-size: 13.5px;
+      color: var(--text-muted);
+      line-height: 1.6;
+      word-break: keep-all;
+    }
+
+    .feature-highlights {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      background: rgba(0, 0, 0, 0.25);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 8px;
+      padding: 10px 12px;
+      font-size: 12px;
+    }
+
+    .feature-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #cbd5e1;
+    }
+
+    .feature-item span.bullet {
+      color: var(--card-glow, var(--accent-cyan));
+    }
+
+    .concept-launch-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      background: var(--card-glow, var(--accent-cyan));
+      color: #080c16;
+      padding: 11px;
+      border-radius: 10px;
+      font-size: 12.5px;
+      font-weight: 700;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+
+    .concept-launch-btn:hover {
+      filter: brightness(1.15);
+      box-shadow: 0 4px 18px var(--card-glow-alpha, rgba(0, 242, 254, 0.4));
+    }
+
+    /* 푸터 */
+    .hub-footer {
+      text-align: center;
+      font-size: 12px;
+      color: var(--text-muted);
+      font-family: var(--font-code);
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      padding-top: 24px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 배경 오로라 블롭 레이어 -->
+  <div class="aurora-container" aria-hidden="true">
+    <div class="aurora-blob blob-1"></div>
+    <div class="aurora-blob blob-2"></div>
+    <div class="aurora-blob blob-3"></div>
+  </div>
+
+  <div class="hub-wrapper">
+
+    <!-- 상단 히어로 헤더 -->
+    <header class="hub-hero">
+      <div class="hub-badge">
+        <span>✨</span> 10 Distinct Interactive Visualization Archetypes
+      </div>
+      <h1 class="hub-title">
+        Supianna's Creative Prototypes<br>
+        <span class="gradient">포트폴리오 시각화 10대 컨셉 컬렉션</span>
+      </h1>
+      <p class="hub-desc">
+        다크 코스믹 테마 5종과 순백의 화이트 미니멀리즘 5종 등 총 10가지 독창적인 인터랙티브 경험을 설계했습니다.
+        각 카드를 클릭하여 살아 숨 쉬는 페이지를 직접 감상하고 가장 어울리는 비주얼 스타일을 찾아보세요.
+      </p>
+      <div class="hub-quick-nav">
+        <a href="../portfolio/index.html" class="hub-btn hub-btn-primary">
+          <span>🌌 메인 오로라 포트폴리오</span>
+        </a>
+        <a href="https://github.com/supianna/supianna.github.io" target="_blank" class="hub-btn hub-btn-outline">
+          <span>GitHub 저장소 ↗</span>
+        </a>
+      </div>
+    </header>
+
+    <!-- 테마 필터 탭 바 -->
+    <div class="filter-tabs-bar">
+      <button class="tab-btn active" data-filter="all">전체 10대 컨셉 보기</button>
+      <button class="tab-btn" data-filter="white">🤍 미니멀 화이트 (6~10)</button>
+      <button class="tab-btn" data-filter="dark">🌌 코스믹 다크 (1~5)</button>
+    </div>
+
+    <!-- ============================================== -->
+    <!-- 미니멀 화이트 에디션 (6 ~ 10) -->
+    <!-- ============================================== -->
+    <section class="theme-section" id="section-white">
+      <div class="section-header-box">
+        <h2 class="section-title-text">🤍 Part 2. 미니멀 화이트 & 에디토리얼 에디션</h2>
+        <span class="section-badge" style="background: rgba(255,255,255,0.1); color: #fff;">06 - 10</span>
+      </div>
+
+      <div class="concepts-grid" style="margin-top: 14px;">
+        
+        <!-- 카드 6: 영수증 -->
+        <article class="concept-card" style="--card-glow: #e2e8f0; --card-glow-alpha: rgba(255, 255, 255, 0.3);">
+          <div>
+            <div class="concept-top">
+              <span class="concept-num">CONCEPT 06</span>
+              <span class="concept-icon">🧾</span>
+            </div>
+            <div class="concept-body" style="margin-top: 12px;">
+              <h3 class="concept-title">디지털 아카이브 ‘영수증/바코드’</h3>
+              <div class="concept-subtitle">Thermal Printer & Laser Barcode Scanner</div>
+              <p class="concept-desc">
+                서멀 프린터에서 영수증이 출력되며, 바코드와 항목을 마우스로 훑으면 레이저 스캔 빔과 비프음이 발생합니다.
+              </p>
+            </div>
+          </div>
+          <div>
+            <div class="feature-highlights">
+              <div class="feature-item"><span class="bullet">✔</span> 레이저 바코드 스캔 빔 & 비프 효과음</div>
+              <div class="feature-item"><span class="bullet">✔</span> 항목 클릭 시 미니멀 상세 결과물 팝업</div>
+            </div>
+            <a href="6_receipt_barcode.html" class="concept-launch-btn" style="margin-top: 12px;">
+              <span>체험하기 (6_receipt_barcode.html) →</span>
+            </a>
+          </div>
+        </article>
+
+        <!-- 카드 7: 매거진 -->
+        <article class="concept-card" style="--card-glow: #e5e7eb; --card-glow-alpha: rgba(255, 255, 255, 0.3);">
+          <div>
+            <div class="concept-top">
+              <span class="concept-num">CONCEPT 07</span>
+              <span class="concept-icon">📖</span>
+            </div>
+            <div class="concept-body" style="margin-top: 12px;">
+              <h3 class="concept-title">매거진 스프레드 뷰 (룩북)</h3>
+              <div class="concept-subtitle">Editorial Lookbook & 3D Sculpture</div>
+              <p class="concept-desc">
+                킨포크·보그 감성의 좌우 2면 스프레드 북. 좌측 볼드 타이포와 우측 회전하는 순백의 3D 조형물.
+              </p>
+            </div>
+          </div>
+          <div>
+            <div class="feature-highlights">
+              <div class="feature-item"><span class="bullet">✔</span> 휠/방향키 조작 시 페이퍼 플립 사운드</div>
+              <div class="feature-item"><span class="bullet">✔</span> Three.js 실시간 회전 3D 석고 조각상</div>
+            </div>
+            <a href="7_editorial_magazine.html" class="concept-launch-btn" style="margin-top: 12px;">
+              <span>체험하기 (7_editorial_magazine.html) →</span>
+            </a>
+          </div>
+        </article>
+
+        <!-- 카드 8: 스티커 보드 -->
+        <article class="concept-card" style="--card-glow: #60a5fa; --card-glow-alpha: rgba(96, 165, 250, 0.3);">
+          <div>
+            <div class="concept-top">
+              <span class="concept-num">CONCEPT 08</span>
+              <span class="concept-icon">📌</span>
+            </div>
+            <div class="concept-body" style="margin-top: 12px;">
+              <h3 class="concept-title">스티커 보드 & 핀터레스트 캔버스</h3>
+              <div class="concept-subtitle">Free Drag Canvas & Spring Grid Snap</div>
+              <p class="concept-desc">
+                마우스로 자유롭게 옮길 수 있는 포스트잇 카드들. '정리하기' 버튼을 누르면 칼각 그리드로 자동 정렬 복귀.
+              </p>
+            </div>
+          </div>
+          <div>
+            <div class="feature-highlights">
+              <div class="feature-item"><span class="bullet">✔</span> 마우스 자유 드래그 & z-index 자동 상승</div>
+              <div class="feature-item"><span class="bullet">✔</span> [칼각 그리드로 정렬] 스프링 물리 복귀</div>
+            </div>
+            <a href="8_sticker_canvas.html" class="concept-launch-btn" style="margin-top: 12px;">
+              <span>체험하기 (8_sticker_canvas.html) →</span>
+            </a>
+          </div>
+        </article>
+
+        <!-- 카드 9: macOS 팝업 -->
+        <article class="concept-card" style="--card-glow: #38bdf8; --card-glow-alpha: rgba(56, 189, 248, 0.3);">
+          <div>
+            <div class="concept-top">
+              <span class="concept-num">CONCEPT 09</span>
+              <span class="concept-icon">🪟</span>
+            </div>
+            <div class="concept-body" style="margin-top: 12px;">
+              <h3 class="concept-title">macOS 화이트 팝업 미니멀리즘</h3>
+              <div class="concept-subtitle">Spotlight Search & Frosted Glass Windows</div>
+              <p class="concept-desc">
+                중앙 Spotlight 검색창과 미니멀 독(Dock). 키워드 입력 시 맑은 사운드와 함께 창이 부드럽게 팝업됩니다.
+              </p>
+            </div>
+          </div>
+          <div>
+            <div class="feature-highlights">
+              <div class="feature-item"><span class="bullet">✔</span> Spotlight 검색 필터 & 키보드 엔터 오픈</div>
+              <div class="feature-item"><span class="bullet">✔</span> 윈도우 드래그 이동 및 마카롱 버튼 지원</div>
+            </div>
+            <a href="9_macos_white_popup.html" class="concept-launch-btn" style="margin-top: 12px;">
+              <span>체험하기 (9_macos_white_popup.html) →</span>
+            </a>
+          </div>
+        </article>
+
+        <!-- 카드 10: 캔버스 갤러리 -->
+        <article class="concept-card" style="--card-glow: #a3a3a3; --card-glow-alpha: rgba(255, 255, 255, 0.25);">
+          <div>
+            <div class="concept-top">
+              <span class="concept-num">CONCEPT 10</span>
+              <span class="concept-icon">🏛️</span>
+            </div>
+            <div class="concept-body" style="margin-top: 12px;">
+              <h3 class="concept-title">캔버스 갤러리 슬라이더 (전시관)</h3>
+              <div class="concept-subtitle">Curated Museum Exhibition & Lighting</div>
+              <p class="concept-desc">
+                현대 미술관의 하얀 벽면과 액자. 조명 슬라이더로 벽면 스포트라이트를 조절하고 차분한 BGM을 감상합니다.
+              </p>
+            </div>
+          </div>
+          <div>
+            <div class="feature-highlights">
+              <div class="feature-item"><span class="bullet">✔</span> 가로 휠 스크롤 액자 초점 포커스</div>
+              <div class="feature-item"><span class="bullet">✔</span> 조명 슬라이더 & 앰비언트 BGM 토글</div>
+            </div>
+            <a href="10_curated_gallery.html" class="concept-launch-btn" style="margin-top: 12px;">
+              <span>체험하기 (10_curated_gallery.html) →</span>
+            </a>
+          </div>
+        </article>
+
+      </div>
+    </section>
+
+    <!-- ============================================== -->
+    <!-- 코스믹 다크 에디션 (1 ~ 5) -->
+    <!-- ============================================== -->
+    <section class="theme-section" id="section-dark">
+      <div class="section-header-box" style="margin-top: 30px;">
+        <h2 class="section-title-text">🌌 Part 1. 코스믹 다크 & 인터랙티브 에디션</h2>
+        <span class="section-badge" style="background: rgba(0, 242, 254, 0.15); color: var(--accent-cyan);">01 - 05</span>
+      </div>
+
+      <div class="concepts-grid" style="margin-top: 14px;">
+
+        <!-- 카드 1: IDE -->
+        <article class="concept-card" style="--card-glow: #61afef; --card-glow-alpha: rgba(97, 175, 239, 0.3);">
+          <div>
+            <div class="concept-top">
+              <span class="concept-num">CONCEPT 01</span>
+              <span class="concept-icon">💻</span>
+            </div>
+            <div class="concept-body" style="margin-top: 12px;">
+              <h3 class="concept-title">IDE / 터미널 인터랙티브 UI</h3>
+              <div class="concept-subtitle">Developer VS Code & Interactive Shell</div>
+              <p class="concept-desc">
+                VS Code 스타일 다크 에디터와 대화형 터미널. 파일 클릭 시 코드와 프리뷰 카드가 동시 렌더링됩니다.
+              </p>
+            </div>
+          </div>
+          <div>
+            <div class="feature-highlights">
+              <div class="feature-item"><span class="bullet">✔</span> 터미널 자동 타이핑 부팅 애니메이션</div>
+              <div class="feature-item"><span class="bullet">✔</span> 'help', 'skills', 'run' 등 콘솔 쉘 내장</div>
+            </div>
+            <a href="1_ide_terminal.html" class="concept-launch-btn" style="margin-top: 12px;">
+              <span>체험하기 (1_ide_terminal.html) →</span>
+            </a>
+          </div>
+        </article>
+
+        <!-- 카드 2: 3D 성좌 -->
+        <article class="concept-card" style="--card-glow: #00f2fe; --card-glow-alpha: rgba(0, 242, 254, 0.3);">
+          <div>
+            <div class="concept-top">
+              <span class="concept-num">CONCEPT 02</span>
+              <span class="concept-icon">🌌</span>
+            </div>
+            <div class="concept-body" style="margin-top: 12px;">
+              <h3 class="concept-title">3D 기술/프로젝트 성좌</h3>
+              <div class="concept-subtitle">Three.js Cosmic Constellation Graph</div>
+              <p class="concept-desc">
+                Three.js 3D 공간에 내 역량이 별자리처럼 얽힌 구조. 마우스 드래그 360도 회전 및 카메라 줌인 팝업.
+              </p>
+            </div>
+          </div>
+          <div>
+            <div class="feature-highlights">
+              <div class="feature-item"><span class="bullet">✔</span> 3D 360도 회전, 줌인, 자동 회전 토글</div>
+              <div class="feature-item"><span class="bullet">✔</span> 노드 클릭 시 부드러운 카메라 타겟 줌인</div>
+            </div>
+            <a href="2_constellation_graph.html" class="concept-launch-btn" style="margin-top: 12px;">
+              <span>체험하기 (2_constellation_graph.html) →</span>
+            </a>
+          </div>
+        </article>
+
+        <!-- 카드 3: 대시보드 -->
+        <article class="concept-card" style="--card-glow: #00ffaa; --card-glow-alpha: rgba(0, 255, 170, 0.3);">
+          <div>
+            <div class="concept-top">
+              <span class="concept-num">CONCEPT 03</span>
+              <span class="concept-icon">📊</span>
+            </div>
+            <div class="concept-body" style="margin-top: 12px;">
+              <h3 class="concept-title">인터랙티브 데이터 대시보드</h3>
+              <div class="concept-subtitle">Personal Metrics & Mission Control</div>
+              <p class="concept-desc">
+                나를 데이터로 시각화한 관제 센터 UI. 해결한 에러 수 카운터, 레이더 역량 차트, 실시간 슬라이더.
+              </p>
+            </div>
+          </div>
+          <div>
+            <div class="feature-highlights">
+              <div class="feature-item"><span class="bullet">✔</span> 에러 해결수, 절약 시간 롤링 카운터</div>
+              <div class="feature-item"><span class="bullet">✔</span> Chart.js 고대비 6각 레이더 차트</div>
+            </div>
+            <a href="3_data_dashboard.html" class="concept-launch-btn" style="margin-top: 12px;">
+              <span>체험하기 (3_data_dashboard.html) →</span>
+            </a>
+          </div>
+        </article>
+
+        <!-- 카드 4: 스크롤텔링 -->
+        <article class="concept-card" style="--card-glow: #c678dd; --card-glow-alpha: rgba(198, 120, 221, 0.3);">
+          <div>
+            <div class="concept-top">
+              <span class="concept-num">CONCEPT 04</span>
+              <span class="concept-icon">📜</span>
+            </div>
+            <div class="concept-body" style="margin-top: 12px;">
+              <h3 class="concept-title">시네마틱 스크롤텔링</h3>
+              <div class="concept-subtitle">Scrollytelling Timeline & Chapter Journey</div>
+              <p class="concept-desc">
+                스크롤에 따라 배경 오로라와 3D 목업이 모핑되며 한 편의 영화처럼 개발자 여정을 보여줍니다.
+              </p>
+            </div>
+          </div>
+          <div>
+            <div class="feature-highlights">
+              <div class="feature-item"><span class="bullet">✔</span> 5대 챕터 스크롤 진행률 & 도트 네비</div>
+              <div class="feature-item"><span class="bullet">✔</span> 단계별 배경 오로라 모핑 & 목업 전환</div>
+            </div>
+            <a href="4_scrollytelling.html" class="concept-launch-btn" style="margin-top: 12px;">
+              <span>체험하기 (4_scrollytelling.html) →</span>
+            </a>
+          </div>
+        </article>
+
+        <!-- 카드 5: 아이소메트릭 -->
+        <article class="concept-card" style="--card-glow: #f5d76e; --card-glow-alpha: rgba(245, 215, 110, 0.3);">
+          <div>
+            <div class="concept-top">
+              <span class="concept-num">CONCEPT 05</span>
+              <span class="concept-icon">🕹️</span>
+            </div>
+            <div class="concept-body" style="margin-top: 12px;">
+              <h3 class="concept-title">게임풍 2D/아이소메트릭 맵</h3>
+              <div class="concept-subtitle">Pixel / Low-Poly Lab Room RPG</div>
+              <p class="concept-desc">
+                개발자의 방을 아이소메트릭 뷰로 재현. 모니터, 책장, 보드 클릭 시 8비트 사운드와 대화창 오픈.
+              </p>
+            </div>
+          </div>
+          <div>
+            <div class="feature-highlights">
+              <div class="feature-item"><span class="bullet">✔</span> 6대 소품 클릭 상호작용 & 8bit 사운드</div>
+              <div class="feature-item"><span class="bullet">✔</span> RPG 스탯 바 & 떠다니는 AI 펫 봇</div>
+            </div>
+            <a href="5_isometric_room.html" class="concept-launch-btn" style="margin-top: 12px;">
+              <span>체험하기 (5_isometric_room.html) →</span>
+            </a>
+          </div>
+        </article>
+
+      </div>
+    </section>
+
+    <!-- 푸터 -->
+    <footer class="hub-footer">
+      <p>Supianna Portfolio Visualization Project · 12 Curated Prototypes Created with Care ✨</p>
+    </footer>
+
+  </div>
+
+  <script>
+    // 탭 필터링 로직
+    const tabBtns = document.querySelectorAll(".tab-btn");
+    const secWhite = document.getElementById("section-white");
+    const secDark = document.getElementById("section-dark");
+
+    tabBtns.forEach(btn => {
+      btn.addEventListener("click", () => {
+        tabBtns.forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+
+        const filter = btn.getAttribute("data-filter");
+        if (filter === "all") {
+          secWhite.style.display = "block";
+          secDark.style.display = "block";
+        } else if (filter === "white") {
+          secWhite.style.display = "block";
+          secDark.style.display = "none";
+        } else if (filter === "dark") {
+          secWhite.style.display = "none";
+          secDark.style.display = "block";
+        }
+      });
+    });
+  </script>
+
+</body>
+</html>

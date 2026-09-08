@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <!-- 파일명: gitblog/8_sticker_canvas.html -->
+  <!-- 목적: 컨셉 8 - 스티커 보드 & 핀터레스트 캔버스 (자유 드래그 & 스프링 칼각 정렬) -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>컨셉 8: 스티커 보드 & 핀터레스트 캔버스 | Supianna Portfolio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Pretendard:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;600&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-canvas: #f8fafc;
+      --grid-dot: #cbd5e1;
+      --card-white: #ffffff;
+      --card-yellow: #fef08a;
+      --card-cyan: #cffafe;
+      --card-purple: #f3e8ff;
+      --card-emerald: #d1fae5;
+      --card-pink: #fce7f3;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --font-hand: 'Caveat', cursive;
+      --font-sans: 'Pretendard', sans-serif;
+      --font-mono: 'Fira Code', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-canvas);
+      color: var(--text-main);
+      font-family: var(--font-sans);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      user-select: none;
+      background-image: radial-gradient(var(--grid-dot) 1.2px, transparent 1.2px);
+      background-size: 28px 28px;
+    }
+
+    /* 상단 글로벌 네비게이션 배너 */
+    .global-nav-bar {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid #e2e8f0;
+      padding: 10px 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 12px;
+      z-index: 1000;
+    }
+
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 700;
+    }
+
+    .nav-badge {
+      background: #3b82f6;
+      color: #fff;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 10px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 12px;
+    }
+
+    .nav-link-btn {
+      color: var(--text-muted);
+      text-decoration: none;
+      padding: 4px 8px;
+      border-radius: 4px;
+      transition: color 0.15s;
+    }
+
+    .nav-link-btn:hover, .nav-link-btn.active {
+      color: #000;
+      font-weight: 600;
+    }
+
+    .nav-link-btn.active {
+      border-bottom: 2px solid #3b82f6;
+    }
+
+    /* 상단 인터랙티브 컨트롤 툴바 */
+    .canvas-toolbar {
+      padding: 12px 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: transparent;
+      z-index: 500;
+    }
+
+    .toolbar-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .canvas-title {
+      font-size: 18px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+    }
+
+    .canvas-hint {
+      font-size: 12px;
+      color: var(--text-muted);
+      background: rgba(255, 255, 255, 0.8);
+      border: 1px solid #e2e8f0;
+      padding: 4px 12px;
+      border-radius: 20px;
+    }
+
+    .toolbar-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn-tool {
+      background: #fff;
+      border: 1.5px solid #0f172a;
+      color: #0f172a;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-family: var(--font-sans);
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 2px 3px 0px #0f172a;
+      transition: all 0.15s;
+    }
+
+    .btn-tool:hover {
+      transform: translate(-1px, -1px);
+      box-shadow: 3px 4px 0px #0f172a;
+    }
+
+    .btn-tool:active {
+      transform: translate(1px, 1px);
+      box-shadow: 1px 1px 0px #0f172a;
+    }
+
+    .btn-align-primary {
+      background: #0f172a;
+      color: #fff;
+      box-shadow: 2px 3px 0px #64748b;
+    }
+
+    .btn-align-primary:hover {
+      background: #1e293b;
+      box-shadow: 3px 4px 0px #64748b;
+    }
+
+    /* 캔버스 메인 보드 */
+    .stickers-viewport {
+      flex: 1;
+      width: 100%;
+      height: 100%;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* 개별 스티커 카드 기본 스타일 */
+    .sticker-card {
+      position: absolute;
+      width: 280px;
+      padding: 20px 22px;
+      border-radius: 12px;
+      border: 2px solid #0f172a;
+      box-shadow: 4px 6px 0px rgba(15, 23, 42, 0.9);
+      cursor: grab;
+      touch-action: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      transition: box-shadow 0.2s, transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      z-index: 10;
+    }
+
+    .sticker-card.is-dragging {
+      cursor: grabbing;
+      box-shadow: 10px 16px 25px rgba(15, 23, 42, 0.25);
+      transform: scale(1.05) rotate(0deg) !important;
+      transition: box-shadow 0.2s, transform 0.05s linear;
+      z-index: 999 !important;
+    }
+
+    /* 마스킹 테이프 장식 */
+    .washi-tape {
+      position: absolute;
+      top: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80px;
+      height: 20px;
+      background: rgba(255, 255, 255, 0.75);
+      border: 1px dashed rgba(0, 0, 0, 0.2);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      pointer-events: none;
+    }
+
+    /* 핀 장식 */
+    .push-pin {
+      position: absolute;
+      top: -8px;
+      right: 14px;
+      font-size: 18px;
+      filter: drop-shadow(1px 2px 2px rgba(0, 0, 0, 0.3));
+      pointer-events: none;
+    }
+
+    .sticker-category {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-muted);
+    }
+
+    .sticker-title {
+      font-size: 17px;
+      font-weight: 800;
+      letter-spacing: -0.3px;
+      line-height: 1.3;
+    }
+
+    .sticker-body {
+      font-size: 13px;
+      line-height: 1.6;
+      color: #334155;
+    }
+
+    .handwriting-note {
+      font-family: var(--font-hand);
+      font-size: 20px;
+      line-height: 1.2;
+      color: #0284c7;
+      margin-top: 4px;
+    }
+
+    .sticker-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      margin-top: 4px;
+    }
+
+    .s-tag {
+      font-size: 10px;
+      font-family: var(--font-mono);
+      background: rgba(0, 0, 0, 0.06);
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    .sticker-action-btn {
+      align-self: flex-start;
+      margin-top: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      color: #0f172a;
+      text-decoration: none;
+      border-bottom: 1.5px solid #0f172a;
+      padding-bottom: 1px;
+    }
+
+    /* 폴라로이드 사진 스타일 스티커 */
+    .polaroid-card {
+      background: #fff;
+      padding: 14px 14px 20px;
+      width: 250px;
+    }
+
+    .polaroid-photo-box {
+      width: 100%;
+      height: 150px;
+      background: linear-gradient(135deg, #00f2fe, #9d4edd);
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 40px;
+      color: #fff;
+    }
+
+    .polaroid-caption {
+      font-family: var(--font-hand);
+      font-size: 20px;
+      text-align: center;
+      margin-top: 10px;
+      color: #1e293b;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 상단 글로벌 네비게이션 배너 -->
+  <header class="global-nav-bar">
+    <div class="nav-brand">
+      <span class="nav-badge">Concept 08</span>
+      <span>스티커 보드 & 핀터레스트 캔버스</span>
+    </div>
+    <nav class="nav-links">
+      <a href="index.html" class="nav-link-btn">← 허브</a>
+      <a href="6_receipt_barcode.html" class="nav-link-btn">6. 영수증</a>
+      <a href="7_editorial_magazine.html" class="nav-link-btn">7. 매거진</a>
+      <a href="8_sticker_canvas.html" class="nav-link-btn active">8. 스티커 보드</a>
+      <a href="9_macos_white_popup.html" class="nav-link-btn">9. 맥OS 팝업</a>
+      <a href="10_curated_gallery.html" class="nav-link-btn">10. 갤러리</a>
+    </nav>
+  </header>
+
+  <!-- 상단 인터랙티브 컨트롤 툴바 -->
+  <div class="canvas-toolbar">
+    <div class="toolbar-left">
+      <h1 class="canvas-title">📌 Supianna Inspiration Board</h1>
+      <span class="canvas-hint">💡 카드를 마우스로 자유롭게 드래그하세요!</span>
+    </div>
+    <div class="toolbar-actions">
+      <button class="btn-tool" id="btn-scatter">
+        <span>🎲</span> 자유롭게 흩뿌리기
+      </button>
+      <button class="btn-tool btn-align-primary" id="btn-align">
+        <span>📐</span> 칼각 그리드로 정렬하기
+      </button>
+    </div>
+  </div>
+
+  <!-- 캔버스 보드 뷰포트 -->
+  <main class="stickers-viewport" id="viewport">
+    
+    <!-- 스티커 1: 프로필 자기소개 -->
+    <div class="sticker-card" style="background: var(--card-yellow); top: 40px; left: 80px;" data-index="0">
+      <div class="washi-tape"></div>
+      <div class="sticker-category">DEVELOPER PROFILE</div>
+      <h2 class="sticker-title">Supianna (수피아나)</h2>
+      <p class="sticker-body">
+        밤하늘 오로라처럼 깊이 있는 사색과 단단한 아키텍처로 가치 있는 코드를 짓는 AI-Native 개발자입니다.
+      </p>
+      <div class="handwriting-note">"INFJ의 따뜻한 시선과 통찰 ✨"</div>
+      <div class="sticker-tags">
+        <span class="s-tag">#AI-Native</span>
+        <span class="s-tag">#INFJ</span>
+        <span class="s-tag">#ContinuousLearning</span>
+      </div>
+      <a href="../portfolio/index.html#who-am-i" target="_blank" class="sticker-action-btn">상세 프로필 보기 →</a>
+    </div>
+
+    <!-- 스티커 2: 폴라로이드 오로라 프로젝트 -->
+    <div class="sticker-card polaroid-card" style="top: 80px; left: 400px;" data-index="1">
+      <div class="push-pin">📍</div>
+      <div class="polaroid-photo-box">🌌</div>
+      <div class="polaroid-caption">Mystic Aurora Portfolio (2026)</div>
+      <p class="sticker-body" style="font-size: 11.5px; text-align: center; margin-top: 4px;">
+        신비로운 오로라 글로우와 글래스모피즘 싱글 스크린 대시보드
+      </p>
+      <a href="../portfolio/index.html" target="_blank" class="sticker-action-btn" style="align-self: center;">라이브 보기 →</a>
+    </div>
+
+    <!-- 스티커 3: Interactive Free Board -->
+    <div class="sticker-card" style="background: var(--card-cyan); top: 320px; left: 120px;" data-index="2">
+      <div class="washi-tape"></div>
+      <div class="sticker-category">INTERACTIVE APP</div>
+      <h2 class="sticker-title">Interactive Free Board</h2>
+      <p class="sticker-body">
+        브라우저 로컬 저장소와 연동되어 실시간으로 생각의 조각과 감성 메시지를 남기는 반응형 포스트잇 게시판.
+      </p>
+      <div class="handwriting-note">"따뜻한 마음을 남겨주세요 📝"</div>
+      <div class="sticker-tags">
+        <span class="s-tag">#TypeScript</span>
+        <span class="s-tag">#LocalStorage</span>
+      </div>
+      <a href="../portfolio/index.html#free-board" target="_blank" class="sticker-action-btn">방명록 체험하기 →</a>
+    </div>
+
+    <!-- 스티커 4: Clean Architecture 철학 -->
+    <div class="sticker-card" style="background: var(--card-emerald); top: 60px; left: 700px;" data-index="3">
+      <div class="push-pin">📌</div>
+      <div class="sticker-category">ARCHITECTURE PRINCIPLE</div>
+      <h2 class="sticker-title">단일 책임 원칙 (SRP)</h2>
+      <p class="sticker-body">
+        하나의 함수는 오직 하나의 역할만 수행하며, 원자적 커밋(Atomic Commits)으로 변경 이력을 정갈하게 보존합니다.
+      </p>
+      <div class="handwriting-note">"Clean & Sustainable Code"</div>
+      <div class="sticker-tags">
+        <span class="s-tag">#SRP</span>
+        <span class="s-tag">#AtomicCommits</span>
+        <span class="s-tag">#CleanCode</span>
+      </div>
+      <a href="1_ide_terminal.html" class="sticker-action-btn">아키텍처 엔진 확인 →</a>
+    </div>
+
+    <!-- 스티커 5: AI Agent Synergy -->
+    <div class="sticker-card" style="background: var(--card-purple); top: 360px; left: 450px;" data-index="4">
+      <div class="washi-tape"></div>
+      <div class="sticker-category">NEXT-GEN WORKFLOW</div>
+      <h2 class="sticker-title">AI 에이전트 협업 & 러닝</h2>
+      <p class="sticker-body">
+        단순 생성을 넘어 페어 프로그래밍을 통해 시스템의 내부 원리를 학습하고 당일 완성하는 초고속 실행력.
+      </p>
+      <div class="handwriting-note">"300% Acceleration ⚡"</div>
+      <div class="sticker-tags">
+        <span class="s-tag">#PairProgramming</span>
+        <span class="s-tag">#uv</span>
+        <span class="s-tag">#Automation</span>
+      </div>
+      <a href="3_data_dashboard.html" class="sticker-action-btn">텔레메트리 보기 →</a>
+    </div>
+
+    <!-- 스티커 6: 취향과 일상 -->
+    <div class="sticker-card" style="background: var(--card-pink); top: 300px; left: 780px;" data-index="5">
+      <div class="push-pin">📍</div>
+      <div class="sticker-category">LIFESTYLE & INSPIRATION</div>
+      <h2 class="sticker-title">밤하늘 천체 관측 & 커피</h2>
+      <p class="sticker-body">
+        탁 트인 밤하늘의 은하수와 별빛을 보며 깊은 사색에 잠기고, 향긋한 드립 커피와 함께 테크 아티클을 읽습니다.
+      </p>
+      <div class="handwriting-note">"Stargazing & Hot Coffee ☕"</div>
+      <div class="sticker-tags">
+        <span class="s-tag">#Cosmic</span>
+        <span class="s-tag">#Stargazing</span>
+      </div>
+      <a href="5_isometric_room.html" class="sticker-action-btn">작업 공간 구경하기 →</a>
+    </div>
+
+  </main>
+
+  <script>
+    // [1. 자유 드래그 & 드롭 물리 구현]
+    const cards = document.querySelectorAll(".sticker-card");
+    let highestZ = 20;
+
+    cards.forEach(card => {
+      let isDragging = false;
+      let startX, startY;
+      let initialLeft, initialTop;
+
+      // 초기 무작위 미세 회전각 부여
+      const initRot = (Math.random() * 8 - 4).toFixed(1);
+      card.style.transform = `rotate(${initRot}deg)`;
+      card.dataset.rotation = initRot;
+
+      card.addEventListener("mousedown", (e) => {
+        // 링크 클릭 방지 제외
+        if (e.target.tagName.toLowerCase() === "a") return;
+
+        isDragging = true;
+        card.classList.add("is-dragging");
+        highestZ++;
+        card.style.zIndex = highestZ;
+
+        startX = e.clientX;
+        startY = e.clientY;
+
+        const rect = card.getBoundingClientRect();
+        const parentRect = card.parentElement.getBoundingClientRect();
+        initialLeft = rect.left - parentRect.left;
+        initialTop = rect.top - parentRect.top;
+
+        function onMouseMove(moveEvent) {
+          if (!isDragging) return;
+          const dx = moveEvent.clientX - startX;
+          const dy = moveEvent.clientY - startY;
+
+          card.style.left = `${initialLeft + dx}px`;
+          card.style.top = `${initialTop + dy}px`;
+        }
+
+        function onMouseUp() {
+          isDragging = false;
+          card.classList.remove("is-dragging");
+          const rot = card.dataset.rotation || 0;
+          card.style.transform = `rotate(${rot}deg)`;
+
+          window.removeEventListener("mousemove", onMouseMove);
+          window.removeEventListener("mouseup", onMouseUp);
+        }
+
+        window.addEventListener("mousemove", onMouseMove);
+        window.addEventListener("mouseup", onMouseUp);
+      });
+    });
+
+    // [2. 칼각 그리드 정렬 (Auto-Align)]
+    const btnAlign = document.getElementById("btn-align");
+    const btnScatter = document.getElementById("btn-scatter");
+    let isAligned = false;
+
+    btnAlign.addEventListener("click", () => {
+      isAligned = true;
+      const viewport = document.getElementById("viewport");
+      const vWidth = viewport.clientWidth;
+
+      // 3열 그리드 좌표 계산
+      const colWidth = 320;
+      const rowHeight = 320;
+      const startX = Math.max((vWidth - (colWidth * 3)) / 2, 40);
+      const startY = 50;
+
+      cards.forEach((card, idx) => {
+        const col = idx % 3;
+        const row = Math.floor(idx / 3);
+
+        const targetX = startX + col * colWidth;
+        const targetY = startY + row * rowHeight;
+
+        card.style.transition = "all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275)";
+        card.style.left = `${targetX}px`;
+        card.style.top = `${targetY}px`;
+        card.style.transform = "rotate(0deg)";
+      });
+    });
+
+    // [3. 자유롭게 흩뿌리기 (Scatter)]
+    btnScatter.addEventListener("click", () => {
+      isAligned = false;
+      const viewport = document.getElementById("viewport");
+      const maxW = viewport.clientWidth - 320;
+      const maxH = viewport.clientHeight - 340;
+
+      cards.forEach(card => {
+        const randX = Math.max(40, Math.floor(Math.random() * maxW));
+        const randY = Math.max(30, Math.floor(Math.random() * maxH));
+        const randRot = (Math.random() * 12 - 6).toFixed(1);
+
+        card.dataset.rotation = randRot;
+        card.style.transition = "all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275)";
+        card.style.left = `${randX}px`;
+        card.style.top = `${randY}px`;
+        card.style.transform = `rotate(${randRot}deg)`;
+      });
+    });
+  </script>
+</body>
+</html>
+
