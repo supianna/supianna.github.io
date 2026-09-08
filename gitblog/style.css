@@ -1,5 +1,6 @@
 /* ==========================================================================
    Supia.log | Modern Minimalist Clean Blog Stylesheet
+   - 바탕화면 배경: 윤슬 바다 (윤슬바다.avif) 전체 페이지 적용
    - 테마: 서귀포의 이른 봄 (5가지 핵심 색상 팔레트)
      1. #272A59 (Deep Midnight Navy - 로고, 주요 헤딩, 활성 탭, 주요 버튼)
      2. #58748C (Slate Blue - 보조 텍스트, 설명글, 메타데이터, 보더)
@@ -21,7 +22,13 @@
   --color-sky: #a0c3d9;
   --color-offwhite: #f2f2f2;
   --color-pure-white: #ffffff;
-  --color-bg-page: #f8fafc;
+  --color-bg-page: #dce7f0;
+
+  /* 글래스모피즘 반투명 서피스 */
+  --glass-bg: rgba(255, 255, 255, 0.86);
+  --glass-bg-hover: rgba(255, 255, 255, 0.96);
+  --glass-border: rgba(255, 255, 255, 0.75);
+  --glass-nav: rgba(255, 255, 255, 0.82);
 
   /* 시맨틱 색상 매핑 */
   --text-primary: var(--color-navy);
@@ -41,9 +48,9 @@
   --radius-lg: 16px;
   --radius-full: 9999px;
 
-  --shadow-sm: 0 2px 8px rgba(39, 42, 89, 0.04);
-  --shadow-md: 0 6px 20px -3px rgba(39, 42, 89, 0.07);
-  --shadow-lg: 0 14px 32px -4px rgba(39, 42, 89, 0.12);
+  --shadow-sm: 0 4px 14px rgba(39, 42, 89, 0.05);
+  --shadow-md: 0 8px 24px -3px rgba(39, 42, 89, 0.09);
+  --shadow-lg: 0 16px 36px -4px rgba(39, 42, 89, 0.14);
 
   --transition-fast: 0.18s ease;
   --transition-normal: 0.25s cubic-bezier(0.2, 0, 0, 1);
@@ -51,7 +58,7 @@
 }
 
 /* --------------------------------------------------------------------------
-   2. 리셋 및 글로벌 기본 스타일
+   2. 리셋 및 글로벌 기본 스타일 & 윤슬 바다 바탕화면
    -------------------------------------------------------------------------- */
 *, *::before, *::after {
   box-sizing: border-box;
@@ -74,6 +81,22 @@ body {
   flex-direction: column;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  position: relative;
+}
+
+/* ★ 모든 페이지 바탕화면: 윤슬 바다 (윤슬바다.avif) 고화질 픽스드 배경 레이어 */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background-image: 
+    linear-gradient(180deg, rgba(255, 255, 255, 0.18) 0%, rgba(255, 255, 255, 0.06) 45%, rgba(220, 238, 252, 0.28) 100%),
+    url('윤슬바다.avif');
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  pointer-events: none;
 }
 
 /* ==========================================================================
@@ -119,16 +142,17 @@ button, input, textarea, select {
 }
 
 /* --------------------------------------------------------------------------
-   3. 상단 헤더 & GNB (GitHub/포트폴리오 버튼 없이 로고 + 4대 탭만 단정하게)
+   3. 상단 헤더 & GNB (글래스모피즘 & 로고 + 4대 탭)
    -------------------------------------------------------------------------- */
 .navbar {
   position: sticky;
   top: 0;
   z-index: 100;
-  background-color: rgba(255, 255, 255, 0.94);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-bottom: 1px solid var(--border-subtle);
+  background-color: var(--glass-nav);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--glass-border);
+  box-shadow: 0 2px 10px rgba(39, 42, 89, 0.03);
   flex-shrink: 0;
 }
 
@@ -177,12 +201,13 @@ button, input, textarea, select {
 
 .tab-btn:hover {
   color: var(--color-navy);
-  background-color: rgba(160, 195, 217, 0.15);
+  background-color: rgba(255, 255, 255, 0.6);
 }
 
 .tab-btn.active {
   color: var(--color-navy);
-  background-color: rgba(160, 195, 217, 0.25);
+  background-color: rgba(255, 255, 255, 0.85);
+  box-shadow: 0 2px 6px rgba(39, 42, 89, 0.06);
   font-weight: 700;
 }
 
@@ -234,7 +259,7 @@ button, input, textarea, select {
 .section-intro {
   margin-bottom: 2.2rem;
   padding-bottom: 1rem;
-  border-bottom: 1.5px solid var(--border-subtle);
+  border-bottom: 1.5px solid rgba(160, 195, 217, 0.4);
 }
 
 .page-title {
@@ -243,11 +268,13 @@ button, input, textarea, select {
   color: var(--color-navy);
   letter-spacing: -0.03em;
   margin-bottom: 0.35rem;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.85);
 }
 
 .page-desc {
   font-size: 1.02rem;
   color: var(--color-slate);
+  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.7);
 }
 
 /* --------------------------------------------------------------------------
@@ -269,11 +296,14 @@ button, input, textarea, select {
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--color-navy);
-  background-color: rgba(160, 195, 217, 0.3);
+  background-color: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   padding: 3px 12px;
   border-radius: var(--radius-full);
   margin-bottom: 0.5rem;
-  border: 1px solid rgba(128, 162, 191, 0.3);
+  border: 1px solid rgba(160, 195, 217, 0.45);
+  box-shadow: 0 2px 8px rgba(39, 42, 89, 0.04);
 }
 
 .home-title {
@@ -283,6 +313,7 @@ button, input, textarea, select {
   letter-spacing: -0.03em;
   line-height: 1.3;
   margin-bottom: 0.3rem;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.85);
 }
 
 .home-desc {
@@ -290,6 +321,7 @@ button, input, textarea, select {
   color: var(--color-slate);
   margin: 0 auto;
   max-width: 580px;
+  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.7);
 }
 
 /* 4대 핵심 카드 섹션 그리드 */
@@ -301,8 +333,10 @@ button, input, textarea, select {
 }
 
 .home-card {
-  background-color: var(--color-pure-white);
-  border: 1px solid var(--border-card);
+  background-color: var(--glass-bg);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid var(--glass-border);
   border-radius: var(--radius-md);
   padding: clamp(1.1rem, 2vh, 1.45rem) clamp(1.2rem, 1.6vw, 1.5rem);
   display: flex;
@@ -310,7 +344,7 @@ button, input, textarea, select {
   justify-content: space-between;
   cursor: pointer;
   box-shadow: var(--shadow-sm);
-  transition: transform var(--transition-fast), box-shadow var(--transition-fast), border-color var(--transition-fast);
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast), border-color var(--transition-fast), background-color var(--transition-fast);
   position: relative;
   overflow: hidden;
 }
@@ -329,6 +363,7 @@ button, input, textarea, select {
 
 .home-card:hover {
   transform: translateY(-3px);
+  background-color: var(--glass-bg-hover);
   border-color: var(--color-soft-blue);
   box-shadow: var(--shadow-md);
 }
@@ -349,7 +384,7 @@ button, input, textarea, select {
   font-size: 0.74rem;
   font-weight: 700;
   color: var(--color-navy);
-  background-color: rgba(160, 195, 217, 0.25);
+  background-color: rgba(160, 195, 217, 0.35);
   padding: 2px 8px;
   border-radius: var(--radius-xs);
   letter-spacing: -0.01em;
@@ -398,7 +433,7 @@ button, input, textarea, select {
   align-items: center;
   margin-top: auto;
   padding-top: 0.4rem;
-  border-top: 1px dashed rgba(226, 232, 240, 0.8);
+  border-top: 1px dashed rgba(88, 116, 140, 0.25);
 }
 
 .action-text {
@@ -426,8 +461,10 @@ button, input, textarea, select {
 }
 
 .content-block {
-  background-color: var(--color-pure-white);
-  border: 1px solid var(--border-card);
+  background-color: var(--glass-bg);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid var(--glass-border);
   border-radius: var(--radius-md);
   padding: 1.6rem 1.8rem;
   box-shadow: var(--shadow-sm);
@@ -441,7 +478,7 @@ button, input, textarea, select {
   font-weight: 700;
   color: var(--color-navy);
   padding-bottom: 0.4rem;
-  border-bottom: 1.5px solid rgba(160, 195, 217, 0.25);
+  border-bottom: 1.5px solid rgba(160, 195, 217, 0.35);
   display: flex;
   align-items: center;
   gap: 8px;
@@ -449,7 +486,7 @@ button, input, textarea, select {
 
 .text-paragraph {
   font-size: 0.98rem;
-  color: #334155;
+  color: #272a59;
   line-height: 1.75;
 }
 
@@ -463,7 +500,7 @@ button, input, textarea, select {
 .simple-list li {
   position: relative;
   padding-left: 1.25rem;
-  color: #334155;
+  color: #272a59;
   font-size: 0.95rem;
   line-height: 1.65;
 }
@@ -486,10 +523,11 @@ button, input, textarea, select {
   font-size: 0.84rem;
   font-weight: 600;
   color: var(--color-navy);
-  background-color: rgba(160, 195, 217, 0.18);
-  border: 1px solid rgba(128, 162, 191, 0.35);
+  background-color: rgba(255, 255, 255, 0.75);
+  border: 1px solid rgba(128, 162, 191, 0.45);
   padding: 0.35rem 0.85rem;
   border-radius: var(--radius-full);
+  box-shadow: 0 1px 4px rgba(39, 42, 89, 0.04);
 }
 
 .links-row {
@@ -500,8 +538,8 @@ button, input, textarea, select {
 }
 
 .text-link-btn {
-  background-color: var(--color-bg-page);
-  border: 1px solid var(--border-subtle);
+  background-color: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(160, 195, 217, 0.5);
   color: var(--color-navy);
   font-weight: 600;
   font-size: 0.9rem;
@@ -527,26 +565,29 @@ button, input, textarea, select {
 }
 
 .project-item {
-  background-color: var(--color-pure-white);
-  border: 1px solid var(--border-card);
+  background-color: var(--glass-bg);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid var(--glass-border);
   border-radius: var(--radius-md);
   padding: 1.6rem 1.85rem;
   box-shadow: var(--shadow-sm);
   display: flex;
   flex-direction: column;
   gap: 0.8rem;
-  transition: transform var(--transition-fast), box-shadow var(--transition-fast), border-color var(--transition-fast);
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast), border-color var(--transition-fast), background-color var(--transition-fast);
 }
 
 .project-item:hover {
   transform: translateY(-2px);
+  background-color: var(--glass-bg-hover);
   box-shadow: var(--shadow-md);
   border-color: var(--color-soft-blue);
 }
 
 /* ★ 대표 프로젝트: Supianna 디지털 포트폴리오 웹사이트 카드 */
 .portfolio-featured-card {
-  background: linear-gradient(135deg, #ffffff 0%, rgba(160, 195, 217, 0.18) 100%);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(200, 228, 250, 0.85) 100%);
   border: 1.8px solid var(--color-soft-blue);
   box-shadow: var(--shadow-md);
   position: relative;
@@ -599,17 +640,17 @@ button, input, textarea, select {
 
 .project-summary {
   font-size: 0.95rem;
-  color: #334155;
+  color: #272a59;
   line-height: 1.65;
 }
 
 .project-meta {
   font-size: 0.86rem;
   color: var(--color-slate);
-  background-color: rgba(248, 250, 252, 0.8);
+  background-color: rgba(255, 255, 255, 0.65);
   padding: 0.6rem 0.85rem;
   border-radius: var(--radius-sm);
-  border: 1px solid var(--border-subtle);
+  border: 1px solid rgba(160, 195, 217, 0.35);
 }
 
 .meta-label {
@@ -646,7 +687,7 @@ button, input, textarea, select {
 }
 
 .btn-simple-action {
-  background-color: transparent;
+  background-color: rgba(255, 255, 255, 0.8);
   border: 1px solid var(--color-slate);
   color: var(--color-navy);
   font-size: 0.88rem;
@@ -658,7 +699,8 @@ button, input, textarea, select {
 }
 
 .btn-simple-action:hover {
-  background-color: var(--color-offwhite);
+  background-color: var(--color-navy);
+  color: var(--color-pure-white);
   border-color: var(--color-navy);
 }
 
@@ -671,8 +713,10 @@ button, input, textarea, select {
   gap: 0.85rem;
   margin-bottom: 2.5rem;
   padding: 1.6rem;
-  background-color: var(--color-pure-white);
-  border: 1px solid var(--border-card);
+  background-color: var(--glass-bg);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid var(--glass-border);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-sm);
 }
@@ -685,9 +729,9 @@ button, input, textarea, select {
 .form-inputs-row input,
 .form-inputs-row select {
   padding: 0.55rem 0.85rem;
-  border: 1px solid var(--border-subtle);
+  border: 1px solid rgba(160, 195, 217, 0.45);
   border-radius: var(--radius-sm);
-  background-color: var(--color-bg-page);
+  background-color: rgba(255, 255, 255, 0.85);
   outline: none;
   color: var(--color-navy);
   font-size: 0.92rem;
@@ -705,9 +749,9 @@ button, input, textarea, select {
 .simple-board-form textarea {
   width: 100%;
   padding: 0.75rem 0.85rem;
-  border: 1px solid var(--border-subtle);
+  border: 1px solid rgba(160, 195, 217, 0.45);
   border-radius: var(--radius-sm);
-  background-color: var(--color-bg-page);
+  background-color: rgba(255, 255, 255, 0.85);
   outline: none;
   resize: vertical;
   color: var(--color-navy);
@@ -720,7 +764,7 @@ button, input, textarea, select {
 .simple-board-form select:focus,
 .simple-board-form textarea:focus {
   border-color: var(--color-soft-blue);
-  box-shadow: 0 0 0 3px rgba(128, 162, 191, 0.25);
+  box-shadow: 0 0 0 3px rgba(128, 162, 191, 0.3);
   background-color: var(--color-pure-white);
 }
 
@@ -755,9 +799,10 @@ button, input, textarea, select {
 /* 방명록 피드 리스트 */
 .feed-count-bar {
   font-size: 0.92rem;
-  color: var(--color-slate);
+  color: var(--color-navy);
+  font-weight: 600;
   padding-bottom: 0.65rem;
-  border-bottom: 1.5px solid var(--border-subtle);
+  border-bottom: 1.5px solid rgba(160, 195, 217, 0.4);
   margin-bottom: 1rem;
 }
 
@@ -768,8 +813,10 @@ button, input, textarea, select {
 }
 
 .board-item {
-  background-color: var(--color-pure-white);
-  border: 1px solid var(--border-card);
+  background-color: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
   border-radius: var(--radius-sm);
   padding: 1.2rem 1.4rem;
   box-shadow: var(--shadow-sm);
@@ -797,7 +844,7 @@ button, input, textarea, select {
   font-size: 0.72rem;
   font-weight: 600;
   color: var(--color-navy);
-  background-color: rgba(160, 195, 217, 0.3);
+  background-color: rgba(160, 195, 217, 0.35);
   padding: 2px 7px;
   border-radius: var(--radius-xs);
 }
@@ -810,7 +857,7 @@ button, input, textarea, select {
 
 .board-text {
   font-size: 0.94rem;
-  color: #334155;
+  color: #272a59;
   line-height: 1.6;
   white-space: pre-wrap;
   word-break: break-word;
@@ -828,14 +875,14 @@ button, input, textarea, select {
   font-size: 0.8rem;
   color: var(--color-slate);
   cursor: pointer;
-  padding: 2px 4px;
+  padding: 2px 6px;
   border-radius: var(--radius-xs);
   transition: var(--transition-fast);
 }
 
 .btn-board-action:hover {
   color: var(--color-navy);
-  background-color: rgba(160, 195, 217, 0.2);
+  background-color: rgba(255, 255, 255, 0.8);
 }
 
 /* --------------------------------------------------------------------------
@@ -845,9 +892,9 @@ button, input, textarea, select {
   display: none;
   position: fixed;
   inset: 0;
-  background-color: rgba(39, 42, 89, 0.45);
-  backdrop-filter: blur(5px);
-  -webkit-backdrop-filter: blur(5px);
+  background-color: rgba(39, 42, 89, 0.5);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   z-index: 1000;
   align-items: center;
   justify-content: center;
@@ -862,7 +909,9 @@ button, input, textarea, select {
 }
 
 .modal-dialog {
-  background-color: var(--color-pure-white);
+  background-color: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
   max-width: 720px;
@@ -916,7 +965,7 @@ button, input, textarea, select {
 .category-tag-badge {
   font-weight: 700;
   color: var(--color-navy);
-  background-color: rgba(160, 195, 217, 0.3);
+  background-color: rgba(160, 195, 217, 0.35);
   padding: 2px 8px;
   border-radius: var(--radius-xs);
 }
@@ -939,7 +988,7 @@ button, input, textarea, select {
 .row-tag {
   font-size: 0.76rem;
   color: var(--color-slate);
-  background-color: var(--color-bg-page);
+  background-color: rgba(255, 255, 255, 0.8);
   border: 1px solid var(--border-subtle);
   padding: 2px 7px;
   border-radius: var(--radius-xs);
@@ -948,7 +997,7 @@ button, input, textarea, select {
 .modal-article-body {
   font-size: 1rem;
   line-height: 1.85;
-  color: #334155;
+  color: #272a59;
 }
 
 .modal-article-body h3 {
@@ -964,7 +1013,7 @@ button, input, textarea, select {
 
 .modal-article-body blockquote {
   border-left: 3.5px solid var(--color-soft-blue);
-  background-color: rgba(160, 195, 217, 0.15);
+  background-color: rgba(160, 195, 217, 0.2);
   padding: 0.85rem 1.25rem;
   border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
   margin: 1.35rem 0;
@@ -997,8 +1046,10 @@ button, input, textarea, select {
    10. 푸터
    -------------------------------------------------------------------------- */
 .footer {
-  border-top: 1px solid var(--border-subtle);
-  background-color: var(--color-pure-white);
+  border-top: 1px solid var(--glass-border);
+  background-color: var(--glass-nav);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
   padding: 1.5rem;
   margin-top: auto;
 }
