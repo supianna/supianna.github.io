@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>도스 고전 너구리 게임 (Ponpoko Web Remake)</title>
+  <meta name="description" content="1980~90년대 추억의 도스 명작 아케이드 게임 너구리(Ponpoko) 웹 리메이크! 방향키와 스페이스바로 압정과 뱀을 뛰어넘으세요.">
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Pretendard:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- CRT 스캔라인 & 비네팅 효과 레이어 -->
+  <div class="crt-overlay"></div>
+
+  <div class="game-wrapper">
+    <!-- 레트로 아케이드 상단 헤더 -->
+    <header class="arcade-header">
+      <div class="brand-box">
+        <a href="../index.html" class="back-link" title="블로그 메인으로 돌아가기">← BLOG</a>
+        <h1 class="game-title">PONPOKO <span>너구리</span></h1>
+      </div>
+
+      <!-- 게임 상태 HUD -->
+      <div class="hud-bar">
+        <div class="hud-item score-box">
+          <span class="hud-label">SCORE</span>
+          <span id="score-val" class="hud-val">00000</span>
+        </div>
+        <div class="hud-item high-box">
+          <span class="hud-label">HIGH</span>
+          <span id="high-score-val" class="hud-val">05000</span>
+        </div>
+        <div class="hud-item stage-box">
+          <span class="hud-label">STAGE</span>
+          <span id="stage-val" class="hud-val">1</span>
+        </div>
+        <div class="hud-item lives-box">
+          <span class="hud-label">REST</span>
+          <div id="lives-container" class="lives-icons">
+            <span>🦝</span><span>🦝</span><span>🦝</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 사운드 & 조작 안내 컨트롤 -->
+      <div class="header-controls">
+        <button id="btn-sound" class="arcade-btn" title="사운드 켜기/끄기">🔊 SOUND ON</button>
+        <button id="btn-restart" class="arcade-btn" title="게임 다시 시작">🔄 RESTART</button>
+      </div>
+    </header>
+
+    <!-- 게임 캔버스 컨테이너 -->
+    <main class="canvas-container">
+      <canvas id="gameCanvas" width="800" height="600"></canvas>
+
+      <!-- 시작 / 일시정지 / 게임오버 / 클리어 오버레이 -->
+      <div id="game-overlay" class="game-overlay active">
+        <div class="overlay-content">
+          <div class="overlay-badge">RETRO ARCADE 1982</div>
+          <h2 id="overlay-title" class="overlay-title">PONPOKO</h2>
+          <p id="overlay-msg" class="overlay-msg">방향키로 이동하고 사다리를 타며,<br>스페이스바로 압정과 뱀을 뛰어넘으세요!</p>
+          
+          <div class="guide-box">
+            <div class="guide-row">
+              <span class="key-badge">←</span>
+              <span class="key-badge">→</span>
+              <span class="key-desc">좌우 이동</span>
+            </div>
+            <div class="guide-row">
+              <span class="key-badge">↑</span>
+              <span class="key-badge">↓</span>
+              <span class="key-desc">사다리 타기</span>
+            </div>
+            <div class="guide-row">
+              <span class="key-badge">SPACE</span>
+              <span class="key-desc">포물선 점프</span>
+            </div>
+          </div>
+
+          <button id="btn-start" class="btn-start-action">GAME START</button>
+        </div>
+      </div>
+    </main>
+
+    <!-- 모바일 온스크린 가상 패드 (스마트폰 터치 지원) -->
+    <div class="mobile-controls">
+      <div class="dpad-box">
+        <button id="touch-up" class="touch-btn dpad-up" aria-label="위로">▲</button>
+        <div class="dpad-middle">
+          <button id="touch-left" class="touch-btn dpad-left" aria-label="왼쪽">◀</button>
+          <div class="dpad-center"></div>
+          <button id="touch-right" class="touch-btn dpad-right" aria-label="오른쪽">▶</button>
+        </div>
+        <button id="touch-down" class="touch-btn dpad-down" aria-label="아래로">▼</button>
+      </div>
+
+      <div class="action-box">
+        <button id="touch-jump" class="touch-btn action-jump">
+          <span>JUMP</span>
+          <small>(SPACE)</small>
+        </button>
+      </div>
+    </div>
+
+    <!-- 하단 푸터 팁 -->
+    <footer class="game-footer">
+      <p>💡 <strong>꿀팁</strong>: 달리는 도중 점프하면 앞으로 멀리 뛰며, 사다리에서는 점프할 수 없습니다!</p>
+    </footer>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>
