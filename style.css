@@ -909,8 +909,320 @@ button, input, textarea, select {
 }
 
 /* --------------------------------------------------------------------------
-   6. 탭 2: Who am I ? (단정하고 격조 있는 소개)
+   6. 탭 2: Who am I ? (귀여운 해달이 조개를 던져 소개를 여는 인터랙션)
    -------------------------------------------------------------------------- */
+
+/* 해달 & 조개 시네마틱 무대 */
+.otter-stage {
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 0.5rem 0 1.2rem;
+  z-index: 5;
+}
+
+/* 좌측 하단 해달 캐릭터 */
+.otter-character {
+  position: relative;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+  z-index: 15;
+  animation: otterBob 4.2s ease-in-out infinite;
+  transition: transform 0.35s cubic-bezier(0.2, 0.9, 0.3, 1);
+  outline: none;
+}
+
+.otter-character:hover {
+  transform: scale(1.08) translateY(-4px);
+}
+
+.otter-character:active {
+  transform: scale(0.96) translateY(2px);
+}
+
+/* 수면 위 둥둥 부유 모션 */
+@keyframes otterBob {
+  0%, 100% {
+    transform: translateY(0px) rotate(-1.5deg);
+  }
+  50% {
+    transform: translateY(-8px) rotate(2deg);
+  }
+}
+
+.otter-svg {
+  width: 155px;
+  height: 135px;
+  filter: drop-shadow(0 10px 18px rgba(25, 45, 65, 0.22));
+  transition: filter 0.3s ease;
+}
+
+.otter-character:hover .otter-svg {
+  filter: drop-shadow(0 14px 24px rgba(25, 55, 80, 0.32));
+}
+
+/* 해달 밑의 잔잔한 물결 파문 */
+.otter-water-ripples {
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 120px;
+  height: 40px;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.water-ripple {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  border: 1.5px solid rgba(165, 215, 245, 0.65);
+  animation: waterRipple 3.6s ease-out infinite;
+}
+
+.water-ripple.ripple-2 {
+  animation-delay: 1.8s;
+}
+
+@keyframes waterRipple {
+  0% {
+    width: 40px;
+    height: 18px;
+    opacity: 0.9;
+    border-color: rgba(210, 235, 255, 0.85);
+  }
+  100% {
+    width: 170px;
+    height: 55px;
+    opacity: 0;
+    border-color: rgba(130, 185, 220, 0.1);
+  }
+}
+
+/* 해달 말풍선 */
+.otter-speech-bubble {
+  position: absolute;
+  top: -34px;
+  left: 50%;
+  transform: translateX(-50%) translateY(4px) scale(0.88);
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  padding: 6px 14px;
+  border-radius: 18px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--color-navy);
+  box-shadow: 0 6px 18px rgba(20, 45, 70, 0.14);
+  border: 1.5px solid rgba(255, 255, 255, 0.98);
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  z-index: 20;
+}
+
+.otter-speech-bubble::after {
+  content: '';
+  position: absolute;
+  bottom: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 6px 6px 0;
+  border-style: solid;
+  border-color: rgba(255, 255, 255, 0.96) transparent;
+}
+
+.otter-character:hover .otter-speech-bubble {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0px) scale(1);
+}
+
+/* 앞발 투척 모션 */
+.otter-character.is-throwing .otter-paws {
+  animation: pawsToss 0.65s cubic-bezier(0.2, 0.9, 0.3, 1);
+}
+
+.otter-character.is-throwing .otter-chest-shell {
+  opacity: 0;
+}
+
+@keyframes pawsToss {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  35% {
+    transform: translateY(-16px) rotate(-12deg);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   날아가는 마법 조개 & 포물선 궤적 (Flying Shell Parabolic Arc)
+   -------------------------------------------------------------------------- */
+.otter-flying-shell {
+  position: absolute;
+  top: 35px;
+  left: 80px;
+  z-index: 30;
+  pointer-events: none;
+  opacity: 0;
+  transform-origin: center center;
+}
+
+.flying-shell-svg {
+  width: 58px;
+  height: 52px;
+  display: block;
+}
+
+/* 마법 빛줄기 꼬리 */
+.shell-magic-trail {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(220, 240, 255, 0.8) 0%, rgba(140, 200, 240, 0.3) 50%, transparent 70%);
+  filter: blur(8px);
+  z-index: -1;
+}
+
+/* 조개 포물선 투척 비행 애니메이션 */
+.otter-flying-shell.is-flying {
+  animation: shellArcFlight 0.85s cubic-bezier(0.25, 0.8, 0.35, 1) forwards;
+}
+
+@keyframes shellArcFlight {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0) scale(0.5) rotate(0deg);
+  }
+  10% {
+    opacity: 1;
+    transform: translate(30px, -45px) scale(0.8) rotate(70deg);
+  }
+  40% {
+    opacity: 1;
+    transform: translate(calc(22vw), -160px) scale(1.25) rotate(320deg);
+  }
+  75% {
+    opacity: 1;
+    transform: translate(calc(42vw), -60px) scale(1.05) rotate(600deg);
+  }
+  95% {
+    opacity: 1;
+    transform: translate(calc(48vw), 15px) scale(0.95) rotate(760deg);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(calc(48vw), 20px) scale(0.2) rotate(800deg);
+  }
+}
+
+/* 중앙 착지 지점 스파클 파열 이펙트 */
+.shell-landing-burst {
+  position: absolute;
+  top: 100px;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 25;
+  pointer-events: none;
+  opacity: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.burst-particle {
+  position: absolute;
+  font-size: 1.4rem;
+  opacity: 0;
+}
+
+.shell-landing-burst.burst-active {
+  opacity: 1;
+}
+
+.shell-landing-burst.burst-active .p1 {
+  animation: burstP1 0.75s ease-out forwards;
+}
+.shell-landing-burst.burst-active .p2 {
+  animation: burstP2 0.75s ease-out forwards;
+}
+.shell-landing-burst.burst-active .p3 {
+  animation: burstP3 0.75s ease-out forwards;
+}
+.shell-landing-burst.burst-active .p4 {
+  animation: burstP4 0.75s ease-out forwards;
+}
+.shell-landing-burst.burst-active .p5 {
+  animation: burstP5 0.75s ease-out forwards;
+}
+
+@keyframes burstP1 {
+  0% { transform: translate(0, 0) scale(0.3); opacity: 1; }
+  100% { transform: translate(-45px, -45px) scale(1.3); opacity: 0; }
+}
+@keyframes burstP2 {
+  0% { transform: translate(0, 0) scale(0.3); opacity: 1; }
+  100% { transform: translate(45px, -45px) scale(1.2); opacity: 0; }
+}
+@keyframes burstP3 {
+  0% { transform: translate(0, 0) scale(0.3); opacity: 1; }
+  100% { transform: translate(-50px, 35px) scale(1.4); opacity: 0; }
+}
+@keyframes burstP4 {
+  0% { transform: translate(0, 0) scale(0.3); opacity: 1; }
+  100% { transform: translate(50px, 35px) scale(1.1); opacity: 0; }
+}
+@keyframes burstP5 {
+  0% { transform: translate(0, 0) scale(0.5); opacity: 1; }
+  100% { transform: translate(0, -65px) scale(1.5) rotate(20deg); opacity: 0; }
+}
+
+/* --------------------------------------------------------------------------
+   소개글 컨테이너 언폴딩 (조개가 퐁! 열리며 촥 펼쳐짐)
+   -------------------------------------------------------------------------- */
+.profile-reveal-container {
+  opacity: 0;
+  transform: translateY(32px) scale(0.95);
+  filter: blur(6px);
+  pointer-events: none;
+  transition: opacity 0.75s cubic-bezier(0.2, 0.9, 0.3, 1), transform 0.75s cubic-bezier(0.2, 0.9, 0.3, 1.1), filter 0.6s ease;
+}
+
+.profile-reveal-container.is-revealed {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  filter: blur(0);
+  pointer-events: auto;
+}
+
+/* 해달 뱃지 */
+.intro-otter-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 14px;
+  background: rgba(140, 195, 225, 0.28);
+  border: 1px solid rgba(140, 195, 225, 0.45);
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--color-navy);
+  margin-bottom: 0.75rem;
+}
+
 .profile-content {
   display: flex;
   flex-direction: column;
@@ -918,6 +1230,7 @@ button, input, textarea, select {
 }
 
 .content-block {
+
   background-color: var(--glass-bg);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
@@ -1592,6 +1905,16 @@ button, input, textarea, select {
 
   .shell-wrapper {
     max-width: 330px;
+  }
+
+  .otter-stage {
+    justify-content: center;
+    padding: 0.2rem 0 1rem;
+  }
+
+  .otter-svg {
+    width: 130px;
+    height: 115px;
   }
 
   .page-title {

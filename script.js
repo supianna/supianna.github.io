@@ -208,6 +208,69 @@ function createGlowSprite(color, radius) {
 
     // 화면 최상단으로 부드럽게 스크롤
     window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    // Who am I ? 탭 활성화 시 해달 조개 던지기 시네마틱 자동 재생
+    if (tabId === 'who-am-i') {
+      setTimeout(() => {
+        triggerOtterShellToss();
+      }, 150);
+    }
+  }
+
+  // ------------------------------------------------------------------------
+  // 2-1. Who am I ? 탭: 귀여운 해달의 조개 던지기 시네마틱 애니메이션 엔진
+  // ------------------------------------------------------------------------
+  const otterCharacter = document.getElementById('otter-character');
+  const flyingShell = document.getElementById('otter-flying-shell');
+  const landingBurst = document.getElementById('shell-landing-burst');
+  const profileContainer = document.getElementById('profile-reveal-container');
+  let isOtterAnimating = false;
+
+  function triggerOtterShellToss() {
+    if (!otterCharacter || !flyingShell || !profileContainer) return;
+    if (isOtterAnimating) return;
+    isOtterAnimating = true;
+
+    // 1. 기존 클래스 초기화
+    otterCharacter.classList.remove('is-throwing');
+    flyingShell.classList.remove('is-flying');
+    if (landingBurst) landingBurst.classList.remove('burst-active');
+    profileContainer.classList.remove('is-revealed');
+
+    // 리플로우 강제 (애니메이션 재시작을 위함)
+    void flyingShell.offsetWidth;
+
+    // 2. 해달 앞발 들고 조개 투척 시작!
+    otterCharacter.classList.add('is-throwing');
+    flyingShell.classList.add('is-flying');
+
+    // 3. 조개가 화면 중앙에 도달하는 타이밍 (약 750ms 시점)
+    setTimeout(() => {
+      if (landingBurst) landingBurst.classList.add('burst-active');
+      profileContainer.classList.add('is-revealed');
+    }, 750);
+
+    // 4. 애니메이션 완료 후 정리
+    setTimeout(() => {
+      otterCharacter.classList.remove('is-throwing');
+      flyingShell.classList.remove('is-flying');
+      isOtterAnimating = false;
+    }, 1200);
+  }
+
+  // 해달 클릭 시 조개 던지기 리플레이 이벤트
+  if (otterCharacter) {
+    otterCharacter.addEventListener('click', (e) => {
+      e.stopPropagation();
+      triggerOtterShellToss();
+    });
+
+    otterCharacter.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        triggerOtterShellToss();
+      }
+    });
   }
 
   // 상단 탭 버튼 클릭 이벤트
