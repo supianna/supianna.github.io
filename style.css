@@ -89,8 +89,11 @@ body {
    ========================================================================== */
 .ocean-bg-layer {
   position: fixed;
-  inset: 0;
-  z-index: -1;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 0;
   overflow: hidden;
   pointer-events: none;
   background: var(--color-bg-page) url('윤슬바다.avif') center center / cover no-repeat;
@@ -107,6 +110,7 @@ body {
   transform: translate(-50%, -50%);
   object-fit: cover;
   z-index: 1;
+  pointer-events: none;
 }
 
 /* 텍스트 가독성 및 글래스모피즘 톤을 정돈하는 파스텔 오버레이 */
@@ -114,7 +118,7 @@ body {
   position: absolute;
   inset: 0;
   z-index: 2;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.16) 0%, rgba(255, 255, 255, 0.04) 45%, rgba(220, 238, 252, 0.25) 100%);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.22) 0%, rgba(255, 255, 255, 0.08) 45%, rgba(220, 238, 252, 0.28) 100%);
   pointer-events: none;
 }
 
@@ -128,6 +132,8 @@ body {
   }
 
   body[data-active-tab="home"] .main-container {
+    position: relative;
+    z-index: 10;
     flex: 1;
     display: flex;
     flex-direction: column;
@@ -137,6 +143,8 @@ body {
   }
 
   body[data-active-tab="home"] .home-dashboard {
+    position: relative;
+    z-index: 10;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -145,6 +153,8 @@ body {
   }
 
   body[data-active-tab="home"] .footer {
+    position: relative;
+    z-index: 10;
     padding: 0.75rem 1.5rem;
     flex-shrink: 0;
   }
@@ -245,6 +255,8 @@ button, input, textarea, select {
    4. 메인 컨테이너 및 탭 패널 공통
    -------------------------------------------------------------------------- */
 .main-container {
+  position: relative;
+  z-index: 10;
   flex: 1;
   max-width: var(--max-content-width);
   width: 100%;
@@ -1065,6 +1077,8 @@ button, input, textarea, select {
    10. 푸터
    -------------------------------------------------------------------------- */
 .footer {
+  position: relative;
+  z-index: 10;
   border-top: 1px solid var(--glass-border);
   background-color: var(--glass-nav);
   backdrop-filter: blur(14px);
