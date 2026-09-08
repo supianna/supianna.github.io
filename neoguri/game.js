@@ -218,10 +218,10 @@
   // 캔버스 크기: 800 x 600
   // 각 층 바닥 Y: 530 (1층 바닥), 430 (2층), 330 (3층), 230 (4층), 130 (5층 꼭대기)
   const STAGES = [
-    // [Stage 1] 입문 코스
+    // [Stage 1] 입문 코스 (완전 쉬움 & 튜토리얼)
     {
       stageNum: 1,
-      name: "초원 언덕",
+      name: "초원 언덕 (쉬움)",
       platforms: [
         { x: 30, y: 530, w: 740, h: 18 }, // 1층
         { x: 70, y: 430, w: 660, h: 18 }, // 2층
@@ -236,26 +236,23 @@
         { x: 260, y: 130, h: 100 }  // 4 -> 5층 좌측
       ],
       spikes: [
-        { x: 320, y: 514 },
-        { x: 480, y: 514 },
-        { x: 380, y: 414 },
-        { x: 300, y: 314 },
-        { x: 440, y: 214 }
+        { x: 360, y: 514 }, // 1층 연습용 압정 1개
+        { x: 380, y: 314 }  // 3층 압정 1개
       ],
       snakes: [
-        { x: 220, y: 410, minX: 180, maxX: 460, speed: 1.2, dir: 1 },
-        { x: 400, y: 310, minX: 280, maxX: 560, speed: 1.4, dir: -1 }
+        // 2층 느림보 뱀 1마리만 배치 (속도 0.65)
+        { x: 320, y: 410, minX: 220, maxX: 460, speed: 0.65, dir: 1 }
       ],
       foods: [
-        { x: 120, y: 504, type: 'carrot', points: 100 },
-        { x: 420, y: 504, type: 'apple', points: 100 },
-        { x: 250, y: 404, type: 'mushroom', points: 150 },
-        { x: 520, y: 404, type: 'grape', points: 150 },
-        { x: 220, y: 304, type: 'carrot', points: 100 },
-        { x: 480, y: 304, type: 'apple', points: 100 },
+        { x: 140, y: 504, type: 'carrot', points: 100 },
+        { x: 480, y: 504, type: 'apple', points: 100 },
+        { x: 280, y: 404, type: 'mushroom', points: 150 },
+        { x: 540, y: 404, type: 'grape', points: 150 },
+        { x: 240, y: 304, type: 'carrot', points: 100 },
+        { x: 500, y: 304, type: 'apple', points: 100 },
         { x: 200, y: 204, type: 'radish', points: 200 },
         { x: 500, y: 204, type: 'mushroom', points: 150 },
-        { x: 340, y: 104, type: 'watermelon', points: 500 }
+        { x: 360, y: 104, type: 'watermelon', points: 500 }
       ],
       spawn: { x: 70, y: 500 }
     },
@@ -263,7 +260,7 @@
     // [Stage 2] 중급 코스
     {
       stageNum: 2,
-      name: "밤의 사원",
+      name: "밤의 사원 (보통)",
       platforms: [
         { x: 30, y: 530, w: 740, h: 18 },
         { x: 80, y: 430, w: 320, h: 18 },
@@ -281,39 +278,33 @@
         { x: 420, y: 130, h: 100 }
       ],
       spikes: [
-        { x: 260, y: 514 },
-        { x: 420, y: 514 },
-        { x: 600, y: 514 },
-        { x: 220, y: 414 },
-        { x: 240, y: 314 },
-        { x: 420, y: 314 },
-        { x: 340, y: 214 },
-        { x: 480, y: 214 }
+        { x: 340, y: 514 },
+        { x: 560, y: 514 },
+        { x: 360, y: 314 },
+        { x: 360, y: 214 }
       ],
       snakes: [
-        { x: 350, y: 510, minX: 180, maxX: 560, speed: 1.6, dir: 1 },
-        { x: 180, y: 310, minX: 100, maxX: 400, speed: 1.5, dir: -1 },
-        { x: 360, y: 210, minX: 200, maxX: 560, speed: 1.8, dir: 1 }
+        { x: 300, y: 510, minX: 180, maxX: 480, speed: 0.9, dir: 1 },
+        { x: 220, y: 310, minX: 120, maxX: 360, speed: 0.9, dir: -1 }
       ],
       foods: [
         { x: 100, y: 504, type: 'apple', points: 100 },
-        { x: 340, y: 504, type: 'grape', points: 150 },
+        { x: 460, y: 504, type: 'grape', points: 150 },
         { x: 680, y: 504, type: 'carrot', points: 100 },
         { x: 260, y: 404, type: 'mushroom', points: 150 },
-        { x: 660, y: 404, type: 'radish', points: 200 },
+        { x: 620, y: 404, type: 'radish', points: 200 },
         { x: 160, y: 304, type: 'apple', points: 100 },
-        { x: 500, y: 304, type: 'grape', points: 150 },
+        { x: 460, y: 304, type: 'grape', points: 150 },
         { x: 280, y: 204, type: 'watermelon', points: 300 },
-        { x: 440, y: 204, type: 'carrot', points: 100 },
         { x: 380, y: 104, type: 'watermelon', points: 500 }
       ],
       spawn: { x: 70, y: 500 }
     },
 
-    // [Stage 3] 고수 코스
+    // [Stage 3] 상급 코스
     {
       stageNum: 3,
-      name: "오로라 첨탑",
+      name: "오로라 첨탑 (도전)",
       platforms: [
         { x: 30, y: 530, w: 740, h: 18 },
         { x: 90, y: 430, w: 620, h: 18 },
@@ -328,32 +319,25 @@
         { x: 380, y: 130, h: 100 }
       ],
       spikes: [
-        { x: 240, y: 514 },
-        { x: 380, y: 514 },
-        { x: 520, y: 514 },
-        { x: 280, y: 414 },
-        { x: 440, y: 414 },
-        { x: 220, y: 314 },
-        { x: 380, y: 314 },
-        { x: 500, y: 314 },
-        { x: 260, y: 214 },
-        { x: 460, y: 214 }
+        { x: 260, y: 514 },
+        { x: 460, y: 514 },
+        { x: 320, y: 414 },
+        { x: 400, y: 314 },
+        { x: 340, y: 214 }
       ],
       snakes: [
-        { x: 300, y: 510, minX: 100, maxX: 650, speed: 2.1, dir: 1 },
-        { x: 360, y: 410, minX: 160, maxX: 580, speed: 2.0, dir: -1 },
-        { x: 420, y: 310, minX: 120, maxX: 620, speed: 2.2, dir: 1 },
-        { x: 320, y: 210, minX: 180, maxX: 540, speed: 2.2, dir: -1 }
+        { x: 340, y: 510, minX: 180, maxX: 580, speed: 1.2, dir: 1 },
+        { x: 380, y: 410, minX: 200, maxX: 540, speed: 1.2, dir: -1 },
+        { x: 320, y: 210, minX: 200, maxX: 480, speed: 1.3, dir: 1 }
       ],
       foods: [
         { x: 140, y: 504, type: 'watermelon', points: 200 },
-        { x: 440, y: 504, type: 'apple', points: 100 },
+        { x: 540, y: 504, type: 'apple', points: 100 },
         { x: 340, y: 404, type: 'grape', points: 150 },
         { x: 560, y: 404, type: 'radish', points: 200 },
         { x: 260, y: 304, type: 'mushroom', points: 150 },
-        { x: 460, y: 304, type: 'carrot', points: 100 },
+        { x: 500, y: 304, type: 'carrot', points: 100 },
         { x: 300, y: 204, type: 'grape', points: 150 },
-        { x: 540, y: 204, type: 'watermelon', points: 300 },
         { x: 380, y: 104, type: 'watermelon', points: 1000 }
       ],
       spawn: { x: 70, y: 500 }
@@ -429,13 +413,13 @@
         this.vx = 0;
         this.vy = 0;
 
-        if (keys.up) this.vy = -2.4;
-        else if (keys.down) this.vy = 2.4;
+        if (keys.up) this.vy = -3.0;
+        else if (keys.down) this.vy = 3.0;
 
         this.y += this.vy;
 
         // 사다리 상단 도달 (위층 발판에 안착)
-        if (this.y + this.h <= currentLadder.y + 4) {
+        if (this.y + this.h <= currentLadder.y + 6) {
           this.y = currentLadder.y - this.h;
           this.isClimbing = false;
           this.isGrounded = true;
@@ -454,10 +438,10 @@
       if (this.isGrounded) {
         this.vx = 0;
         if (keys.left) {
-          this.vx = -3.2;
+          this.vx = -3.4;
           this.facing = -1;
         } else if (keys.right) {
-          this.vx = 3.2;
+          this.vx = 3.4;
           this.facing = 1;
         }
 
@@ -465,16 +449,16 @@
         if (keys.spacePressedThisFrame) {
           this.isJumping = true;
           this.isGrounded = false;
-          this.vy = -8.2; // 수직 도약력
-          // 걷는 도중이면 이동 방향으로 포물선 점프, 멈춰있으면 수직 점프
-          this.jumpVx = this.vx !== 0 ? this.facing * 3.4 : 0;
+          this.vy = -9.2; // 시원한 수직 도약력 (기존 -8.2에서 상향)
+          // 걷는 도중이면 이동 방향으로 넉넉한 포물선 점프, 멈춰있으면 수직 점프
+          this.jumpVx = this.vx !== 0 ? this.facing * 3.8 : 0;
           audio.playJump();
         }
       } else {
         // 공중 점프 진행 중: 발동 시점의 수평 속도 유지
         this.vx = this.jumpVx;
-        // 중력 적용
-        this.vy += 0.42;
+        // 중력 적용 (부드러운 체공 시간)
+        this.vy += 0.38;
       }
 
       // 위치 갱신
@@ -493,7 +477,7 @@
         const currentFootY = this.y + this.h;
 
         if (this.x + this.w * 0.7 > plat.x && this.x + this.w * 0.3 < plat.x + plat.w) {
-          if (prevFootY <= plat.y + 6 && currentFootY >= plat.y && this.vy >= 0) {
+          if (prevFootY <= plat.y + 8 && currentFootY >= plat.y && this.vy >= 0) {
             this.y = plat.y - this.h;
             this.vy = 0;
             this.isGrounded = true;
@@ -515,8 +499,9 @@
       const footY = this.y + this.h;
 
       for (const lad of ladders) {
-        if (centerX >= lad.x - 4 && centerX <= lad.x + 28) {
-          if (footY >= lad.y && this.y <= lad.y + lad.h + 6) {
+        // 사다리 감지 범위를 넓혀 부드럽게 사다리를 탈 수 있도록 개선
+        if (centerX >= lad.x - 12 && centerX <= lad.x + 36) {
+          if (footY >= lad.y && this.y <= lad.y + lad.h + 8) {
             return lad;
           }
         }
@@ -668,7 +653,7 @@
 
     start() {
       this.score = 0;
-      this.lives = 3;
+      this.lives = 5; // 기본 목숨 5개로 넉넉하게 상향
       this.loadStage(0);
       this.state = 'PLAYING';
       this.updateHUD();
@@ -733,24 +718,24 @@
         return;
       }
 
-      // 충돌 검사 1: 음식(Fruit) 섭취
+      // 플레이어 히트박스 (관대하게 안쪽 중심부만 피격되도록 여유 부여)
       const pBox = {
-        x: this.player.x + 3,
-        y: this.player.y + 4,
-        w: this.player.w - 6,
-        h: this.player.h - 6
+        x: this.player.x + 7,
+        y: this.player.y + 6,
+        w: this.player.w - 14,
+        h: this.player.h - 8
       };
 
+      // 충돌 검사 1: 음식(Fruit) 섭취 (수집 판정 여유롭게 확대)
       let uncollectedCount = 0;
       for (const food of this.stage.foods) {
         if (!food.collected) {
           uncollectedCount++;
-          // 음식 크기 18x18
           if (
-            pBox.x < food.x + 18 &&
-            pBox.x + pBox.w > food.x &&
-            pBox.y < food.y + 18 &&
-            pBox.y + pBox.h > food.y
+            pBox.x < food.x + 22 &&
+            pBox.x + pBox.w > food.x - 4 &&
+            pBox.y < food.y + 22 &&
+            pBox.y + pBox.h > food.y - 4
           ) {
             food.collected = true;
             this.score += food.points;
@@ -786,13 +771,12 @@
         return;
       }
 
-      // 충돌 검사 2: 압정(Spikes)
+      // 충돌 검사 2: 압정(Spikes) - 중심부 바닥을 정통으로 밟았을 때만 피격되도록 축소
       for (const spike of this.stage.spikes) {
-        // 압정 히트박스 (바닥 삼각형 형태)
         if (
-          pBox.x < spike.x + 16 &&
-          pBox.x + pBox.w > spike.x + 2 &&
-          pBox.y + pBox.h > spike.y + 2 &&
+          pBox.x < spike.x + 13 &&
+          pBox.x + pBox.w > spike.x + 5 &&
+          pBox.y + pBox.h > spike.y + 8 &&
           pBox.y < spike.y + 16
         ) {
           this.player.die();
@@ -800,9 +784,9 @@
         }
       }
 
-      // 충돌 검사 3: 뱀(Snakes)
+      // 충돌 검사 3: 뱀(Snakes) - 머리 위로 뛰어넘을 때 스쳐도 살도록 피격 상단 축소
       for (const snake of this.stage.snakes) {
-        const sBox = { x: snake.x, y: snake.y, w: 26, h: 18 };
+        const sBox = { x: snake.x + 4, y: snake.y + 7, w: 18, h: 11 };
         if (
           pBox.x < sBox.x + sBox.w &&
           pBox.x + pBox.w > sBox.x &&
