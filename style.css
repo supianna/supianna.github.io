@@ -355,10 +355,10 @@ button, input, textarea, select {
   text-shadow: 0 1px 1px rgba(255, 255, 255, 0.7);
 }
 
-/* 4대 핵심 카드 섹션 그리드 */
+/* 3대 핵심 카드 섹션 그리드 (3열 균형 배치) */
 .home-cards-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: clamp(0.85rem, 1.6vh, 1.25rem);
   width: 100%;
 }
@@ -641,8 +641,9 @@ button, input, textarea, select {
   gap: 4px;
   font-size: 0.76rem;
   font-weight: 700;
-  color: var(--color-pure-white);
-  background-color: var(--color-navy);
+  color: var(--color-navy);
+  background-color: rgba(160, 195, 217, 0.35);
+  border: 1px solid rgba(160, 195, 217, 0.6);
   padding: 3px 10px;
   border-radius: var(--radius-full);
   margin-bottom: 0.35rem;
@@ -1121,7 +1122,7 @@ button, input, textarea, select {
 /* --------------------------------------------------------------------------
    11. 모바일 & 태블릿 반응형 미디어 쿼리
    -------------------------------------------------------------------------- */
-@media (max-width: 768px) {
+@media (max-width: 860px) {
   .nav-tabs {
     gap: 0.35rem;
   }
