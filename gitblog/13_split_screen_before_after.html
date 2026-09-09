@@ -1,0 +1,1248 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <!-- 파일명: gitblog/13_split_screen_before_after.html -->
+  <!-- 목적: 컨셉 13 - 스플릿 스크린 '비포 & 애프터' 캔버스 (Interactive Lab View) 시안 -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>컨셉 13: 스플릿 스크린 비포 & 애프터 캔버스 | Supianna Portfolio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Pretendard:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-white: #ffffff;
+      --bg-slate: #f8fafc;
+      --border-subtle: #e2e8f0;
+      --border-dark: #0f172a;
+      
+      /* 일렉트릭 블루 & 사이언 포인트 */
+      --accent-blue: #2563eb;
+      --accent-blue-subtle: #eff6ff;
+      --accent-cyan: #06b6d4;
+      --accent-danger: #ef4444;
+
+      --text-black: #090d16;
+      --text-body: #334155;
+      --text-muted: #64748b;
+      --text-light: #94a3b8;
+
+      --font-sans: 'Inter', 'Pretendard', -apple-system, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-slate);
+      color: var(--text-black);
+      font-family: var(--font-sans);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      user-select: none;
+    }
+
+    /* 글로벌 네비게이션 */
+    .global-nav {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border-subtle);
+      padding: 14px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .nav-brand-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .badge-concept {
+      background: var(--accent-blue);
+      color: #ffffff;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 4px;
+      letter-spacing: 0.5px;
+    }
+
+    .nav-brand-title {
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--text-black);
+      letter-spacing: -0.2px;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .nav-link-btn {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 6px 12px;
+      border-radius: 6px;
+      transition: all 0.15s ease;
+    }
+
+    .nav-link-btn:hover {
+      color: var(--text-black);
+      background: #f1f5f9;
+    }
+
+    .nav-link-btn.active {
+      color: var(--accent-blue);
+      background: var(--accent-blue-subtle);
+      border: 1px solid rgba(37, 99, 235, 0.2);
+    }
+
+    /* 메인 컨테이너 */
+    .lab-container {
+      max-width: 1360px;
+      margin: 0 auto;
+      padding: 48px 36px 80px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+    }
+
+    /* 상단 헤더 & 시나리오 제어 바 */
+    .lab-header {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .lab-tag-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: var(--font-mono);
+      font-size: 11.5px;
+      color: var(--accent-blue);
+      letter-spacing: 0.8px;
+    }
+
+    .tag-pulse {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent-blue);
+      box-shadow: 0 0 10px var(--accent-blue);
+    }
+
+    .lab-title-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .lab-title {
+      font-size: clamp(32px, 4.5vw, 50px);
+      font-weight: 900;
+      letter-spacing: -1.8px;
+      color: var(--text-black);
+      line-height: 1.15;
+    }
+
+    .lab-title .accent {
+      color: var(--accent-blue);
+    }
+
+    .lab-subtext {
+      font-size: 15px;
+      color: var(--text-muted);
+      max-width: 580px;
+      line-height: 1.6;
+    }
+
+    /* 시나리오 탭 & 오토 스위프 컨트롤 */
+    .scenario-control-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #ffffff;
+      border: 1px solid var(--border-subtle);
+      padding: 8px 12px;
+      border-radius: 14px;
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.02);
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .scenario-tabs {
+      display: flex;
+      gap: 6px;
+    }
+
+    .sc-tab-btn {
+      background: none;
+      border: 1px solid transparent;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+      font-family: var(--font-sans);
+    }
+
+    .sc-tab-btn:hover {
+      color: var(--text-black);
+      background: var(--bg-slate);
+    }
+
+    .sc-tab-btn.active {
+      background: var(--text-black);
+      color: #ffffff;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    .bar-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn-sweep-toggle {
+      background: #ffffff;
+      border: 1px solid var(--border-subtle);
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-body);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    .btn-sweep-toggle:hover {
+      background: var(--bg-slate);
+      border-color: #cbd5e1;
+    }
+
+    .btn-sweep-toggle.active {
+      background: var(--accent-blue);
+      color: #ffffff;
+      border-color: var(--accent-blue);
+    }
+
+    /* =================================================== */
+    /* 대형 스플릿 스크린 캔버스 (Interactive Split Canvas) */
+    /* =================================================== */
+    .split-viewport-wrapper {
+      position: relative;
+      width: 100%;
+      height: 580px;
+      background: #ffffff;
+      border: 1px solid var(--border-subtle);
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: 0 20px 50px rgba(15, 23, 42, 0.06);
+      cursor: ew-resize;
+    }
+
+    /* 좌측 (BEFORE) 레이어: 전체 영역을 차지하는 베이스 */
+    .split-layer {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      overflow: hidden;
+    }
+
+    .layer-before {
+      background: #ffffff;
+      z-index: 1;
+    }
+
+    /* 우측 (AFTER) 레이어: clip-path를 통해 슬라이더 위치만큼 마스킹 */
+    .layer-after {
+      background: linear-gradient(135deg, #f8fafc 0%, #f0f7ff 100%);
+      z-index: 2;
+      clip-path: inset(0 0 0 50%); /* 초기 50% 분할 */
+      will-change: clip-path;
+    }
+
+    /* 좌우 컨텐츠 배치 구조 */
+    .layer-inner-canvas {
+      width: 100%;
+      height: 100%;
+      padding: 40px 48px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+    }
+
+    /* 상단 배지 헤더 (BEFORE vs AFTER) */
+    .canvas-hud-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      z-index: 5;
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--font-mono);
+      font-size: 11.5px;
+      font-weight: 700;
+      padding: 6px 14px;
+      border-radius: 8px;
+      letter-spacing: 0.5px;
+    }
+
+    .badge-before {
+      background: #fef2f2;
+      color: #dc2626;
+      border: 1px solid rgba(220, 38, 38, 0.2);
+    }
+
+    .badge-after {
+      background: #eff6ff;
+      color: var(--accent-blue);
+      border: 1px solid rgba(37, 99, 235, 0.3);
+      box-shadow: 0 0 16px rgba(37, 99, 235, 0.15);
+    }
+
+    .hud-metrics-mini {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 600;
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(8px);
+      padding: 6px 12px;
+      border-radius: 6px;
+      border: 1px solid var(--border-subtle);
+    }
+
+    /* 중앙 시각화 그래픽 스테이지 */
+    .visual-stage-center {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      margin: 20px 0;
+    }
+
+    /* [시나리오 1 그래픽] 비전 AI 결함 탐지 (PCB 기판) */
+    .pcb-board-mockup {
+      width: 480px;
+      height: 260px;
+      background: #e2e8f0;
+      border-radius: 14px;
+      border: 2px solid #cbd5e1;
+      position: relative;
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      grid-template-rows: repeat(3, 1fr);
+      gap: 16px;
+      padding: 20px;
+      overflow: hidden;
+    }
+
+    .pcb-chip {
+      background: #475569;
+      border-radius: 4px;
+      position: relative;
+      border: 1px solid #334155;
+    }
+
+    .pcb-circuit-line {
+      position: absolute;
+      background: #94a3b8;
+      height: 2px;
+    }
+
+    /* Before: 혼란/경고 표시 */
+    .defect-warning-circle {
+      position: absolute;
+      width: 50px;
+      height: 50px;
+      border: 2px dashed #dc2626;
+      border-radius: 50%;
+      top: 30px;
+      left: 140px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      font-weight: 800;
+      color: #dc2626;
+      background: rgba(239, 68, 68, 0.1);
+      animation: alertPulse 1.5s infinite;
+    }
+
+    .defect-warning-circle2 {
+      position: absolute;
+      width: 60px;
+      height: 40px;
+      border: 2px dashed #dc2626;
+      border-radius: 8px;
+      bottom: 40px;
+      right: 120px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      font-weight: 800;
+      color: #dc2626;
+      background: rgba(239, 68, 68, 0.1);
+    }
+
+    @keyframes alertPulse {
+      0% { transform: scale(0.95); opacity: 0.6; }
+      50% { transform: scale(1.05); opacity: 1; }
+      100% { transform: scale(0.95); opacity: 0.6; }
+    }
+
+    /* After: AI 바운딩 박스 */
+    .ai-bounding-box {
+      position: absolute;
+      border: 2px solid var(--accent-blue);
+      background: rgba(37, 99, 235, 0.08);
+      border-radius: 4px;
+      box-shadow: 0 0 16px rgba(37, 99, 235, 0.3);
+    }
+
+    .ai-box-1 {
+      top: 25px;
+      left: 130px;
+      width: 70px;
+      height: 60px;
+    }
+
+    .ai-box-2 {
+      bottom: 35px;
+      right: 110px;
+      width: 80px;
+      height: 50px;
+    }
+
+    .ai-box-label {
+      position: absolute;
+      top: -20px;
+      left: -2px;
+      background: var(--accent-blue);
+      color: #ffffff;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 2px;
+      white-space: nowrap;
+    }
+
+    .ai-scanline-laser {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      background: linear-gradient(to bottom, transparent, var(--accent-blue), transparent);
+      box-shadow: 0 0 12px var(--accent-blue);
+      animation: laserSweep 2.5s ease-in-out infinite alternate;
+    }
+
+    @keyframes laserSweep {
+      0% { left: 0%; }
+      100% { left: 100%; }
+    }
+
+    /* [시나리오 2/3 대체 그래픽용 텍스트/카드] */
+    .scenario-card-mockup {
+      width: 480px;
+      background: #ffffff;
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      padding: 24px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.03);
+      font-family: var(--font-mono);
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    /* 하단 정량 임팩트 바 */
+    .canvas-hud-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.95);
+      border: 1px solid var(--border-subtle);
+      padding: 16px 24px;
+      border-radius: 14px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.02);
+      z-index: 5;
+    }
+
+    .hud-stat-group {
+      display: flex;
+      gap: 32px;
+    }
+
+    .hud-stat-item {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .hud-stat-item .k {
+      font-size: 11px;
+      font-family: var(--font-mono);
+      color: var(--text-light);
+    }
+
+    .hud-stat-item .v {
+      font-size: 17px;
+      font-weight: 800;
+      color: var(--text-black);
+    }
+
+    .hud-stat-item .v.bad {
+      color: #dc2626;
+    }
+
+    .hud-stat-item .v.good {
+      color: var(--accent-blue);
+    }
+
+    /* =================================================== */
+    /* 중앙 슬라이더 분할선 & 드래그 핸들 (Split Handle) */
+    /* =================================================== */
+    .split-slider-line {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 50%; /* 초기 위치 */
+      width: 2px;
+      background: var(--text-black);
+      z-index: 10;
+      transform: translateX(-50%);
+      pointer-events: none;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .split-handle-knob {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: #ffffff;
+      border: 2px solid var(--text-black);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: auto;
+      cursor: grab;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .split-handle-knob:active {
+      cursor: grabbing;
+      transform: translate(-50%, -50%) scale(1.1);
+      box-shadow: 0 12px 30px rgba(37, 99, 235, 0.3);
+      border-color: var(--accent-blue);
+    }
+
+    .knob-arrows {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      color: var(--text-black);
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    /* 슬라이더 하단 설명 가이드 */
+    .split-hint-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--text-muted);
+      padding: 0 10px;
+    }
+
+    .hint-chip {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* 하단 3대 솔루션 비교 심층 카드 */
+    .scenarios-detail-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-top: 10px;
+    }
+
+    .detail-card {
+      background: #ffffff;
+      border: 1px solid var(--border-subtle);
+      border-radius: 18px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 16px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.02);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .detail-card:hover, .detail-card.selected {
+      border-color: var(--accent-blue);
+      transform: translateY(-4px);
+      box-shadow: 0 12px 30px rgba(37, 99, 235, 0.08);
+    }
+
+    .detail-card.selected {
+      background: #fbfdff;
+    }
+
+    .detail-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .detail-tag {
+      font-family: var(--font-mono);
+      font-size: 10.5px;
+      font-weight: 700;
+      color: var(--accent-blue);
+      background: var(--accent-blue-subtle);
+      padding: 3px 8px;
+      border-radius: 4px;
+    }
+
+    .detail-title {
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--text-black);
+      margin-top: 8px;
+    }
+
+    .detail-sub {
+      font-size: 12.5px;
+      color: var(--text-muted);
+      line-height: 1.5;
+      margin-top: 4px;
+    }
+
+    .detail-compare-summary {
+      border-top: 1px solid #f1f5f9;
+      padding-top: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-family: var(--font-mono);
+      font-size: 11.5px;
+    }
+
+    .compare-line {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    /* 푸터 */
+    .lab-footer {
+      border-top: 1px solid var(--border-subtle);
+      padding-top: 30px;
+      margin-top: 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      color: var(--text-light);
+      font-family: var(--font-mono);
+    }
+
+    .lab-footer a {
+      color: var(--accent-blue);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    @media (max-width: 960px) {
+      .split-viewport-wrapper {
+        height: 520px;
+      }
+      .scenarios-detail-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 상단 글로벌 네비게이션 배너 -->
+  <header class="global-nav">
+    <div class="nav-brand-group">
+      <span class="badge-concept">CONCEPT 13</span>
+      <span class="nav-brand-title">Split Screen Lab View</span>
+    </div>
+    <nav class="nav-links">
+      <a href="index.html" class="nav-link-btn">← 허브</a>
+      <a href="11_white_clean_architecture.html" class="nav-link-btn">11. 클린 아키텍처</a>
+      <a href="12_minimal_benchmark_view.html" class="nav-link-btn">12. 벤치마크 뷰</a>
+      <a href="13_split_screen_before_after.html" class="nav-link-btn active">13. 비포&애프터</a>
+    </nav>
+  </header>
+
+  <!-- 메인 컨텐츠 래퍼 -->
+  <main class="lab-container">
+    
+    <!-- 헤더 섹션 -->
+    <section class="lab-header">
+      <div class="lab-tag-row">
+        <span class="tag-pulse"></span>
+        <span>INTERACTIVE BEFORE & AFTER TRANSFORMATION CANVAS</span>
+      </div>
+
+      <div class="lab-title-row">
+        <h1 class="lab-title">
+          수작업의 혼돈에서 <span class="accent">엔지니어링의 정밀함</span>으로
+        </h1>
+        <p class="lab-subtext">
+          마우스나 손가락으로 중앙 슬라이더 바를 좌우로 드래그해보세요. AI 모델과 소프트웨어 파이프라인이 개입하기 전의 문제 상황(Before)과 해결 후 정제된 결과물(After)이 실시간으로 교차합니다.
+        </p>
+      </div>
+    </section>
+
+    <!-- 시나리오 전환 및 자동 스위프 툴바 -->
+    <div class="scenario-control-bar">
+      <div class="scenario-tabs">
+        <button class="sc-tab-btn active" data-scenario="vision">
+          <span>👁️</span> 01. AI 비전 품질 전수 검사
+        </button>
+        <button class="sc-tab-btn" data-scenario="rag">
+          <span>📄</span> 02. 비정형 PDF → 벡터 DB
+        </button>
+        <button class="sc-tab-btn" data-scenario="pipeline">
+          <span>🌊</span> 03. 수동 엑셀 → 실시간 Lake
+        </button>
+      </div>
+
+      <div class="bar-actions">
+        <button class="btn-sweep-toggle" id="btn-sweep">
+          <span>🔄</span> 자동 스캔 모드: OFF
+        </button>
+      </div>
+    </div>
+
+    <!-- =================================================== -->
+    <!-- 대형 스플릿 뷰포트 (Interactive Split Viewport) -->
+    <!-- =================================================== -->
+    <div class="split-viewport-wrapper" id="viewport">
+      
+      <!-- ================= 좌측 (BEFORE) 레이어 ================= -->
+      <div class="split-layer layer-before">
+        <div class="layer-inner-canvas">
+          
+          <div class="canvas-hud-header">
+            <div class="status-badge badge-before">
+              <span>⚠️</span> BEFORE : MANUAL BOTTLENECK
+            </div>
+            <div class="hud-metrics-mini" id="before-mini-metric" style="color: #dc2626;">
+              검사 소요: 40분 / 건당
+            </div>
+          </div>
+
+          <!-- 시각화 그래픽 (Before) -->
+          <div class="visual-stage-center" id="visual-before">
+            <!-- PCB 기판 시뮬레이터 (Before: 육안 미검출 & 적색 경고) -->
+            <div class="pcb-board-mockup" style="background: #e2e8f0;">
+              <div class="pcb-chip"></div>
+              <div class="pcb-chip"></div>
+              <div class="pcb-chip"></div>
+              <div class="pcb-chip"></div>
+              <div class="pcb-chip"></div>
+              <div class="pcb-chip"></div>
+              <div class="pcb-chip"></div>
+              <div class="pcb-chip"></div>
+              <div class="pcb-chip"></div>
+              <div class="pcb-chip"></div>
+              <div class="pcb-chip"></div>
+              <div class="pcb-chip"></div>
+
+              <!-- 결함 원형 경고 -->
+              <div class="defect-warning-circle">
+                <span>미검출</span>
+              </div>
+              <div class="defect-warning-circle2">
+                <span>쇼트 의심</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="canvas-hud-footer">
+            <div class="hud-stat-group">
+              <div class="hud-stat-item">
+                <span class="k">검사 방식</span>
+                <span class="v" id="before-stat-method">작업자 육안 전수 검사</span>
+              </div>
+              <div class="hud-stat-item">
+                <span class="k">오류 누락률</span>
+                <span class="v bad" id="before-stat-error">18.4% (피로도 누적)</span>
+              </div>
+              <div class="hud-stat-item">
+                <span class="k">월 소요 비용</span>
+                <span class="v bad" id="before-stat-cost">₩ 8,400,000</span>
+              </div>
+            </div>
+            <div style="font-size: 11px; font-family: var(--font-mono); color: var(--text-light);">
+              PROBLEM IDENTIFIED // MANUAL LIMIT
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ================= 우측 (AFTER) 레이어 (클립 마스킹) ================= -->
+      <div class="split-layer layer-after" id="layer-after">
+        <div class="layer-inner-canvas">
+          
+          <div class="canvas-hud-header">
+            <div class="status-badge badge-after">
+              <span>⚡</span> AFTER : AI TENSORRT ENGINE
+            </div>
+            <div class="hud-metrics-mini" id="after-mini-metric" style="color: var(--accent-blue);">
+              검사 소요: 0.004초 (4.2ms)
+            </div>
+          </div>
+
+          <!-- 시각화 그래픽 (After) -->
+          <div class="visual-stage-center" id="visual-after">
+            <!-- PCB 기판 시뮬레이터 (After: 정밀 바운딩 박스 & 레이저 스캔) -->
+            <div class="pcb-board-mockup" style="background: #f1f5f9; border-color: rgba(37, 99, 235, 0.4);">
+              <div class="pcb-chip"></div>
+              <div class="pcb-chip"></div>
+              <div class="pcb-chip"></div>
+              <div class="pcb-chip"></div>
+              <div class="pcb-chip"></div>
+              <div class="pcb-chip"></div>
+              <div class="pcb-chip"></div>
+              <div class="pcb-chip"></div>
+              <div class="pcb-chip"></div>
+              <div class="pcb-chip"></div>
+              <div class="pcb-chip"></div>
+              <div class="pcb-chip"></div>
+
+              <!-- 레이저 스위프 빔 -->
+              <div class="ai-scanline-laser"></div>
+
+              <!-- AI 검출 바운딩 박스 2개 -->
+              <div class="ai-bounding-box ai-box-1">
+                <span class="ai-box-label">Micro_Crack: 99.8%</span>
+              </div>
+              <div class="ai-bounding-box ai-box-2">
+                <span class="ai-box-label">Solder_Bridge: 98.4%</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="canvas-hud-footer">
+            <div class="hud-stat-group">
+              <div class="hud-stat-item">
+                <span class="k">검사 방식</span>
+                <span class="v" id="after-stat-method">YOLOv8 Edge 120 FPS 무인화</span>
+              </div>
+              <div class="hud-stat-item">
+                <span class="k">오류 누락률</span>
+                <span class="v good" id="after-stat-error">0.001% (정밀 검증)</span>
+              </div>
+              <div class="hud-stat-item">
+                <span class="k">월 절감액</span>
+                <span class="v good" id="after-stat-cost">₩ 8,100,000 절감</span>
+              </div>
+            </div>
+            <div style="font-size: 11px; font-family: var(--font-mono); color: var(--accent-blue); font-weight: 700;">
+              ENGINEERING SOLUTION // 100% AUTOMATED
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ================= 중앙 분할선 & 슬라이더 핸들 ================= -->
+      <div class="split-slider-line" id="slider-line">
+        <div class="split-handle-knob" id="slider-knob">
+          <div class="knob-arrows">
+            <span>‹</span>
+            <span>›</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- 하단 조작 가이드 안내 바 -->
+    <div class="split-hint-bar">
+      <div class="hint-chip">
+        <span>◀</span> <span>좌측: 문제 상황 (Before)</span>
+      </div>
+      <div style="color: var(--text-black); font-weight: 700;">
+        <span id="slider-percent">50%</span> SPLIT POSITION
+      </div>
+      <div class="hint-chip">
+        <span>우측: 엔지니어링 결과 (After)</span> <span>▶</span>
+      </div>
+    </div>
+
+    <!-- 하위 시나리오 3대 심층 카드 그리드 -->
+    <section class="scenarios-detail-grid">
+      
+      <!-- 카드 1: 비전 검사 -->
+      <article class="detail-card selected" data-sc-target="vision">
+        <div>
+          <div class="detail-head">
+            <span class="detail-tag">COMPUTER VISION</span>
+            <span style="font-size: 18px;">👁️</span>
+          </div>
+          <h3 class="detail-title">산업용 비전 결함 전수 검사</h3>
+          <p class="detail-sub">사람의 육안 피로로 인한 불량품 출고 사고를 0건으로 차단하는 고성능 엣지 딥러닝 시스템.</p>
+        </div>
+        <div class="detail-compare-summary">
+          <div class="compare-line">
+            <span style="color: #dc2626;">Before: 40분 소요</span>
+            <span style="color: var(--accent-blue); font-weight: 700;">After: 4.2ms 판별</span>
+          </div>
+          <div class="compare-line">
+            <span style="color: #dc2626;">누락률: 18.4%</span>
+            <span style="color: var(--accent-blue); font-weight: 700;">정확도: 99.8%</span>
+          </div>
+        </div>
+      </article>
+
+      <!-- 카드 2: RAG 파이프라인 -->
+      <article class="detail-card" data-sc-target="rag">
+        <div>
+          <div class="detail-head">
+            <span class="detail-tag">MULTIMODAL RAG</span>
+            <span style="font-size: 18px;">📄</span>
+          </div>
+          <h3 class="detail-title">비정형 문서 지식 베이스화</h3>
+          <p class="detail-sub">수백 장의 도면과 복잡한 PDF 규격서를 벡터 DB와 LLM 퓨전으로 0.1초 만에 인용 검색.</p>
+        </div>
+        <div class="detail-compare-summary">
+          <div class="compare-line">
+            <span style="color: #dc2626;">Before: 매뉴얼 1.5시간 서칭</span>
+            <span style="color: var(--accent-blue); font-weight: 700;">After: 0.14초 인덱스 검색</span>
+          </div>
+          <div class="compare-line">
+            <span style="color: #dc2626;">할루시네이션: 32%</span>
+            <span style="color: var(--accent-blue); font-weight: 700;">검증 정확도: 99.2%</span>
+          </div>
+        </div>
+      </article>
+
+      <!-- 카드 3: 데이터 파이프라인 -->
+      <article class="detail-card" data-sc-target="pipeline">
+        <div>
+          <div class="detail-head">
+            <span class="detail-tag">STREAMING LAKE</span>
+            <span style="font-size: 18px;">🌊</span>
+          </div>
+          <h3 class="detail-title">수동 엑셀 수집의 완전 무인화</h3>
+          <p class="detail-sub">수기 입력 및 파일 복사 반복을 Kafka 실시간 이벤트 스트림과 Iceberg 데이터 레이크로 전환.</p>
+        </div>
+        <div class="detail-compare-summary">
+          <div class="compare-line">
+            <span style="color: #dc2626;">Before: 일 3시간 수동 취합</span>
+            <span style="color: var(--accent-blue); font-weight: 700;">After: 80ms 실시간 동기화</span>
+          </div>
+          <div class="compare-line">
+            <span style="color: #dc2626;">데이터 누락: 빈번 발생</span>
+            <span style="color: var(--accent-blue); font-weight: 700;">무손실률: 100.00%</span>
+          </div>
+        </div>
+      </article>
+
+    </section>
+
+    <!-- 푸터 -->
+    <footer class="lab-footer">
+      <div>SUPIANNA SPLIT CANVAS LAB · INTERACTIVE VALUE DEMONSTRATION</div>
+      <div>
+        <a href="index.html">← 허브로 돌아가기</a>
+      </div>
+    </footer>
+
+  </main>
+
+  <!-- 인터랙션 로직 스크립트 -->
+  <script>
+    // [1] 시나리오별 데이터셋
+    const SCENARIO_DATA = {
+      vision: {
+        beforeMini: "검사 소요: 40분 / 건당",
+        beforeMethod: "작업자 육안 전수 검사",
+        beforeError: "18.4% (피로도 누적)",
+        beforeCost: "₩ 8,400,000 / 월",
+        afterMini: "검사 소요: 0.004초 (4.2ms)",
+        afterMethod: "YOLOv8 Edge 120 FPS 무인화",
+        afterError: "0.001% (정밀 검증)",
+        afterCost: "₩ 8,100,000 절감",
+        beforeHtml: `
+          <div class="pcb-board-mockup" style="background: #e2e8f0;">
+            <div class="pcb-chip"></div><div class="pcb-chip"></div><div class="pcb-chip"></div>
+            <div class="pcb-chip"></div><div class="pcb-chip"></div><div class="pcb-chip"></div>
+            <div class="pcb-chip"></div><div class="pcb-chip"></div><div class="pcb-chip"></div>
+            <div class="pcb-chip"></div><div class="pcb-chip"></div><div class="pcb-chip"></div>
+            <div class="defect-warning-circle"><span>미검출</span></div>
+            <div class="defect-warning-circle2"><span>쇼트 의심</span></div>
+          </div>
+        `,
+        afterHtml: `
+          <div class="pcb-board-mockup" style="background: #f1f5f9; border-color: rgba(37, 99, 235, 0.4);">
+            <div class="pcb-chip"></div><div class="pcb-chip"></div><div class="pcb-chip"></div>
+            <div class="pcb-chip"></div><div class="pcb-chip"></div><div class="pcb-chip"></div>
+            <div class="pcb-chip"></div><div class="pcb-chip"></div><div class="pcb-chip"></div>
+            <div class="pcb-chip"></div><div class="pcb-chip"></div><div class="pcb-chip"></div>
+            <div class="ai-scanline-laser"></div>
+            <div class="ai-bounding-box ai-box-1"><span class="ai-box-label">Micro_Crack: 99.8%</span></div>
+            <div class="ai-bounding-box ai-box-2"><span class="ai-box-label">Solder_Bridge: 98.4%</span></div>
+          </div>
+        `
+      },
+      rag: {
+        beforeMini: "검색 소요: 1.5시간 / 매뉴얼",
+        beforeMethod: "수백 페이지 PDF 수동 검색",
+        beforeError: "오답/누락률 32%",
+        beforeCost: "주 20시간 낭비",
+        afterMini: "응답 지연: 142 ms (실시간)",
+        afterMethod: "Hybrid Vector DB + Reranker",
+        afterError: "검증 정확도 99.2%",
+        afterCost: "작업 시간 95% 단축",
+        beforeHtml: `
+          <div class="scenario-card-mockup" style="border-left: 4px solid #dc2626;">
+            <div style="color: #dc2626; font-weight: 700; margin-bottom: 8px;">[RAW SCANNED PDF // UNINDEXED]</div>
+            <p style="color: #64748b;">■ Page 142: "모터 구동부 과전압 발생 시... (흐릿한 스캔 폰트)"</p>
+            <p style="color: #94a3b8; margin-top: 4px;">■ Text OCR 깨짐: err_v0lt#g3_unknown_0x82</p>
+            <p style="color: #ef4444; margin-top: 8px;">⚠️ 키워드 검색 실패 (Ctrl+F 작동안함), 수동 탐색 중...</p>
+          </div>
+        `,
+        afterHtml: `
+          <div class="scenario-card-mockup" style="border-left: 4px solid var(--accent-blue); background: #f0f7ff;">
+            <div style="color: var(--accent-blue); font-weight: 700; margin-bottom: 8px;">[STRUCTURED VECTOR RAG // VERIFIED]</div>
+            <div style="background: #ffffff; padding: 10px; border-radius: 6px; border: 1px solid #cbd5e1;">
+              <span style="color: #059669; font-weight: 700;">✓ Exact Chunk Retrieved (Score: 0.984)</span><br>
+              <span style="color: #0f172a;">"모터 과전압 레지스터 0x82 감지 시 릴레이 #3 자동 셧다운"</span>
+            </div>
+            <div style="margin-top: 8px; font-size: 11px; color: var(--text-muted);">Source: Doc_Rev4.pdf (p.142 L18) · Latency: 18ms</div>
+          </div>
+        `
+      },
+      pipeline: {
+        beforeMini: "데이터 지연: 24시간 (익일 집계)",
+        beforeMethod: "수동 엑셀 취합 & 이메일 송부",
+        beforeError: "#VALUE! 결측치 잦음",
+        beforeCost: "일 3시간 수기 작업",
+        afterMini: "데이터 지연: 80 ms (실시간)",
+        afterMethod: "Kafka Streaming + Delta Lake",
+        afterError: "0.000% 무손실 보장",
+        afterCost: "완전 무인 자동화",
+        beforeHtml: `
+          <div class="scenario-card-mockup" style="border-left: 4px solid #dc2626;">
+            <div style="color: #dc2626; font-weight: 700; margin-bottom: 8px;">[MESSY SPREADSHEETS // CONFLICT]</div>
+            <table style="width: 100%; border-collapse: collapse; font-size: 11px;">
+              <tr style="border-bottom: 1px solid #cbd5e1;"><td style="padding: 4px;">ID</td><td>Status</td><td>Value</td></tr>
+              <tr style="color: #dc2626;"><td style="padding: 4px;">#108</td><td>#N/A</td><td>ERR_TYPE</td></tr>
+              <tr><td style="padding: 4px;">#109</td><td>Pending</td><td>NULL</td></tr>
+            </table>
+            <p style="color: #ef4444; margin-top: 8px;">⚠️ 시트 버전 불일치로 집계 데이터 왜곡 발생</p>
+          </div>
+        `,
+        afterHtml: `
+          <div class="scenario-card-mockup" style="border-left: 4px solid var(--accent-blue); background: #f0f7ff;">
+            <div style="color: var(--accent-blue); font-weight: 700; margin-bottom: 8px;">[STREAMING DATA LAKE // REALTIME]</div>
+            <div style="background: #ffffff; padding: 10px; border-radius: 6px; border: 1px solid #cbd5e1; font-size: 11.5px;">
+              <span style="color: #059669; font-weight: 700;">● Ingestion Rate: 125,000 evt/s</span><br>
+              <span style="color: #0f172a;">Schema Check: Passed (Pydantic V2 strictly validated)</span>
+            </div>
+            <div style="margin-top: 8px; font-size: 11px; color: var(--accent-blue); font-weight: 600;">Zero Data Drop // Microsecond Sync</div>
+          </div>
+        `
+      }
+    };
+
+    // [2] 스플릿 슬라이더 인터랙션
+    const viewport = document.getElementById("viewport");
+    const layerAfter = document.getElementById("layer-after");
+    const sliderLine = document.getElementById("slider-line");
+    const sliderKnob = document.getElementById("slider-knob");
+    const sliderPercent = document.getElementById("slider-percent");
+
+    let isDragging = false;
+    let autoSweep = false;
+    let sweepDirection = 1;
+    let currentPercent = 50;
+    let sweepInterval = null;
+
+    function setSplitPosition(percent) {
+      const clamped = Math.max(5, Math.min(95, percent));
+      currentPercent = clamped;
+      layerAfter.style.clipPath = `inset(0 0 0 ${clamped}%)`;
+      sliderLine.style.left = `${clamped}%`;
+      sliderPercent.textContent = `${Math.round(clamped)}%`;
+    }
+
+    function handlePointerMove(clientX) {
+      const rect = viewport.getBoundingClientRect();
+      const x = clientX - rect.left;
+      const pct = (x / rect.width) * 100;
+      setSplitPosition(pct);
+    }
+
+    // 마우스 이벤트
+    viewport.addEventListener("mousedown", (e) => {
+      isDragging = true;
+      stopAutoSweep();
+      handlePointerMove(e.clientX);
+    });
+
+    window.addEventListener("mousemove", (e) => {
+      if (!isDragging) return;
+      handlePointerMove(e.clientX);
+    });
+
+    window.addEventListener("mouseup", () => {
+      isDragging = false;
+    });
+
+    // 터치 이벤트
+    viewport.addEventListener("touchstart", (e) => {
+      isDragging = true;
+      stopAutoSweep();
+      if (e.touches.length > 0) handlePointerMove(e.touches[0].clientX);
+    }, { passive: true });
+
+    window.addEventListener("touchmove", (e) => {
+      if (!isDragging) return;
+      if (e.touches.length > 0) handlePointerMove(e.touches[0].clientX);
+    }, { passive: true });
+
+    window.addEventListener("touchend", () => {
+      isDragging = false;
+    });
+
+    // [3] 자동 스캔 모드 (Auto Sweep Mode)
+    const btnSweep = document.getElementById("btn-sweep");
+
+    function startAutoSweep() {
+      autoSweep = true;
+      btnSweep.classList.add("active");
+      btnSweep.innerHTML = "<span>⏸️</span> 자동 스캔 모드: ON";
+
+      sweepInterval = setInterval(() => {
+        currentPercent += sweepDirection * 0.75;
+        if (currentPercent >= 90) {
+          sweepDirection = -1;
+        } else if (currentPercent <= 10) {
+          sweepDirection = 1;
+        }
+        setSplitPosition(currentPercent);
+      }, 20);
+    }
+
+    function stopAutoSweep() {
+      if (!autoSweep) return;
+      autoSweep = false;
+      clearInterval(sweepInterval);
+      btnSweep.classList.remove("active");
+      btnSweep.innerHTML = "<span>🔄</span> 자동 스캔 모드: OFF";
+    }
+
+    btnSweep.addEventListener("click", () => {
+      if (autoSweep) stopAutoSweep();
+      else startAutoSweep();
+    });
+
+    // [4] 시나리오 전환 이벤트
+    function switchScenario(scenarioKey) {
+      const data = SCENARIO_DATA[scenarioKey];
+      if (!data) return;
+
+      // 텍스트 업데이트
+      document.getElementById("before-mini-metric").textContent = data.beforeMini;
+      document.getElementById("before-stat-method").textContent = data.beforeMethod;
+      document.getElementById("before-stat-error").textContent = data.beforeError;
+      document.getElementById("before-stat-cost").textContent = data.beforeCost;
+
+      document.getElementById("after-mini-metric").textContent = data.afterMini;
+      document.getElementById("after-stat-method").textContent = data.afterMethod;
+      document.getElementById("after-stat-error").textContent = data.afterError;
+      document.getElementById("after-stat-cost").textContent = data.afterCost;
+
+      // HTML 그래픽 교체
+      document.getElementById("visual-before").innerHTML = data.beforeHtml;
+      document.getElementById("visual-after").innerHTML = data.afterHtml;
+
+      // 탭 활성화 상태
+      document.querySelectorAll(".sc-tab-btn").forEach(btn => {
+        btn.classList.toggle("active", btn.getAttribute("data-scenario") === scenarioKey);
+      });
+
+      // 하단 카드 활성화 상태
+      document.querySelectorAll(".detail-card").forEach(card => {
+        card.classList.toggle("selected", card.getAttribute("data-sc-target") === scenarioKey);
+      });
+    }
+
+    document.querySelectorAll(".sc-tab-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        switchScenario(btn.getAttribute("data-scenario"));
+      });
+    });
+
+    document.querySelectorAll(".detail-card").forEach(card => {
+      card.addEventListener("click", () => {
+        switchScenario(card.getAttribute("data-sc-target"));
+      });
+    });
+
+    // 초기 상태
+    setSplitPosition(50);
+  </script>
+
+</body>
+</html>
