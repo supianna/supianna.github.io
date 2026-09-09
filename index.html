@@ -95,8 +95,11 @@
       letter-spacing: 0.5px;
     }
 
-    /* 중앙 플로팅 텍스트 메뉴 */
+    /* 중앙 플로팅 텍스트 메뉴 (완전 중앙 정렬) */
     .orbital-menu-cluster {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
       pointer-events: auto;
       display: flex;
       align-items: center;
@@ -144,31 +147,6 @@
       100% { transform: scaleX(1); }
     }
 
-    .orbital-right-hub {
-      pointer-events: auto;
-      display: flex;
-      gap: 14px;
-      font-family: var(--font-mono);
-      font-size: 11px;
-    }
-
-    .hub-link {
-      color: var(--text-muted);
-      text-decoration: none;
-      transition: color 0.2s;
-    }
-
-    .hub-link:hover {
-      color: var(--accent-cobalt);
-    }
-
-    .hub-badge-link {
-      background: rgba(37, 99, 235, 0.08);
-      color: var(--accent-cobalt);
-      padding: 4px 10px;
-      border-radius: 6px;
-      font-weight: 600;
-    }
 
     /* =================================================== */
     /* 메인 스페이셜 캔버스 스테이지 */
@@ -463,13 +441,28 @@
       box-shadow: 0 20px 50px var(--accent-glow);
     }
 
-    /* 5대 프로젝트 노드 배치 */
-    .proj-card-1 { top: 30px; left: 60px; }
-    .proj-card-2 { bottom: 40px; left: 80px; }
-    .proj-card-3 { top: 30px; right: 60px; }
-    .proj-card-4 { bottom: 40px; right: 80px; border-color: rgba(37, 99, 235, 0.35); background: linear-gradient(135deg, #fff 0%, #f0f7ff 100%); }
-    .proj-card-5 { top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 5; }
-    .proj-card-5:hover { transform: translate(-50%, -50%) scale(1.08); }
+    /* 프로젝트 노드 배치 (궤도 좌우 대칭 균형 배치) */
+    .proj-card-classic {
+      top: 50%;
+      left: 90px;
+      transform: translateY(-50%);
+      border-color: rgba(37, 99, 235, 0.35);
+      background: linear-gradient(135deg, #fff 0%, #f0f7ff 100%);
+    }
+    .proj-card-classic:hover {
+      transform: translateY(-50%) scale(1.06);
+    }
+
+    .proj-card-hub {
+      top: 50%;
+      right: 90px;
+      transform: translateY(-50%);
+      border-color: rgba(147, 51, 234, 0.25);
+      background: linear-gradient(135deg, #fff 0%, #faf5ff 100%);
+    }
+    .proj-card-hub:hover {
+      transform: translateY(-50%) scale(1.06);
+    }
 
     .proj-card-icon {
       font-size: 22px;
@@ -641,24 +634,19 @@
       box-shadow: 0 0 8px var(--accent-cobalt);
     }
 
-    .hud-right-nav {
-      pointer-events: auto;
-      display: flex;
-      gap: 16px;
-    }
-
-    .hud-right-nav a {
-      color: var(--text-muted);
-      text-decoration: none;
-      transition: color 0.2s;
-    }
-
-    .hud-right-nav a:hover {
-      color: var(--accent-cobalt);
-    }
 
     /* 모바일 뷰포트 대응 */
     @media (max-width: 860px) {
+      .orbital-top-nav {
+        padding: 16px 20px;
+        flex-direction: column;
+        gap: 12px;
+      }
+      .orbital-menu-cluster {
+        position: static;
+        transform: none;
+        gap: 20px;
+      }
       .orbital-system-root {
         transform: scale(0.72);
       }
@@ -696,11 +684,6 @@
       <button class="orbital-tab-link" data-tab="projects">Projects</button>
       <button class="orbital-tab-link" data-tab="guestbook">Guestbook</button>
     </nav>
-
-    <div class="orbital-right-hub">
-      <a href="classic/index.html" class="hub-link hub-badge-link">🌊 클래식 블로그 (v1)</a>
-      <a href="gitblog/index.html" class="hub-link">✨ 15대 프로토타입 허브</a>
-    </div>
   </header>
 
   <!-- 메인 스페이셜 캔버스 스테이지 -->
@@ -793,41 +776,16 @@
     <!-- ============================================== -->
     <div class="spatial-content-pane" id="pane-projects">
       <div class="projects-orbital-wrap">
-        
-        <!-- 프로젝트 1: 비전 AI -->
-        <div class="project-satellite-card proj-card-1" onclick="triggerNodePulse(this)">
-          <div class="proj-card-icon">👁️</div>
-          <div class="proj-card-name">엣지 비전 AI 결함 탐지</div>
-          <div class="proj-card-metric">4.2ms / 120 FPS</div>
-          <p class="proj-card-sub">TensorRT C++ 기반 산업용 실시간 표면 결함 무인 전수 검사.</p>
-        </div>
-
-        <!-- 프로젝트 2: RAG 벡터 엔진 -->
-        <div class="project-satellite-card proj-card-2" onclick="triggerNodePulse(this)">
-          <div class="proj-card-icon">📄</div>
-          <div class="proj-card-name">엔터프라이즈 RAG 엔진</div>
-          <div class="proj-card-metric">142ms Hybrid Search</div>
-          <p class="proj-card-sub">비정형 기술 문서와 도면을 Qdrant 벡터 지능으로 즉각 인용.</p>
-        </div>
-
-        <!-- 프로젝트 3: 데이터 레이크 -->
-        <div class="project-satellite-card proj-card-3" onclick="triggerNodePulse(this)">
-          <div class="proj-card-icon">🌊</div>
-          <div class="proj-card-name">실시간 이벤트 스트림 레이크</div>
-          <div class="proj-card-metric">125K evt/s 무손실</div>
-          <p class="proj-card-sub">Apache Kafka & Iceberg 기반 페타바이트급 트랜잭션 수집 체계.</p>
-        </div>
-
-        <!-- 프로젝트 4: 기존 Supia.log 클래식 블로그 바로가기 -->
-        <a href="classic/index.html" class="project-satellite-card proj-card-4">
+        <!-- 프로젝트 1: 기존 Supia.log 클래식 블로그 바로가기 -->
+        <a href="classic/index.html" class="project-satellite-card proj-card-classic">
           <div class="proj-card-icon">🌊</div>
           <div class="proj-card-name">Supia.log 클래식 블로그 (v1)</div>
           <div class="proj-card-metric">Classic Archive ↗</div>
           <p class="proj-card-sub">바다 영상 배경, 기술 아티클 및 피드 중심의 기존 블로그로 이동합니다.</p>
         </a>
 
-        <!-- 프로젝트 5: 15대 프로토타입 컬렉션 -->
-        <a href="gitblog/index.html" class="project-satellite-card proj-card-5">
+        <!-- 프로젝트 2: 15대 프로토타입 컬렉션 -->
+        <a href="gitblog/index.html" class="project-satellite-card proj-card-hub">
           <div class="proj-card-icon">✨</div>
           <div class="proj-card-name">15대 인터랙티브 시각화 쇼케이스</div>
           <div class="proj-card-metric">15 Prototypes ↗</div>
@@ -869,11 +827,6 @@
     <div class="hud-left-data">
       <span class="pulse-dot"></span>
       <span>SPATIAL ORBITAL PROTOCOL // HARMONIC 60 FPS</span>
-    </div>
-    <div class="hud-right-nav">
-      <a href="classic/index.html">🌊 클래식 블로그 바로가기</a>
-      <a href="gitblog/index.html">✨ 15대 프로토타입 랩</a>
-    </div>
   </footer>
 
   <!-- 인터랙티브 스크립트 -->
