@@ -441,27 +441,43 @@
       box-shadow: 0 20px 50px var(--accent-glow);
     }
 
-    /* 프로젝트 노드 배치 (궤도 좌우 대칭 균형 배치) */
-    .proj-card-classic {
+    /* 5대 프로젝트 노드 배치 (오비탈 성좌 구조) */
+    .proj-card-portfolio {
       top: 50%;
-      left: 90px;
-      transform: translateY(-50%);
-      border-color: rgba(37, 99, 235, 0.35);
-      background: linear-gradient(135deg, #fff 0%, #f0f7ff 100%);
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 250px;
+      z-index: 5;
+      border-color: rgba(37, 99, 235, 0.45);
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(240, 247, 255, 0.98) 100%);
+      box-shadow: 0 16px 45px rgba(37, 99, 235, 0.12);
     }
-    .proj-card-classic:hover {
-      transform: translateY(-50%) scale(1.06);
+    .proj-card-portfolio:hover {
+      transform: translate(-50%, -50%) scale(1.08);
+      border-color: var(--accent-cobalt);
+      box-shadow: 0 24px 60px rgba(37, 99, 235, 0.25);
+    }
+
+    .proj-card-lotte {
+      top: 30px;
+      left: 50px;
+    }
+
+    .proj-card-neoguri {
+      top: 30px;
+      right: 50px;
+    }
+
+    .proj-card-classic {
+      bottom: 30px;
+      left: 60px;
+      border-color: rgba(37, 99, 235, 0.25);
     }
 
     .proj-card-hub {
-      top: 50%;
-      right: 90px;
-      transform: translateY(-50%);
+      bottom: 30px;
+      right: 60px;
       border-color: rgba(147, 51, 234, 0.25);
-      background: linear-gradient(135deg, #fff 0%, #faf5ff 100%);
-    }
-    .proj-card-hub:hover {
-      transform: translateY(-50%) scale(1.06);
     }
 
     .proj-card-icon {
@@ -776,7 +792,31 @@
     <!-- ============================================== -->
     <div class="spatial-content-pane" id="pane-projects">
       <div class="projects-orbital-wrap">
-        <!-- 프로젝트 1: 기존 Supia.log 클래식 블로그 바로가기 -->
+        <!-- 프로젝트 1: Supianna 공식 포트폴리오 (중앙 코어 쇼케이스) -->
+        <a href="portfolio/index.html" class="project-satellite-card proj-card-portfolio">
+          <div class="proj-card-icon">🌟</div>
+          <div class="proj-card-name">Supianna Digital Portfolio</div>
+          <div class="proj-card-metric">60 FPS Canvas · Glassmorphism ↗</div>
+          <p class="proj-card-sub">신비로운 오로라 & 글래스모피즘 테마의 공식 메인 포트폴리오 웹사이트.</p>
+        </a>
+
+        <!-- 프로젝트 2: ⚾ 롯데자이언츠 뉴스 수집기 & AI 일일 브리핑 -->
+        <a href="lotte-news/index.html" class="project-satellite-card proj-card-lotte">
+          <div class="proj-card-icon">⚾</div>
+          <div class="proj-card-name">롯데자이언츠 뉴스 & AI 브리핑</div>
+          <div class="proj-card-metric">OpenAI GPT · NAVER API ↗</div>
+          <p class="proj-card-sub">실시간 롯데자이언츠 뉴스 자동 수집 및 GPT 기반 일일 브리핑 웹 데모.</p>
+        </a>
+
+        <!-- 프로젝트 3: 🦝 Ponpoko 너구리 게임 (Web Remake) -->
+        <a href="neoguri/index.html" class="project-satellite-card proj-card-neoguri">
+          <div class="proj-card-icon">🦝</div>
+          <div class="proj-card-name">Ponpoko 너구리 게임 (Web Remake)</div>
+          <div class="proj-card-metric">HTML5 Canvas · 2D Physics ↗</div>
+          <p class="proj-card-sub">추억의 도스 명작 아케이드 게임을 순수 캔버스와 웹 오디오로 완벽 구현.</p>
+        </a>
+
+        <!-- 프로젝트 4: 기존 Supia.log 클래식 블로그 바로가기 -->
         <a href="classic/index.html" class="project-satellite-card proj-card-classic">
           <div class="proj-card-icon">🌊</div>
           <div class="proj-card-name">Supia.log 클래식 블로그 (v1)</div>
@@ -784,12 +824,12 @@
           <p class="proj-card-sub">바다 영상 배경, 기술 아티클 및 피드 중심의 기존 블로그로 이동합니다.</p>
         </a>
 
-        <!-- 프로젝트 2: 15대 프로토타입 컬렉션 -->
+        <!-- 프로젝트 5: 15대 프로토타입 컬렉션 -->
         <a href="gitblog/index.html" class="project-satellite-card proj-card-hub">
           <div class="proj-card-icon">✨</div>
           <div class="proj-card-name">15대 인터랙티브 시각화 쇼케이스</div>
           <div class="proj-card-metric">15 Prototypes ↗</div>
-          <p class="proj-card-sub">다크 코스믹, 미니멀 화이트, 벤토 스위트 등 15대 디자인 모음.</p>
+          <p class="proj-card-sub">다크 코스믹, 미니멀 화이트, 벤토 스위트 등 15대 디자인 랩 아카이브.</p>
         </a>
 
       </div>
