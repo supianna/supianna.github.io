@@ -351,126 +351,129 @@
     <!-- ================================================================= -->
     <section id="who-am-i" class="tab-panel">
       
-      <!-- 해달 & 날아가는 조개 시네마틱 무대 -->
-      <div class="otter-stage" id="otter-stage">
-        
-        <!-- 좌측 하단 둥둥 떠있는 귀여운 해달 캐릭터 -->
-        <div class="otter-character" id="otter-character" role="button" tabindex="0" title="해달을 클릭하면 조개를 다시 던져요!">
-          <!-- 말풍선 -->
-          <div class="otter-speech-bubble" id="otter-speech">
-            <span>조개 또 던져볼까? 🦦</span>
-          </div>
+      <!-- 2열 레이아웃: 좌측 상단 해달 + 우측 소개글 (글을 전혀 가리지 않는 완벽한 구조) -->
+      <div class="who-am-i-layout">
+
+        <!-- 좌측 상단 해달 & 조개 시네마틱 무대 -->
+        <div class="otter-stage" id="otter-stage">
           
-          <!-- 물결 파문 이펙트 -->
-          <div class="otter-water-ripples">
-            <span class="water-ripple ripple-1"></span>
-            <span class="water-ripple ripple-2"></span>
+          <!-- 좌측 둥둥 떠있는 큼직하고 귀여운 해달 캐릭터 -->
+          <div class="otter-character" id="otter-character" role="button" tabindex="0" title="해달을 클릭하면 조개를 다시 던져요!">
+            <!-- 말풍선 -->
+            <div class="otter-speech-bubble" id="otter-speech">
+              <span>조개 또 던져볼까? 🦦</span>
+            </div>
+            
+            <!-- 물결 파문 이펙트 -->
+            <div class="otter-water-ripples">
+              <span class="water-ripple ripple-1"></span>
+              <span class="water-ripple ripple-2"></span>
+            </div>
+
+            <!-- 사랑스러운 큼직한 해달 SVG -->
+            <svg class="otter-svg" viewBox="0 0 160 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="otterFurGrad" x1="40" y1="40" x2="130" y2="120" gradientUnits="userSpaceOnUse">
+                  <stop offset="0%" stop-color="#9C6B58"/>
+                  <stop offset="50%" stop-color="#805343"/>
+                  <stop offset="100%" stop-color="#653D30"/>
+                </linearGradient>
+                <linearGradient id="otterBellyGrad" x1="60" y1="55" x2="110" y2="105" gradientUnits="userSpaceOnUse">
+                  <stop offset="0%" stop-color="#F5DFCA"/>
+                  <stop offset="100%" stop-color="#E2BE9B"/>
+                </linearGradient>
+              </defs>
+
+              <!-- 꼬리 -->
+              <path d="M 22 92 Q 10 102 14 114 Q 26 116 35 100 Z" fill="#6E4435"/>
+
+              <!-- 해달 몸통 (배를 내밀고 누운 자세) -->
+              <path d="M 32 82 C 26 52 58 42 98 46 C 132 50 144 74 138 98 C 128 122 62 122 32 82 Z" fill="url(#otterFurGrad)"/>
+
+              <!-- 배 부분 베이지 털 -->
+              <path d="M 46 80 C 44 62 66 54 94 57 C 118 60 124 76 118 96 C 110 112 62 112 46 80 Z" fill="url(#otterBellyGrad)"/>
+
+              <!-- 뒷발 (물 위로 살짝 들린 앙증맞은 발) -->
+              <ellipse cx="38" cy="98" rx="8.5" ry="6.5" fill="#6E4435" transform="rotate(-15 38 98)"/>
+              <ellipse cx="50" cy="106" rx="8" ry="6" fill="#6E4435" transform="rotate(10 50 106)"/>
+
+              <!-- 동그란 두 귀 -->
+              <circle cx="106" cy="32" r="7" fill="#6E4435"/>
+              <circle cx="106" cy="32" r="4.5" fill="#E2BE9B"/>
+              <circle cx="138" cy="34" r="7" fill="#6E4435"/>
+              <circle cx="138" cy="34" r="4.5" fill="#E2BE9B"/>
+
+              <!-- 머리통 -->
+              <ellipse cx="122" cy="48" rx="25" ry="23" fill="url(#otterFurGrad)"/>
+
+              <!-- 볼과 주둥이 (베이지) -->
+              <ellipse cx="127" cy="54" rx="14" ry="11" fill="#F8E7D8"/>
+
+              <!-- 까만 콩 코 -->
+              <ellipse cx="127" cy="49" rx="4.5" ry="3.5" fill="#281A15"/>
+
+              <!-- W 모양의 행복한 입 -->
+              <path d="M 122 54 Q 127 57 127 54 Q 127 57 132 54" stroke="#281A15" stroke-width="1.6" stroke-linecap="round" fill="none"/>
+
+              <!-- 반짝이는 눈동자 -->
+              <circle cx="115" cy="44" r="3.2" fill="#281A15"/>
+              <circle cx="114" cy="43" r="1.1" fill="#FFFFFF"/>
+              <circle cx="133" cy="45" r="3.2" fill="#281A15"/>
+              <circle cx="132" cy="44" r="1.1" fill="#FFFFFF"/>
+
+              <!-- 사랑스러운 핑크 볼터치 -->
+              <ellipse cx="112" cy="52" rx="4.5" ry="2.8" fill="#F8A3A8" opacity="0.75"/>
+              <ellipse cx="137" cy="53" rx="4.5" ry="2.8" fill="#F8A3A8" opacity="0.75"/>
+
+              <!-- 앙증맞은 수염 -->
+              <path d="M 108 51 L 98 49 M 108 54 L 97 55" stroke="#E2BE9B" stroke-width="1.2" stroke-linecap="round"/>
+              <path d="M 140 52 L 150 50 M 140 55 L 151 56" stroke="#E2BE9B" stroke-width="1.2" stroke-linecap="round"/>
+
+              <!-- 배 위의 앙증맞은 두 앞발 (조개를 쥐고 있는 손) -->
+              <g class="otter-paws" id="otter-paws">
+                <!-- 작은 조개 아이콘 (가슴 위) -->
+                <path class="otter-chest-shell" d="M 86 73 C 81 68 76 60 84 57 C 91 55 96 55 101 58 C 107 62 103 70 98 73 Z" fill="#D6EAF8" stroke="#5D8AA8" stroke-width="1.2"/>
+                <!-- 왼쪽 앞발 & 오른쪽 앞발 -->
+                <ellipse cx="82" cy="69" rx="7.5" ry="5.5" fill="#754838" transform="rotate(25 82 69)"/>
+                <ellipse cx="102" cy="70" rx="7.5" ry="5.5" fill="#754838" transform="rotate(-25 102 70)"/>
+              </g>
+            </svg>
           </div>
 
-          <!-- 사랑스러운 해달 SVG -->
-          <svg class="otter-svg" viewBox="0 0 160 140" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <linearGradient id="otterFurGrad" x1="40" y1="40" x2="130" y2="120" gradientUnits="userSpaceOnUse">
-                <stop offset="0%" stop-color="#9C6B58"/>
-                <stop offset="50%" stop-color="#805343"/>
-                <stop offset="100%" stop-color="#653D30"/>
-              </linearGradient>
-              <linearGradient id="otterBellyGrad" x1="60" y1="55" x2="110" y2="105" gradientUnits="userSpaceOnUse">
-                <stop offset="0%" stop-color="#F5DFCA"/>
-                <stop offset="100%" stop-color="#E2BE9B"/>
-              </linearGradient>
-            </defs>
+          <!-- 해달의 손에서 출발해 오른쪽 본문으로 날아가는 마법의 조개 -->
+          <div class="otter-flying-shell" id="otter-flying-shell">
+            <svg class="flying-shell-svg" viewBox="0 0 70 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="flyShellGrad" x1="35" y1="4" x2="35" y2="54" gradientUnits="userSpaceOnUse">
+                  <stop offset="0%" stop-color="#FFFFFF"/>
+                  <stop offset="40%" stop-color="#D8EEF8"/>
+                  <stop offset="100%" stop-color="#7EA7C6"/>
+                </linearGradient>
+                <filter id="flyShellGlow" x="-20%" y="-20%" width="140%" height="140%">
+                  <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#4A7596" flood-opacity="0.35"/>
+                </filter>
+              </defs>
+              <g filter="url(#flyShellGlow)">
+                <path d="M 25 52 C 16 50 6 40 5 30 C 4 20 12 8 24 4 C 30 2 40 2 46 4 C 58 8 66 20 65 30 C 64 40 54 50 45 52 Z" fill="url(#flyShellGrad)" stroke="#4A7596" stroke-width="2"/>
+                <path d="M 35 52 L 35 4 M 35 52 Q 30 28 24 5 M 35 52 Q 40 28 46 5 M 35 52 Q 22 32 15 12 M 35 52 Q 48 32 55 12" stroke="#4A7596" stroke-width="1.5" stroke-linecap="round"/>
+              </g>
+            </svg>
+            <div class="shell-magic-trail"></div>
+          </div>
 
-            <!-- 꼬리 -->
-            <path d="M 22 92 Q 10 102 14 114 Q 26 116 35 100 Z" fill="#6E4435"/>
+          <!-- 조개 착지 스파클 이펙트 -->
+          <div class="shell-landing-burst" id="shell-landing-burst">
+            <span class="burst-particle p1">✨</span>
+            <span class="burst-particle p2">✦</span>
+            <span class="burst-particle p3">🌟</span>
+            <span class="burst-particle p4">✧</span>
+            <span class="burst-particle p5">🦪</span>
+          </div>
 
-            <!-- 해달 몸통 (배를 내밀고 누운 자세) -->
-            <path d="M 32 82 C 26 52 58 42 98 46 C 132 50 144 74 138 98 C 128 122 62 122 32 82 Z" fill="url(#otterFurGrad)"/>
-
-            <!-- 배 부분 베이지 털 -->
-            <path d="M 46 80 C 44 62 66 54 94 57 C 118 60 124 76 118 96 C 110 112 62 112 46 80 Z" fill="url(#otterBellyGrad)"/>
-
-            <!-- 뒷발 (물 위로 살짝 들린 앙증맞은 발) -->
-            <ellipse cx="38" cy="98" rx="8.5" ry="6.5" fill="#6E4435" transform="rotate(-15 38 98)"/>
-            <ellipse cx="50" cy="106" rx="8" ry="6" fill="#6E4435" transform="rotate(10 50 106)"/>
-
-            <!-- 동그란 두 귀 -->
-            <circle cx="106" cy="32" r="7" fill="#6E4435"/>
-            <circle cx="106" cy="32" r="4.5" fill="#E2BE9B"/>
-            <circle cx="138" cy="34" r="7" fill="#6E4435"/>
-            <circle cx="138" cy="34" r="4.5" fill="#E2BE9B"/>
-
-            <!-- 머리통 -->
-            <ellipse cx="122" cy="48" rx="25" ry="23" fill="url(#otterFurGrad)"/>
-
-            <!-- 볼과 주둥이 (베이지) -->
-            <ellipse cx="127" cy="54" rx="14" ry="11" fill="#F8E7D8"/>
-
-            <!-- 까만 콩 코 -->
-            <ellipse cx="127" cy="49" rx="4.5" ry="3.5" fill="#281A15"/>
-
-            <!-- W 모양의 행복한 입 -->
-            <path d="M 122 54 Q 127 57 127 54 Q 127 57 132 54" stroke="#281A15" stroke-width="1.6" stroke-linecap="round" fill="none"/>
-
-            <!-- 반짝이는 눈동자 -->
-            <circle cx="115" cy="44" r="3.2" fill="#281A15"/>
-            <circle cx="114" cy="43" r="1.1" fill="#FFFFFF"/>
-            <circle cx="133" cy="45" r="3.2" fill="#281A15"/>
-            <circle cx="132" cy="44" r="1.1" fill="#FFFFFF"/>
-
-            <!-- 사랑스러운 핑크 볼터치 -->
-            <ellipse cx="112" cy="52" rx="4.5" ry="2.8" fill="#F8A3A8" opacity="0.75"/>
-            <ellipse cx="137" cy="53" rx="4.5" ry="2.8" fill="#F8A3A8" opacity="0.75"/>
-
-            <!-- 앙증맞은 수염 -->
-            <path d="M 108 51 L 98 49 M 108 54 L 97 55" stroke="#E2BE9B" stroke-width="1.2" stroke-linecap="round"/>
-            <path d="M 140 52 L 150 50 M 140 55 L 151 56" stroke="#E2BE9B" stroke-width="1.2" stroke-linecap="round"/>
-
-            <!-- 배 위의 앙증맞은 두 앞발 (조개를 쥐고 있는 손) -->
-            <g class="otter-paws" id="otter-paws">
-              <!-- 작은 조개 아이콘 (가슴 위) -->
-              <path class="otter-chest-shell" d="M 86 73 C 81 68 76 60 84 57 C 91 55 96 55 101 58 C 107 62 103 70 98 73 Z" fill="#D6EAF8" stroke="#5D8AA8" stroke-width="1.2"/>
-              <!-- 왼쪽 앞발 & 오른쪽 앞발 -->
-              <ellipse cx="82" cy="69" rx="7.5" ry="5.5" fill="#754838" transform="rotate(25 82 69)"/>
-              <ellipse cx="102" cy="70" rx="7.5" ry="5.5" fill="#754838" transform="rotate(-25 102 70)"/>
-            </g>
-          </svg>
         </div>
 
-        <!-- 해달의 손에서 출발해 중앙으로 날아가는 마법의 조개 -->
-        <div class="otter-flying-shell" id="otter-flying-shell">
-          <svg class="flying-shell-svg" viewBox="0 0 70 60" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <linearGradient id="flyShellGrad" x1="35" y1="4" x2="35" y2="54" gradientUnits="userSpaceOnUse">
-                <stop offset="0%" stop-color="#FFFFFF"/>
-                <stop offset="40%" stop-color="#D8EEF8"/>
-                <stop offset="100%" stop-color="#7EA7C6"/>
-              </linearGradient>
-              <filter id="flyShellGlow" x="-20%" y="-20%" width="140%" height="140%">
-                <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#4A7596" flood-opacity="0.35"/>
-              </filter>
-            </defs>
-            <g filter="url(#flyShellGlow)">
-              <path d="M 25 52 C 16 50 6 40 5 30 C 4 20 12 8 24 4 C 30 2 40 2 46 4 C 58 8 66 20 65 30 C 64 40 54 50 45 52 Z" fill="url(#flyShellGrad)" stroke="#4A7596" stroke-width="2"/>
-              <path d="M 35 52 L 35 4 M 35 52 Q 30 28 24 5 M 35 52 Q 40 28 46 5 M 35 52 Q 22 32 15 12 M 35 52 Q 48 32 55 12" stroke="#4A7596" stroke-width="1.5" stroke-linecap="round"/>
-            </g>
-          </svg>
-          <div class="shell-magic-trail"></div>
-        </div>
-
-        <!-- 중앙 착지 팝 & 스파클 이펙트 -->
-        <div class="shell-landing-burst" id="shell-landing-burst">
-          <span class="burst-particle p1">✨</span>
-          <span class="burst-particle p2">✦</span>
-          <span class="burst-particle p3">🌟</span>
-          <span class="burst-particle p4">✧</span>
-          <span class="burst-particle p5">🦪</span>
-        </div>
-
-      </div>
-
-      <!-- 상단 헤더 & 소개 본문 (조개가 착지하면 드라마틱하게 촥 펼쳐짐) -->
-      <div class="profile-reveal-container" id="profile-reveal-container">
+        <!-- 우측 소개 본문 (해달의 오른쪽에 배치되어 글이 전혀 가려지지 않음) -->
+        <div class="profile-reveal-container" id="profile-reveal-container">
         <header class="section-intro">
           <div class="intro-otter-badge">🦦 해달이 건넨 소중한 이야기</div>
           <h1 class="page-title">Who am I ?</h1>
@@ -520,7 +523,8 @@
         </div>
       </div>
 
-    </section>
+    </div>
+  </section>
 
     <!-- ================================================================= -->
     <!-- 탭 3: Projects (포트폴리오 전면 배치 & 프로젝트 쇼케이스) -->
