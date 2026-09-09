@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>⚾ 롯데자이언츠 뉴스 수집기 & AI 일일 보고서 | Web Interactive Demo</title>
+  <meta name="description" content="NAVER API HUB 검색 API 및 웹 스크래핑으로 롯데자이언츠 뉴스를 수집하고, 특정 날짜를 선택하여 OpenAI GPT-5.6-Luna 기반 AI 일일 보고서를 생성하는 인터랙티브 웹 데모입니다.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- 상단 글로벌 내비게이션 바 -->
+  <nav class="top-nav">
+    <div class="nav-container">
+      <div class="nav-left">
+        <a href="../index.html" class="nav-link nav-home">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          블로그 홈
+        </a>
+        <a href="../portfolio/index.html" class="nav-link nav-portfolio">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+          포트폴리오
+        </a>
+      </div>
+      <div class="nav-center">
+        <span class="demo-pill">
+          <span class="live-pulse"></span>
+          LIVE WEB INTERACTIVE DEMO
+        </span>
+      </div>
+      <div class="nav-right">
+        <a href="https://github.com/supianna" target="_blank" rel="noopener noreferrer" class="nav-link nav-github">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+          GitHub ↗
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="app-container">
+    <!-- 헤더 -->
+    <header class="app-header">
+      <div class="header-top">
+        <div class="logo-area">
+          <span class="badge lotte-badge">LOTTE GIANTS</span>
+          <span class="badge ai-model-badge">OpenAI gpt-5.6-luna</span>
+          <span class="badge api-badge">NAVER API HUB</span>
+        </div>
+        <div class="tech-stack-chips">
+          <span>Python</span>
+          <span>pywebview</span>
+          <span>Pandas</span>
+          <span>BeautifulSoup</span>
+        </div>
+      </div>
+      <h1 class="main-title">⚾ 롯데자이언츠 뉴스 수집기 & AI 일일 보고서</h1>
+      <p class="subtitle">
+        오늘 기준 지난 일주일 동안의 롯데자이언츠 메인 뉴스를 최신순으로 자동 수집하고, 
+        원하는 <strong>특정 하루 날짜</strong>를 선택하여 AI가 심층 분석한 종합 일일 브리핑 보고서(.md)를 실시간으로 생성·조회합니다.
+      </p>
+      <div class="demo-info-banner">
+        <span class="info-icon">💡</span>
+        <span>이 페이지는 데스크톱 앱(pywebview) 환경과 100% 동일한 수집 파이프라인 및 실제 OpenAI GPT-5.6-Luna 생성 보고서를 브라우저에서 직접 체험할 수 있는 웹 인터랙티브 데모입니다.</span>
+      </div>
+    </header>
+
+    <!-- 대시보드 조작 그리드 -->
+    <main class="dashboard-grid">
+      <!-- 카드 1: 지난 일주일 뉴스 수집 -->
+      <section class="card action-card" id="cardCollect">
+        <div class="card-header">
+          <div class="card-title-group">
+            <span class="step-num">STEP 1</span>
+            <h2>지난 일주일 뉴스 자동 수집</h2>
+          </div>
+          <span class="tag live-tag">최근 7일 최신순</span>
+        </div>
+        <p class="card-desc">
+          NAVER API HUB 뉴스 검색 API(display=100)와 페이징 탐색을 통해 오늘 기준 지난 일주일 동안 기사 제목에 <strong>'롯데'</strong> 또는 <strong>'자이언츠'</strong>가 포함된 메인 뉴스를 수집하고 CSV에 누적합니다.
+        </p>
+        
+        <div class="action-box">
+          <button id="collectWeekBtn" class="btn btn-primary">
+            <span class="btn-icon">⚡</span>
+            <span class="btn-text">지난 일주일 뉴스 자동 수집</span>
+          </button>
+        </div>
+
+        <div id="collectStatus" class="status-box">
+          <div class="status-indicator-dot"></div>
+          <div class="status-content">
+            <span id="collectStatusText" class="status-text">대기 중: 수집 버튼을 누르면 최근 일주일 뉴스를 수집합니다.</span>
+            <div id="collectProgressBar" class="progress-bar-container" style="display: none;">
+              <div class="progress-bar-fill" style="width: 0%;"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="stat-pills" id="collectStats" style="display: none;">
+          <div class="stat-pill">
+            <span class="stat-label">수집 기간</span>
+            <span class="stat-val" id="statPeriod">2026.09.03 ~ 09.09</span>
+          </div>
+          <div class="stat-pill">
+            <span class="stat-label">수집 기사 수</span>
+            <span class="stat-val" id="statCount">총 218건</span>
+          </div>
+          <div class="stat-pill">
+            <span class="stat-label">필터 조건</span>
+            <span class="stat-val">제목 '롯데'|'자이언츠'</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 카드 2: 일주일 중 특정 하루 날짜 입력 및 AI 보고서 생성 -->
+      <section class="card action-card" id="cardReport">
+        <div class="card-header">
+          <div class="card-title-group">
+            <span class="step-num">STEP 2</span>
+            <h2>특정 하루 날짜 입력 & AI 보고서</h2>
+          </div>
+          <span class="tag ai-tag">GPT-5.6 Luna</span>
+        </div>
+        <p class="card-desc">
+          수집된 일주일 중 분석을 원하는 <strong>특정 하루 날짜</strong>를 직접 입력하거나 드롭다운에서 선택하면, OpenAI 'gpt-5.6-luna' 모델이 해당 일자의 기사들을 종합 분석하여 마크다운 보고서를 작성합니다.
+        </p>
+        
+        <div class="form-group">
+          <label for="targetDate">분석할 특정 하루 날짜 입력 / 선택:</label>
+          <div class="input-row">
+            <input type="date" id="targetDate" class="input-date" min="2026-09-03" max="2026-09-09" value="2026-09-09">
+            <select id="dateSelect" class="select-date">
+              <option value="2026-09-09">2026.09.09 (9건 수집)</option>
+              <option value="2026-09-08">2026.09.08 (21건 수집)</option>
+              <option value="2026-09-07">2026.09.07 (13건 수집)</option>
+              <option value="2026-09-06">2026.09.06 (25건 수집)</option>
+              <option value="2026-09-05">2026.09.05 (42건 수집)</option>
+              <option value="2026-09-04">2026.09.04 (30건 수집)</option>
+              <option value="2026-09-03">2026.09.03 (60건 수집)</option>
+              <option value="weekly">📅 일주일 종합 주간 브리핑 (총 218건)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="action-button-group">
+          <button id="reportBtn" class="btn btn-success">
+            <span class="btn-icon">📝</span>
+            <span class="btn-text">AI 요약 보고서 생성 (.md)</span>
+          </button>
+          <button id="weeklyReportBtn" class="btn btn-secondary">
+            <span class="btn-icon">📊</span>
+            <span class="btn-text">일주일 종합 브리핑</span>
+          </button>
+        </div>
+
+        <div id="reportStatus" class="status-box">
+          <div class="status-indicator-dot"></div>
+          <div class="status-content">
+            <span id="reportStatusText" class="status-text">원하는 날짜를 선택한 후 보고서 생성 버튼을 누르세요.</span>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- 결과 및 미리보기 섹션 -->
+    <section class="card preview-card">
+      <div class="card-header preview-header">
+        <div class="preview-title-area">
+          <h2>생성된 AI 보고서 미리보기</h2>
+          <span id="fileInfo" class="file-badge">report_2026-09-09.md</span>
+        </div>
+        <div class="preview-actions">
+          <button id="toggleRawBtn" class="btn-tool" title="마크다운 원본 보기">
+            <span class="tool-icon">📄</span> 원본/뷰어 전환
+          </button>
+          <button id="copyMdBtn" class="btn-tool" title="마크다운 내용 복사">
+            <span class="tool-icon">📋</span> 마크다운 복사
+          </button>
+          <button id="downloadMdBtn" class="btn-tool primary" title=".md 파일로 다운로드">
+            <span class="tool-icon">💾</span> .md 다운로드
+          </button>
+        </div>
+      </div>
+      
+      <!-- 렌더링 뷰어 -->
+      <div id="reportContent" class="report-content markdown-body">
+        <div class="empty-state">
+          <p>상단의 <strong>[AI 요약 보고서 생성]</strong> 버튼을 누르면 선택한 날짜의 심층 분석 리포트가 이곳에 실시간 렌더링됩니다.</p>
+        </div>
+      </div>
+
+      <!-- 원본 텍스트에어리어 (기본 숨김) -->
+      <textarea id="rawMarkdownArea" class="raw-markdown-area" readonly style="display: none;"></textarea>
+    </section>
+
+    <!-- 수집된 기사 데이터셋 탐색기 (웹 데모 전용 특화 기능) -->
+    <section class="card dataset-card">
+      <div class="card-header dataset-header">
+        <div>
+          <h2>수집된 롯데자이언츠 뉴스 데이터셋</h2>
+          <p class="dataset-sub">NAVER API HUB 검색 결과에서 필터링되어 CSV에 저장된 실제 218건의 기사 데이터입니다.</p>
+        </div>
+        <div class="dataset-controls">
+          <input type="text" id="articleSearchInput" class="input-search" placeholder="기사 제목 또는 내용 검색...">
+          <span id="filteredArticleCount" class="badge count-badge">218건 표시 중</span>
+        </div>
+      </div>
+
+      <!-- 날짜 퀵 필터 칩스 -->
+      <div class="date-filter-chips" id="dateFilterChips">
+        <button class="chip-btn active" data-date="all">전체 (218)</button>
+        <button class="chip-btn" data-date="2026.09.09">9/9 (9)</button>
+        <button class="chip-btn" data-date="2026.09.08">9/8 (21)</button>
+        <button class="chip-btn" data-date="2026.09.07">9/7 (13)</button>
+        <button class="chip-btn" data-date="2026.09.06">9/6 (25)</button>
+        <button class="chip-btn" data-date="2026.09.05">9/5 (42)</button>
+        <button class="chip-btn" data-date="2026.09.04">9/4 (30)</button>
+        <button class="chip-btn" data-date="2026.09.03">9/3 (60)</button>
+      </div>
+
+      <!-- 기사 목록 테이블/리스트 -->
+      <div class="articles-table-wrapper">
+        <table class="articles-table">
+          <thead>
+            <tr>
+              <th style="width: 60px;">No</th>
+              <th style="width: 130px;">발행일시</th>
+              <th>기사 제목</th>
+              <th style="width: 100px; text-align: center;">원문 링크</th>
+            </tr>
+          </thead>
+          <tbody id="articlesTableBody">
+            <!-- 자바스크립트로 동적 생성 -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 푸터 -->
+    <footer class="app-footer">
+      <p>© 2026 Lotte Giants News AI Collector. Developed with Python, pywebview, NAVER API HUB & OpenAI GPT-5.6 Luna.</p>
+      <div class="footer-links">
+        <a href="../index.html">블로그 메인</a>
+        <span>•</span>
+        <a href="../portfolio/index.html">포트폴리오</a>
+        <span>•</span>
+        <a href="https://github.com/supianna" target="_blank" rel="noopener noreferrer">GitHub</a>
+      </div>
+    </footer>
+  </div>
+
+  <!-- 데이터셋 로드 후 앱 스크립트 실행 -->
+  <script src="news_data.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
