@@ -1,0 +1,1312 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <!-- 파일명: gitblog/14_clean_ai_bento_suite.html -->
+  <!-- 목적: 컨셉 14 - 클린 AI 벤토 스위트 (Clean AI Bento Suite) 1화면 완성형 포트폴리오 -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>컨셉 14: 클린 AI 벤토 스위트 (Clean AI Bento Suite) | Supianna Portfolio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Pretendard:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-canvas: #f8fafc;
+      --bg-card: #ffffff;
+      --border-subtle: #e2e8f0;
+      --border-focus: #cbd5e1;
+      
+      /* 포인트 컬러: 정밀 공학의 코발트 블루 (단 1개만 제한적 사용) */
+      --accent-cobalt: #2563eb;
+      --accent-cobalt-light: #eff6ff;
+      --accent-cobalt-glow: rgba(37, 99, 235, 0.2);
+      
+      --text-black: #090d16;
+      --text-body: #334155;
+      --text-muted: #64748b;
+      --text-light: #94a3b8;
+
+      --shadow-card: 0 10px 30px rgba(15, 23, 42, 0.04), 0 1px 3px rgba(15, 23, 42, 0.02);
+      --shadow-hover: 0 20px 45px rgba(37, 99, 235, 0.08), 0 4px 12px rgba(15, 23, 42, 0.04);
+      --spring-easing: cubic-bezier(0.16, 1, 0.3, 1);
+
+      --font-sans: 'Inter', 'Pretendard', -apple-system, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* 1화면 완성형 (Single Viewport No-Scroll) */
+    html, body {
+      height: 100vh;
+      width: 100vw;
+      overflow: hidden;
+      background-color: var(--bg-canvas);
+      color: var(--text-black);
+      font-family: var(--font-sans);
+      user-select: none;
+    }
+
+    /* 글로벌 레이아웃 컨테이너 */
+    .suite-shell {
+      height: 100vh;
+      width: 100vw;
+      padding: 18px 28px 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      max-width: 1600px;
+      margin: 0 auto;
+    }
+
+    /* =================================================== */
+    /* 상단 네비게이션 헤더 (Header Bar) */
+    /* =================================================== */
+    .bento-header {
+      height: 52px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 0 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: var(--shadow-card);
+      flex-shrink: 0;
+    }
+
+    .brand-cluster {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-mark {
+      width: 28px;
+      height: 28px;
+      background: var(--accent-cobalt);
+      color: #ffffff;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 900;
+      box-shadow: 0 2px 8px var(--accent-cobalt-glow);
+    }
+
+    .brand-title {
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: -0.3px;
+      color: var(--text-black);
+    }
+
+    .brand-tag {
+      font-family: var(--font-mono);
+      font-size: 10.5px;
+      color: var(--accent-cobalt);
+      background: var(--accent-cobalt-light);
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-weight: 600;
+    }
+
+    /* 중앙 알약형 세그먼트 탭 메뉴 */
+    .bento-nav-tabs {
+      display: flex;
+      background: var(--bg-canvas);
+      border: 1px solid var(--border-subtle);
+      border-radius: 30px;
+      padding: 4px;
+      gap: 4px;
+    }
+
+    .tab-pill-btn {
+      background: none;
+      border: none;
+      padding: 7px 18px;
+      border-radius: 20px;
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.25s var(--spring-easing);
+      font-family: var(--font-sans);
+    }
+
+    .tab-pill-btn:hover {
+      color: var(--text-black);
+    }
+
+    .tab-pill-btn.active {
+      background: #ffffff;
+      color: var(--accent-cobalt);
+      font-weight: 700;
+      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
+    }
+
+    /* 우측 퀵 액션 링크 */
+    .header-quick-links {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .quick-link-btn {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-decoration: none;
+      padding: 6px 12px;
+      border-radius: 8px;
+      transition: all 0.2s;
+    }
+
+    .quick-link-btn:hover {
+      color: var(--text-black);
+      background: var(--bg-canvas);
+    }
+
+    /* =================================================== */
+    /* 메인 벤토 그리드 레이아웃 (Bento Grid) */
+    /* =================================================== */
+    .bento-stage-grid {
+      flex: 1;
+      min-height: 0; /* flex 자식 overflow 방지 */
+      display: grid;
+      grid-template-columns: 1.18fr 1fr;
+      grid-template-rows: 1fr 1fr 56px;
+      grid-template-areas:
+        "hero metrics"
+        "hero project"
+        "ticker ticker";
+      gap: 16px;
+    }
+
+    /* 공통 벤토 카드 스타일 */
+    .bento-module {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 22px;
+      padding: 26px 30px;
+      box-shadow: var(--shadow-card);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.3s var(--spring-easing), box-shadow 0.3s var(--spring-easing), border-color 0.3s ease;
+    }
+
+    .bento-module:hover {
+      border-color: #cbd5e1;
+    }
+
+    /* =================================================== */
+    /* [A 영역] HERO & IDENTITY (좌측 세로 전체) */
+    /* =================================================== */
+    .area-hero {
+      grid-area: hero;
+      justify-content: space-between;
+      position: relative;
+    }
+
+    .hero-top-status {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .status-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 600;
+      color: #059669;
+      background: #ecfdf5;
+      padding: 4px 12px;
+      border-radius: 20px;
+      border: 1px solid rgba(5, 150, 105, 0.2);
+    }
+
+    .status-pulse-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #059669;
+      box-shadow: 0 0 8px #059669;
+    }
+
+    .spec-version {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-light);
+    }
+
+    /* 3D 인터랙티브 미니멀 화이트 큐브 캔버스 오브젝트 */
+    .cube-stage-center {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      min-height: 180px;
+    }
+
+    .cube-canvas {
+      width: 220px;
+      height: 220px;
+      filter: drop-shadow(0 20px 30px rgba(37, 99, 235, 0.1));
+    }
+
+    .cube-hint-badge {
+      position: absolute;
+      bottom: 6px;
+      font-family: var(--font-mono);
+      font-size: 10.5px;
+      color: var(--text-light);
+      background: rgba(248, 250, 252, 0.85);
+      backdrop-filter: blur(8px);
+      padding: 3px 10px;
+      border-radius: 20px;
+      border: 1px solid var(--border-subtle);
+    }
+
+    /* 슬로건 및 직관적 볼드 텍스트 */
+    .hero-copy-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .hero-slogan {
+      font-size: clamp(28px, 3.2vw, 42px);
+      font-weight: 900;
+      letter-spacing: -1.6px;
+      line-height: 1.12;
+      color: var(--text-black);
+    }
+
+    .hero-slogan span.blue {
+      color: var(--accent-cobalt);
+    }
+
+    .hero-subdesc {
+      font-size: 14.5px;
+      color: var(--text-muted);
+      line-height: 1.6;
+      word-break: keep-all;
+    }
+
+    /* =================================================== */
+    /* [B 영역] CORE METRICS (오른쪽 상단) */
+    /* =================================================== */
+    .area-metrics {
+      grid-area: metrics;
+      justify-content: space-between;
+    }
+
+    .module-head-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .module-label {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--accent-cobalt);
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    .metrics-triple-cluster {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin: auto 0;
+    }
+
+    .metric-micro-card {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .metric-giant-val {
+      font-size: clamp(32px, 3.6vw, 48px);
+      font-weight: 900;
+      letter-spacing: -2px;
+      line-height: 1;
+      color: var(--text-black);
+    }
+
+    .metric-giant-val.accent {
+      color: var(--accent-cobalt);
+    }
+
+    .metric-name {
+      font-size: 12.5px;
+      font-weight: 700;
+      color: var(--text-body);
+      margin-top: 4px;
+    }
+
+    .metric-bar-track {
+      height: 4px;
+      background: var(--bg-canvas);
+      border-radius: 2px;
+      margin-top: 8px;
+      overflow: hidden;
+    }
+
+    .metric-bar-fill {
+      height: 100%;
+      background: var(--accent-cobalt);
+      border-radius: 2px;
+      transition: width 1s var(--spring-easing);
+    }
+
+    /* =================================================== */
+    /* [C 영역] PROJECT PREVIEW (오른쪽 중간) */
+    /* =================================================== */
+    .area-project {
+      grid-area: project;
+      justify-content: space-between;
+    }
+
+    .proj-preview-frame {
+      background: var(--bg-canvas);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      margin: auto 0;
+      position: relative;
+      cursor: pointer;
+      transition: all 0.2s var(--spring-easing);
+    }
+
+    .proj-preview-frame:hover {
+      background: #f1f5f9;
+      border-color: var(--accent-cobalt);
+      transform: translateY(-2px);
+    }
+
+    .proj-frame-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .proj-visual-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      background: #ffffff;
+      border: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+      flex-shrink: 0;
+    }
+
+    .proj-info-title {
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--text-black);
+    }
+
+    .proj-info-sub {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 2px;
+      font-family: var(--font-mono);
+    }
+
+    .proj-badge-pill {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--accent-cobalt);
+      background: var(--accent-cobalt-light);
+      padding: 4px 10px;
+      border-radius: 6px;
+    }
+
+    /* 태그 목록 */
+    .tech-badges-row {
+      display: flex;
+      gap: 6px;
+    }
+
+    .tech-pill {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-body);
+      background: var(--bg-canvas);
+      border: 1px solid var(--border-subtle);
+      padding: 3px 9px;
+      border-radius: 6px;
+    }
+
+    /* =================================================== */
+    /* [D 영역] GUESTBOOK TICKER (하단 가로 전체 바) */
+    /* =================================================== */
+    .area-ticker {
+      grid-area: ticker;
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      border-radius: 16px;
+      overflow: hidden;
+    }
+
+    .ticker-lead-tag {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--accent-cobalt);
+      background: var(--accent-cobalt-light);
+      padding: 5px 12px;
+      border-radius: 20px;
+      flex-shrink: 0;
+    }
+
+    .ticker-track-box {
+      flex: 1;
+      overflow: hidden;
+      white-space: nowrap;
+      position: relative;
+      mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
+      -webkit-mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
+    }
+
+    .ticker-scroll-content {
+      display: inline-flex;
+      gap: 36px;
+      animation: tickerMarquee 26s linear infinite;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-body);
+    }
+
+    .ticker-scroll-content:hover {
+      animation-play-state: paused;
+    }
+
+    @keyframes tickerMarquee {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    .ticker-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .ticker-item .author {
+      font-weight: 700;
+      color: var(--text-black);
+    }
+
+    .ticker-item .dot {
+      color: var(--accent-cobalt);
+    }
+
+    .btn-quick-post {
+      background: var(--text-black);
+      color: #ffffff;
+      border: none;
+      padding: 7px 16px;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+      transition: all 0.2s;
+    }
+
+    .btn-quick-post:hover {
+      background: var(--accent-cobalt);
+    }
+
+    /* =================================================== */
+    /* 탭 모핑 레이어 (About / Projects / Guestbook 오버레이) */
+    /* =================================================== */
+    .bento-morph-overlay {
+      position: absolute;
+      inset: 0;
+      background: var(--bg-card);
+      border-radius: 22px;
+      padding: 30px 36px;
+      z-index: 20;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      opacity: 0;
+      pointer-events: none;
+      transform: scale(0.98);
+      transition: opacity 0.3s var(--spring-easing), transform 0.3s var(--spring-easing);
+    }
+
+    .bento-morph-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+      transform: scale(1);
+    }
+
+    /* About: 문제 해결 파이프라인 */
+    .pipeline-grid-step {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr auto 1fr;
+      align-items: center;
+      gap: 16px;
+      margin: auto 0;
+    }
+
+    .pipe-node-card {
+      background: var(--bg-canvas);
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 20px 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .pipe-arrow {
+      font-size: 20px;
+      color: var(--accent-cobalt);
+      font-weight: 900;
+    }
+
+    .pipe-tag {
+      font-family: var(--font-mono);
+      font-size: 10.5px;
+      font-weight: 700;
+      color: var(--accent-cobalt);
+    }
+
+    .pipe-title {
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--text-black);
+    }
+
+    .pipe-desc {
+      font-size: 12.5px;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* Guestbook: 화이트 마그넷 보드 */
+    .magnet-board-stage {
+      flex: 1;
+      background: var(--bg-canvas);
+      border: 1px dashed var(--border-focus);
+      border-radius: 16px;
+      padding: 20px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      align-content: flex-start;
+      overflow-y: auto;
+      margin: 16px 0;
+    }
+
+    .magnet-chip {
+      background: #ffffff;
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      padding: 12px 18px;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      animation: snapMagnet 0.4s var(--spring-easing);
+      position: relative;
+    }
+
+    @keyframes snapMagnet {
+      0% { transform: scale(0.7) rotate(-4deg); opacity: 0; }
+      70% { transform: scale(1.05) rotate(2deg); opacity: 1; }
+      100% { transform: scale(1) rotate(0deg); }
+    }
+
+    .magnet-chip .chip-author {
+      font-size: 11px;
+      font-family: var(--font-mono);
+      font-weight: 700;
+      color: var(--accent-cobalt);
+    }
+
+    .magnet-chip .chip-text {
+      font-size: 13px;
+      color: var(--text-black);
+      font-weight: 500;
+    }
+
+    /* 마그넷 입력 폼 */
+    .magnet-input-row {
+      display: flex;
+      gap: 10px;
+    }
+
+    .magnet-input {
+      background: var(--bg-canvas);
+      border: 1px solid var(--border-subtle);
+      padding: 10px 16px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-family: var(--font-sans);
+      color: var(--text-black);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .magnet-input:focus {
+      border-color: var(--accent-cobalt);
+      background: #ffffff;
+    }
+
+    .input-name { width: 140px; }
+    .input-msg { flex: 1; }
+
+    .btn-magnet-submit {
+      background: var(--accent-cobalt);
+      color: #ffffff;
+      border: none;
+      padding: 10px 22px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    .btn-magnet-submit:hover {
+      background: #1d4ed8;
+    }
+
+    /* 모바일 대응 */
+    @media (max-width: 1024px) {
+      html, body {
+        height: auto;
+        overflow-y: auto;
+      }
+      .suite-shell {
+        height: auto;
+      }
+      .bento-stage-grid {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto;
+        grid-template-areas:
+          "hero"
+          "metrics"
+          "project"
+          "ticker";
+      }
+      .area-hero {
+        min-height: 480px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 전체 벤토 스위트 쉘 -->
+  <div class="suite-shell">
+    
+    <!-- 상단 헤더 바 -->
+    <header class="bento-header">
+      <div class="brand-cluster">
+        <div class="brand-mark">S</div>
+        <div class="brand-title">SUPIANNA</div>
+        <div class="brand-tag">CONCEPT 14 · BENTO</div>
+      </div>
+
+      <!-- 알약형 세그먼트 네비게이션 탭 -->
+      <nav class="bento-nav-tabs">
+        <button class="tab-pill-btn active" data-tab="home">
+          <span>🏛️</span> Home
+        </button>
+        <button class="tab-pill-btn" data-tab="about">
+          <span>⚙️</span> About
+        </button>
+        <button class="tab-pill-btn" data-tab="projects">
+          <span>🚀</span> Projects
+        </button>
+        <button class="tab-pill-btn" data-tab="guestbook">
+          <span>📌</span> Guestbook
+        </button>
+      </nav>
+
+      <div class="header-quick-links">
+        <a href="index.html" class="quick-link-btn">← 허브</a>
+        <a href="13_split_screen_before_after.html" class="quick-link-btn">13. 비포&애프터</a>
+      </div>
+    </header>
+
+    <!-- 메인 벤토 그리드 스테이지 -->
+    <main class="bento-stage-grid">
+      
+      <!-- ============================================== -->
+      <!-- [A 영역] HERO & IDENTITY (좌측 세로 전체) -->
+      <!-- ============================================== -->
+      <section class="bento-module area-hero" id="card-hero">
+        
+        <div class="hero-top-status">
+          <div class="status-chip">
+            <span class="status-pulse-dot"></span>
+            <span>SYSTEM ACTIVE // 99.98% UP</span>
+          </div>
+          <span class="spec-version">ARCH 2026 // v4.2</span>
+        </div>
+
+        <!-- 3D 인터랙티브 미니멀 화이트 큐브 오브젝트 -->
+        <div class="cube-stage-center">
+          <canvas id="cubeCanvas" class="cube-canvas" width="240" height="240"></canvas>
+          <div class="cube-hint-badge">마우스 각도에 따라 빛과 음영 반응</div>
+        </div>
+
+        <div class="hero-copy-group">
+          <h1 class="hero-slogan">
+            Building Precision Intelligence,<br>
+            <span class="blue">Zero Complexity.</span>
+          </h1>
+          <p class="hero-subdesc">
+            복잡한 코드 대신 명확한 구조와 수치로 가치를 증명합니다. 
+            단 하나의 화면에서 AI 파이프라인과 엔지니어링 결과물을 직관적으로 탐색하세요.
+          </p>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- [모핑 오버레이: About - 문제 해결 파이프라인] -->
+        <!-- ========================================== -->
+        <div class="bento-morph-overlay" id="morph-about">
+          <div class="module-head-row">
+            <span class="module-label">ENGINEERING PIPELINE // ABOUT ME</span>
+            <span style="font-family: var(--font-mono); font-size: 11px; color: var(--text-light);">PROBLEM-SOLVER</span>
+          </div>
+
+          <div class="pipeline-grid-step">
+            <!-- STEP 1: INPUT -->
+            <div class="pipe-node-card">
+              <span class="pipe-tag">STAGE 01 · INPUT</span>
+              <div class="pipe-title">해결할 난제</div>
+              <p class="pipe-desc">비정형 PDF, 결측치 투성이 엑셀, 육안 수동 검사 병목</p>
+            </div>
+
+            <div class="pipe-arrow">→</div>
+
+            <!-- STEP 2: ENGINE -->
+            <div class="pipe-node-card" style="border-color: var(--accent-cobalt);">
+              <span class="pipe-tag">STAGE 02 · CORE ENGINE</span>
+              <div class="pipe-title">나의 기술 스택</div>
+              <p class="pipe-desc">TensorRT C++, PyTorch, Kafka, FastAPI, UV</p>
+            </div>
+
+            <div class="pipe-arrow">→</div>
+
+            <!-- STEP 3: OUTPUT -->
+            <div class="pipe-node-card">
+              <span class="pipe-tag">STAGE 03 · OUTPUT</span>
+              <div class="pipe-title">창출된 가치</div>
+              <p class="pipe-desc">비용 82% 절감, 검사 소요 40분 → 4.2ms 단축</p>
+            </div>
+          </div>
+
+          <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-subtle); padding-top: 14px;">
+            <span style="font-size: 13px; font-weight: 700; color: var(--text-black);">"코드는 숨기고, 임팩트는 극대화한다."</span>
+            <button class="btn-quick-post" onclick="switchTab('projects')">프로젝트 결과 보기 →</button>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- [모핑 오버레이: Projects - 미니멀 인터랙티브 목업 창] -->
+        <!-- ========================================== -->
+        <div class="bento-morph-overlay" id="morph-projects">
+          <div class="module-head-row">
+            <span class="module-label">INTERACTIVE LAB // INSTANT 1-SEC TEST</span>
+            <span style="font-family: var(--font-mono); font-size: 11px; color: var(--accent-cobalt);">LIVE MOCKUP</span>
+          </div>
+
+          <!-- 미니멀 목업 창 -->
+          <div style="background: var(--bg-canvas); border: 1px solid var(--border-subtle); border-radius: 16px; padding: 18px 22px; display: flex; flex-direction: column; gap: 14px; margin: auto 0;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <div style="width: 10px; height: 10px; border-radius: 50%; background: #ef4444;"></div>
+                <div style="width: 10px; height: 10px; border-radius: 50%; background: #f59e0b;"></div>
+                <div style="width: 10px; height: 10px; border-radius: 50%; background: #10b981;"></div>
+                <span style="font-family: var(--font-mono); font-size: 11px; color: var(--text-muted); margin-left: 6px;" id="mockup-header-title">Vision_Inspection_V4.trt</span>
+              </div>
+              <div style="display: flex; gap: 6px;">
+                <button id="btn-toggle-diff" style="background: #ffffff; border: 1px solid var(--border-subtle); font-size: 11px; font-family: var(--font-mono); padding: 4px 10px; border-radius: 6px; cursor: pointer; font-weight: 700;">Before vs After 토글</button>
+              </div>
+            </div>
+
+            <!-- 라이브 테스트 뷰 -->
+            <div id="mockup-display-box" style="background: #ffffff; border: 1px solid var(--border-subtle); border-radius: 10px; padding: 16px; min-height: 100px; display: flex; align-items: center; justify-content: space-between;">
+              <div>
+                <div style="font-size: 12px; color: var(--text-muted); font-family: var(--font-mono);" id="mockup-status-label">STATUS: INPUT FEED READY</div>
+                <div style="font-size: 16px; font-weight: 800; color: var(--text-black); margin-top: 4px;" id="mockup-res-title">4K 120 FPS 실시간 불량 판별 대기 중</div>
+              </div>
+              <button id="btn-run-1sec" style="background: var(--accent-cobalt); color: #ffffff; border: none; padding: 9px 18px; border-radius: 8px; font-size: 12.5px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 6px; box-shadow: 0 4px 12px var(--accent-cobalt-glow);">
+                <span>⚡</span> 1초 만에 테스트 실행
+              </button>
+            </div>
+
+            <!-- 미니멀 뱃지 -->
+            <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+              <span class="tech-pill">TensorRT 8.6</span>
+              <span class="tech-pill">YOLOv8 Edge</span>
+              <span class="tech-pill">Qdrant DB</span>
+              <span class="tech-pill">Kafka Stream</span>
+              <span class="tech-pill">FastAPI</span>
+              <span class="tech-pill">UV Packager</span>
+            </div>
+          </div>
+
+          <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-subtle); padding-top: 14px;">
+            <span style="font-size: 12.5px; color: var(--text-muted); font-family: var(--font-mono);">Latency: 4.2ms · Precision: 99.4% · Zero Manual Bottleneck</span>
+            <button class="btn-quick-post" onclick="switchTab('home')">메인으로 복귀 ←</button>
+          </div>
+        </div>
+        <!-- [모핑 오버레이: Guestbook - 화이트 마그넷 보드] -->
+        <!-- ========================================== -->
+        <div class="bento-morph-overlay" id="morph-guestbook">
+          <div class="module-head-row">
+            <span class="module-label">WHITE MAGNET BOARD // LIVE GUESTBOOK</span>
+            <span style="font-family: var(--font-mono); font-size: 11px; color: var(--accent-cobalt);">MAGNETIC CHIPS</span>
+          </div>
+
+          <!-- 자석 칩들이 달라붙는 스테이지 -->
+          <div class="magnet-board-stage" id="magnet-board">
+            <div class="magnet-chip">
+              <span class="chip-author">@Product_Lead</span>
+              <span class="chip-text">화이트 모듈 벤토 디자인이 애플 제품군처럼 너무 정갈하네요!</span>
+            </div>
+            <div class="magnet-chip">
+              <span class="chip-author">@AI_Researcher</span>
+              <span class="chip-text">코드 없이 지표와 3D 큐브로만 보여주니 엔지니어링 신뢰감이 올라갑니다.</span>
+            </div>
+            <div class="magnet-chip">
+              <span class="chip-author">@Frontend_Dev</span>
+              <span class="chip-text">탭 누를 때 패널 모핑 인터랙션이 감각적입니다 ✨</span>
+            </div>
+          </div>
+
+          <!-- 한 줄 마그넷 부착 폼 -->
+          <form class="magnet-input-row" id="magnet-form">
+            <input type="text" class="magnet-input input-name" id="mag-name" placeholder="닉네임" required maxlength="12">
+            <input type="text" class="magnet-input input-msg" id="mag-msg" placeholder="새하얀 자석 칩을 보드에 착! 붙여보세요..." required maxlength="40">
+            <button type="submit" class="btn-magnet-submit">
+              <span>📌</span> 붙이기
+            </button>
+          </form>
+        </div>
+
+      </section>
+
+      <!-- ============================================== -->
+      <!-- [B 영역] CORE METRICS (오른쪽 상단) -->
+      <!-- ============================================== -->
+      <section class="bento-module area-metrics" id="card-metrics">
+        <div class="module-head-row">
+          <span class="module-label">CORE BENCHMARK // PRODUCTION VERIFIED</span>
+          <span style="font-size: 12px; color: var(--text-light); font-family: var(--font-mono);">SCALE 2026</span>
+        </div>
+
+        <div class="metrics-triple-cluster">
+          <!-- 메트릭 1 -->
+          <div class="metric-micro-card">
+            <div class="metric-giant-val accent" id="metric-1-val">99.4%</div>
+            <div class="metric-name">불량 검출 정확도</div>
+            <div class="metric-bar-track">
+              <div class="metric-bar-fill" style="width: 99.4%;"></div>
+            </div>
+          </div>
+
+          <!-- 메트릭 2 -->
+          <div class="metric-micro-card">
+            <div class="metric-giant-val" id="metric-2-val">10x</div>
+            <div class="metric-name">파이프라인 가속</div>
+            <div class="metric-bar-track">
+              <div class="metric-bar-fill" style="width: 88%;"></div>
+            </div>
+          </div>
+
+          <!-- 메트릭 3 -->
+          <div class="metric-micro-card">
+            <div class="metric-giant-val" id="metric-3-val">4.2ms</div>
+            <div class="metric-name">초저지연 추론</div>
+            <div class="metric-bar-track">
+              <div class="metric-bar-fill" style="width: 94%;"></div>
+            </div>
+          </div>
+        </div>
+
+        <div style="font-family: var(--font-mono); font-size: 11px; color: var(--text-light); display: flex; justify-content: space-between;">
+          <span>HW: NVIDIA Jetson AGX Orin</span>
+          <span>Zero Code Noise</span>
+        </div>
+      </section>
+
+      <!-- ============================================== -->
+      <!-- [C 영역] PROJECT PREVIEW (오른쪽 중간) -->
+      <!-- ============================================== -->
+      <section class="bento-module area-project" id="card-project">
+        <div class="module-head-row">
+          <span class="module-label">FEATURED LIVE DEMO // INTERACTIVE MOCKUP</span>
+          <span class="proj-badge-pill" id="proj-status-badge">ACTIVE READY</span>
+        </div>
+
+        <div class="proj-preview-frame" id="project-interactive-card">
+          <div class="proj-frame-left">
+            <div class="proj-visual-avatar" id="proj-icon">👁️</div>
+            <div>
+              <div class="proj-info-title" id="proj-title">고성능 비전 AI 엣지 디텍터</div>
+              <div class="proj-info-sub" id="proj-sub">TensorRT C++ · 120 FPS Realtime Inspection</div>
+            </div>
+          </div>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span style="font-size: 12px; font-weight: 700; color: var(--accent-cobalt);">체험하기 ↗</span>
+          </div>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <div class="tech-badges-row" id="proj-tech-tags">
+            <span class="tech-pill">TensorRT 8.6</span>
+            <span class="tech-pill">YOLOv8 Edge</span>
+            <span class="tech-pill">CUDA C++</span>
+          </div>
+          <span style="font-size: 11px; color: var(--text-muted); font-family: var(--font-mono);">CLICK TO MORPH</span>
+        </div>
+      </section>
+
+      <!-- ============================================== -->
+      <!-- [D 영역] QUICK INTERACTION / GUESTBOOK TICKER (하단 가로 전체) -->
+      <!-- ============================================== -->
+      <footer class="bento-module area-ticker">
+        <div class="ticker-lead-tag">
+          <span>●</span> LIVE TICKER
+        </div>
+
+        <div class="ticker-track-box">
+          <div class="ticker-scroll-content" id="ticker-marquee">
+            <div class="ticker-item"><span class="author">Alex:</span> "화이트 벤토 구조가 가독성 최고입니다" <span class="dot">•</span></div>
+            <div class="ticker-item"><span class="author">Dr. Kim:</span> "수치 기반 지표가 직관적이고 깔끔합니다" <span class="dot">•</span></div>
+            <div class="ticker-item"><span class="author">TeamLead:</span> "단 1화면에서 모든 핵심 역량이 파악되네요" <span class="dot">•</span></div>
+            <div class="ticker-item"><span class="author">Engineer H:</span> "스마트 큐브와 미니멀 톤앤매너 완벽!" <span class="dot">•</span></div>
+            <!-- 복제본 (무한 롤링용) -->
+            <div class="ticker-item"><span class="author">Alex:</span> "화이트 벤토 구조가 가독성 최고입니다" <span class="dot">•</span></div>
+            <div class="ticker-item"><span class="author">Dr. Kim:</span> "수치 기반 지표가 직관적이고 깔끔합니다" <span class="dot">•</span></div>
+            <div class="ticker-item"><span class="author">TeamLead:</span> "단 1화면에서 모든 핵심 역량이 파악되네요" <span class="dot">•</span></div>
+            <div class="ticker-item"><span class="author">Engineer H:</span> "스마트 큐브와 미니멀 톤앤매너 완벽!" <span class="dot">•</span></div>
+          </div>
+        </div>
+
+        <button class="btn-quick-post" onclick="switchTab('guestbook')">
+          <span>✏️</span> 메시지 남기기
+        </button>
+      </footer>
+
+    </main>
+
+  </div>
+
+  <!-- 인터랙티브 스크립트 -->
+  <script>
+    // [1] 마우스 반응형 미니멀 3D 화이트 큐브 (Canvas Drawing)
+    const canvas = document.getElementById("cubeCanvas");
+    const ctx = canvas.getContext("2d");
+    
+    let mouseX = 0;
+    let mouseY = 0;
+    let targetRotX = -0.35;
+    let targetRotY = 0.45;
+    let currentRotX = -0.35;
+    let currentRotY = 0.45;
+
+    // 정육면체 8개 꼭짓점
+    const size = 52;
+    const vertices = [
+      [-size, -size, -size],
+      [ size, -size, -size],
+      [ size,  size, -size],
+      [-size,  size, -size],
+      [-size, -size,  size],
+      [ size, -size,  size],
+      [ size,  size,  size],
+      [-size,  size,  size]
+    ];
+
+    // 6개 면 (인덱스)
+    const faces = [
+      { indices: [0, 1, 2, 3], normal: [0, 0, -1] },
+      { indices: [5, 4, 7, 6], normal: [0, 0, 1] },
+      { indices: [4, 0, 3, 7], normal: [-1, 0, 0] },
+      { indices: [1, 5, 6, 2], normal: [1, 0, 0] },
+      { indices: [4, 5, 1, 0], normal: [0, -1, 0] },
+      { indices: [3, 2, 6, 7], normal: [0, 1, 0] }
+    ];
+
+    function rotateX(p, angle) {
+      const cos = Math.cos(angle);
+      const sin = Math.sin(angle);
+      return [p[0], p[1] * cos - p[2] * sin, p[1] * sin + p[2] * cos];
+    }
+
+    function rotateY(p, angle) {
+      const cos = Math.cos(angle);
+      const sin = Math.sin(angle);
+      return [p[0] * cos + p[2] * sin, p[1], -p[0] * sin + p[2] * cos];
+    }
+
+    function renderCube() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // 부드러운 회전 보간
+      currentRotX += (targetRotX - currentRotX) * 0.08;
+      currentRotY += (targetRotY - currentRotY) * 0.08;
+
+      const centerX = canvas.width / 2;
+      const centerY = canvas.height / 2;
+
+      // 꼭짓점 회전
+      const transformedVertices = vertices.map(v => {
+        let p = rotateX(v, currentRotX);
+        p = rotateY(p, currentRotY);
+        return [centerX + p[0], centerY + p[1], p[2]];
+      });
+
+      // 면 렌더링 (Z-sorting)
+      const sortedFaces = faces.map(face => {
+        let zSum = 0;
+        face.indices.forEach(idx => {
+          zSum += transformedVertices[idx][2];
+        });
+        return { face, z: zSum / 4 };
+      }).sort((a, b) => a.z - b.z);
+
+      sortedFaces.forEach(item => {
+        const { face } = item;
+        const pts = face.indices.map(idx => transformedVertices[idx]);
+
+        ctx.beginPath();
+        ctx.moveTo(pts[0][0], pts[0][1]);
+        for (let i = 1; i < pts.length; i++) {
+          ctx.lineTo(pts[i][0], pts[i][1]);
+        }
+        ctx.closePath();
+
+        // 조명 계산 (순백색 및 은은한 그림자 그라데이션)
+        const lightDir = [0.4, -0.6, -0.7];
+        let norm = rotateX(face.normal, currentRotX);
+        norm = rotateY(norm, currentRotY);
+        const dot = norm[0] * lightDir[0] + norm[1] * lightDir[1] + norm[2] * lightDir[2];
+        const intensity = Math.max(0.15, Math.min(0.98, (dot + 1) / 2));
+
+        const baseLight = Math.round(238 + intensity * 17); // #EE ~ #FF
+        ctx.fillStyle = `rgb(${baseLight}, ${baseLight}, ${Math.min(255, baseLight + 2)})`;
+        ctx.fill();
+
+        // 얇고 정밀한 1px 보더
+        ctx.strokeStyle = "rgba(203, 213, 225, 0.7)";
+        ctx.lineWidth = 1;
+        ctx.stroke();
+      });
+
+      requestAnimationFrame(renderCube);
+    }
+
+    window.addEventListener("mousemove", (e) => {
+      const rect = canvas.getBoundingClientRect();
+      const x = e.clientX - (rect.left + rect.width / 2);
+      const y = e.clientY - (rect.top + rect.height / 2);
+      targetRotY = (x / window.innerWidth) * 1.5;
+      targetRotX = -(y / window.innerHeight) * 1.5;
+    });
+
+    renderCube();
+
+    // [2] 탭 전환 및 그리드 모핑 로직 (Morphing)
+    const tabBtns = document.querySelectorAll(".tab-pill-btn");
+    const morphAbout = document.getElementById("morph-about");
+    const morphProjects = document.getElementById("morph-projects");
+    const morphGuestbook = document.getElementById("morph-guestbook");
+
+    function switchTab(tabKey) {
+      tabBtns.forEach(btn => {
+        btn.classList.toggle("active", btn.getAttribute("data-tab") === tabKey);
+      });
+
+      morphAbout.classList.remove("active");
+      morphProjects.classList.remove("active");
+      morphGuestbook.classList.remove("active");
+
+      if (tabKey === "home") {
+        // 기본 홈 뷰 복귀
+      } else if (tabKey === "about") {
+        morphAbout.classList.add("active");
+      } else if (tabKey === "projects") {
+        morphProjects.classList.add("active");
+      } else if (tabKey === "guestbook") {
+        morphGuestbook.classList.add("active");
+        document.getElementById("mag-msg").focus();
+      }
+    }
+
+    // 1초 테스트 버튼 및 Before vs After 토글
+    const btnRun1Sec = document.getElementById("btn-run-1sec");
+    const btnToggleDiff = document.getElementById("btn-toggle-diff");
+    const mockupStatus = document.getElementById("mockup-status-label");
+    const mockupTitle = document.getElementById("mockup-res-title");
+    let isDiffAfter = false;
+
+    if (btnRun1Sec) {
+      btnRun1Sec.addEventListener("click", () => {
+        mockupStatus.textContent = "EXECUTING INFERENCE (4.2ms)...";
+        mockupStatus.style.color = "var(--accent-cobalt)";
+        mockupTitle.textContent = "⚡ 분석 중...";
+
+        setTimeout(() => {
+          mockupStatus.textContent = "RESULT // 100% VERIFIED";
+          mockupStatus.style.color = "#059669";
+          mockupTitle.textContent = "✓ 불량률 0.001% 검출 완료 (Confidence 99.8%)";
+        }, 400);
+      });
+    }
+
+    if (btnToggleDiff) {
+      btnToggleDiff.addEventListener("click", () => {
+        isDiffAfter = !isDiffAfter;
+        if (isDiffAfter) {
+          btnToggleDiff.textContent = "보기: [After (AI 적용 후)]";
+          btnToggleDiff.style.background = "var(--accent-cobalt-light)";
+          btnToggleDiff.style.color = "var(--accent-cobalt)";
+          mockupStatus.textContent = "MODE: AI ENGINE OPTIMIZED";
+          mockupTitle.textContent = "✓ 0.004초 무인 전수 검사 (오류율 0.001%)";
+        } else {
+          btnToggleDiff.textContent = "보기: [Before (기존 수작업)]";
+          btnToggleDiff.style.background = "#ffffff";
+          btnToggleDiff.style.color = "var(--text-black)";
+          mockupStatus.textContent = "MODE: LEGACY MANUAL PROCESS";
+          mockupTitle.textContent = "⚠️ 작업자 육안 검사 (40분 소요, 피로도 누적 18%)";
+        }
+      });
+    }
+
+    tabBtns.forEach(btn => {
+      btn.addEventListener("click", () => {
+        switchTab(btn.getAttribute("data-tab"));
+      });
+    });
+
+    // 프로젝트 프리뷰 데이터
+    const PROJECTS_LIST = [
+      {
+        title: "고성능 비전 AI 엣지 디텍터",
+        sub: "TensorRT C++ · 120 FPS Realtime Inspection",
+        icon: "👁️",
+        tags: ["TensorRT 8.6", "YOLOv8 Edge", "CUDA C++"],
+        m1: "99.4%", m2: "10x", m3: "4.2ms"
+      },
+      {
+        title: "멀티모달 RAG 지식 그래프 엔진",
+        sub: "Qdrant Vector DB · Hybrid Retrieval & Reranker",
+        icon: "📄",
+        tags: ["Qdrant", "vLLM", "Cross-Encoder"],
+        m1: "99.2%", m2: "12.9x", m3: "142ms"
+      },
+      {
+        title: "실시간 분산 스트리밍 데이터 레이크",
+        sub: "Apache Kafka & Spark · Zero Data Drop",
+        icon: "🌊",
+        tags: ["Kafka", "Spark 3.5", "Delta Lake"],
+        m1: "100%", m2: "8.9x", m3: "80ms"
+      }
+    ];
+    let currentProjIdx = 0;
+
+    // 프로젝트 카드 클릭 시 프로젝트 순환 모핑
+    const projCard = document.getElementById("project-interactive-card");
+    function cycleProject() {
+      currentProjIdx = (currentProjIdx + 1) % PROJECTS_LIST.length;
+      const p = PROJECTS_LIST[currentProjIdx];
+
+      document.getElementById("proj-title").textContent = p.title;
+      document.getElementById("proj-sub").textContent = p.sub;
+      document.getElementById("proj-icon").textContent = p.icon;
+      document.getElementById("proj-tech-tags").innerHTML = p.tags.map(t => `<span class="tech-pill">${t}</span>`).join("");
+
+      document.getElementById("metric-1-val").textContent = p.m1;
+      document.getElementById("metric-2-val").textContent = p.m2;
+      document.getElementById("metric-3-val").textContent = p.m3;
+    }
+
+    projCard.addEventListener("click", cycleProject);
+
+    // [3] 화이트 마그넷 보드 부착 인터랙션 (LocalStorage 연동)
+    const magnetForm = document.getElementById("magnet-form");
+    const magnetBoard = document.getElementById("magnet-board");
+    const tickerMarquee = document.getElementById("ticker-marquee");
+
+    magnetForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const name = document.getElementById("mag-name").value.trim();
+      const msg = document.getElementById("mag-msg").value.trim();
+
+      if (!name || !msg) return;
+
+      // 1. 마그넷 칩 생성
+      const chip = document.createElement("div");
+      chip.className = "magnet-chip";
+      chip.innerHTML = `
+        <span class="chip-author">@${name}</span>
+        <span class="chip-text">${msg}</span>
+      `;
+      magnetBoard.prepend(chip);
+
+      // 2. 하단 티커에도 즉시 반영
+      const tickerItem = document.createElement("div");
+      tickerItem.className = "ticker-item";
+      tickerItem.innerHTML = `<span class="author">${name}:</span> "${msg}" <span class="dot">•</span>`;
+      tickerMarquee.prepend(tickerItem);
+
+      // 폼 초기화
+      document.getElementById("mag-msg").value = "";
+    });
+  </script>
+
+</body>
+</html>
