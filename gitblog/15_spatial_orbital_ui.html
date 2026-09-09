@@ -1,0 +1,1056 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <!-- 파일명: gitblog/15_spatial_orbital_ui.html -->
+  <!-- 목적: 컨셉 15 - 스페이셜 오비탈 인터페이스 (Spatial Orbital UI) 미니멀리즘 궤도 시안 -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>컨셉 15: 스페이셜 오비탈 인터페이스 (Spatial Orbital UI) | Supianna Portfolio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700;800;900&family=Pretendard:wght@200;300;400;500;600;700;800;900&family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-pure: #ffffff;
+      --bg-soft: #f8fafc;
+      --ring-border: rgba(15, 23, 42, 0.12);
+      --ring-faint: rgba(15, 23, 42, 0.05);
+      --accent-cobalt: #2563eb;
+      --accent-cyan: #06b6d4;
+      --accent-glow: rgba(37, 99, 235, 0.25);
+      
+      --text-black: #090d16;
+      --text-gray: #475569;
+      --text-muted: #94a3b8;
+      --text-faint: #cbd5e1;
+
+      --spring-motion: cubic-bezier(0.16, 1, 0.3, 1);
+      --font-sans: 'Inter', 'Pretendard', -apple-system, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* 사각형 테두리와 스크롤을 완전히 제거한 순백의 스페이셜 캔버스 */
+    html, body {
+      height: 100vh;
+      width: 100vw;
+      overflow: hidden;
+      background-color: var(--bg-pure);
+      color: var(--text-black);
+      font-family: var(--font-sans);
+      user-select: none;
+      position: relative;
+    }
+
+    /* 은은한 대기 광원 오브 (Atmospheric Ambient Glow) */
+    .spatial-ambient-light {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      background: radial-gradient(circle at 50% 50%, rgba(37, 99, 235, 0.04) 0%, rgba(255, 255, 255, 0) 65%);
+    }
+
+    /* =================================================== */
+    /* 최상단 플로팅 미니멀 텍스트 헤더 */
+    /* =================================================== */
+    .orbital-top-nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      padding: 24px 44px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: linear-gradient(to bottom, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0) 100%);
+      pointer-events: none;
+    }
+
+    .orbital-brand-block {
+      pointer-events: auto;
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+    }
+
+    .brand-logo-text {
+      font-size: 15px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      color: var(--text-black);
+    }
+
+    .brand-status-tag {
+      font-family: var(--font-mono);
+      font-size: 10.5px;
+      color: var(--accent-cobalt);
+      letter-spacing: 0.5px;
+    }
+
+    /* 중앙 플로팅 텍스트 메뉴 */
+    .orbital-menu-cluster {
+      pointer-events: auto;
+      display: flex;
+      align-items: center;
+      gap: 32px;
+    }
+
+    .orbital-tab-link {
+      background: none;
+      border: none;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 6px 0;
+      position: relative;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      transition: color 0.3s var(--spring-motion);
+    }
+
+    .orbital-tab-link:hover {
+      color: var(--text-black);
+    }
+
+    .orbital-tab-link.active {
+      color: var(--accent-cobalt);
+      font-weight: 700;
+    }
+
+    .orbital-tab-link.active::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 1.5px;
+      background: var(--accent-cobalt);
+      border-radius: 2px;
+      animation: dotPop 0.3s var(--spring-motion);
+    }
+
+    @keyframes dotPop {
+      0% { transform: scaleX(0); }
+      100% { transform: scaleX(1); }
+    }
+
+    .orbital-right-hub {
+      pointer-events: auto;
+      display: flex;
+      gap: 16px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+    }
+
+    .hub-link {
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .hub-link:hover {
+      color: var(--text-black);
+    }
+
+    /* =================================================== */
+    /* 메인 스페이셜 캔버스 스테이지 */
+    /* =================================================== */
+    .spatial-stage {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+    }
+
+    /* =================================================== */
+    /* 중앙 궤도 시스템 (Orbital System Rings) */
+    /* =================================================== */
+    .orbital-system-root {
+      position: relative;
+      width: 520px;
+      height: 520px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.8s var(--spring-motion);
+    }
+
+    /* 동심원 궤도선 (1px Ultra Thin Minimal Lines) */
+    .orbit-ring {
+      position: absolute;
+      border-radius: 50%;
+      pointer-events: none;
+      transition: all 0.9s var(--spring-motion);
+    }
+
+    .ring-core {
+      width: 420px;
+      height: 420px;
+      border: 1px solid var(--ring-border);
+    }
+
+    .ring-outer {
+      width: 580px;
+      height: 580px;
+      border: 1px dashed var(--ring-faint);
+    }
+
+    .ring-satellite {
+      width: 720px;
+      height: 720px;
+      border: 1px solid rgba(15, 23, 42, 0.03);
+    }
+
+    /* 궤도를 따라 부드럽게 공전하는 위성 오브 */
+    .satellite-track {
+      position: absolute;
+      inset: -50px;
+      border-radius: 50%;
+      pointer-events: none;
+      animation: orbitSpin 80s linear infinite;
+    }
+
+    .satellite-track.reverse {
+      inset: -100px;
+      animation: orbitSpinRev 120s linear infinite;
+    }
+
+    @keyframes orbitSpin {
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes orbitSpinRev {
+      to { transform: rotate(-360deg); }
+    }
+
+    .orbit-satellite-dot {
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #ffffff;
+      border: 1.5px solid var(--accent-cobalt);
+      box-shadow: 0 0 12px var(--accent-cobalt);
+      pointer-events: auto;
+      cursor: pointer;
+      transition: transform 0.3s;
+    }
+
+    .orbit-satellite-dot:hover {
+      transform: scale(1.6);
+    }
+
+    .dot-1 { top: 12%; left: 16%; }
+    .dot-2 { bottom: 18%; right: 14%; }
+    .dot-3 { top: 50%; right: -4px; }
+
+    /* =================================================== */
+    /* 중앙 뉴럴 파티클 코어 캔버스 (Canvas) */
+    /* =================================================== */
+    .neural-canvas-wrap {
+      position: absolute;
+      width: 380px;
+      height: 380px;
+      border-radius: 50%;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1;
+    }
+
+    #neuralCanvas {
+      width: 380px;
+      height: 380px;
+      filter: drop-shadow(0 0 20px rgba(37, 99, 235, 0.12));
+    }
+
+    /* =================================================== */
+    /* 탭별 유기적 모핑 콘텐츠 레이어 (Liquid Content Flow) */
+    /* =================================================== */
+    .spatial-content-pane {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+      opacity: 0;
+      transform: scale(0.94);
+      transition: opacity 0.6s var(--spring-motion), transform 0.6s var(--spring-motion);
+      z-index: 20;
+    }
+
+    .spatial-content-pane.active {
+      opacity: 1;
+      transform: scale(1);
+      pointer-events: auto;
+    }
+
+    /* --- [1] HOME 뷰 콘텐츠 --- */
+    .home-center-identity {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      pointer-events: auto;
+    }
+
+    .identity-core-badge {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 2px;
+      color: var(--accent-cobalt);
+      text-transform: uppercase;
+      background: rgba(37, 99, 235, 0.06);
+      padding: 4px 14px;
+      border-radius: 20px;
+    }
+
+    .identity-main-name {
+      font-size: clamp(34px, 4.5vw, 54px);
+      font-weight: 900;
+      letter-spacing: -2px;
+      line-height: 1.05;
+      color: var(--text-black);
+    }
+
+    .identity-main-name span.light {
+      font-weight: 200;
+      color: var(--text-muted);
+    }
+
+    .identity-descriptor {
+      font-size: 14px;
+      color: var(--text-gray);
+      max-width: 320px;
+      line-height: 1.6;
+      word-break: keep-all;
+    }
+
+    .orbit-quick-stats {
+      display: flex;
+      gap: 24px;
+      margin-top: 14px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .orbit-quick-stats span.val {
+      font-weight: 700;
+      color: var(--accent-cobalt);
+    }
+
+    /* --- [2] ABOUT 뷰: 유기적 성좌 파이프라인 --- */
+    .about-constellation-wrap {
+      width: 820px;
+      height: 480px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    /* SVG 연결선 */
+    .constellation-svg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .constellation-line {
+      stroke: var(--ring-border);
+      stroke-width: 1.5;
+      stroke-dasharray: 4 4;
+      animation: linePulse 20s linear infinite;
+    }
+
+    @keyframes linePulse {
+      to { stroke-dashoffset: -500; }
+    }
+
+    .orbital-node {
+      position: relative;
+      z-index: 2;
+      width: 220px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding: 16px 20px;
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(12px);
+      border-radius: 16px;
+      border: 1px solid var(--ring-border);
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.04);
+      transition: all 0.3s var(--spring-motion);
+      cursor: default;
+    }
+
+    .orbital-node:hover {
+      transform: translateY(-5px);
+      border-color: var(--accent-cobalt);
+      box-shadow: 0 16px 40px var(--accent-glow);
+    }
+
+    .node-tag {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--accent-cobalt);
+    }
+
+    .node-title {
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--text-black);
+    }
+
+    .node-desc {
+      font-size: 12.5px;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* --- [3] PROJECTS 뷰: 오비탈 행성 갤러리 --- */
+    .projects-orbital-wrap {
+      width: 860px;
+      height: 480px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .project-satellite-card {
+      position: absolute;
+      width: 240px;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--ring-border);
+      border-radius: 18px;
+      padding: 20px;
+      box-shadow: 0 12px 35px rgba(15, 23, 42, 0.05);
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      transition: all 0.35s var(--spring-motion);
+    }
+
+    .project-satellite-card:hover {
+      transform: scale(1.06);
+      border-color: var(--accent-cobalt);
+      box-shadow: 0 20px 50px var(--accent-glow);
+    }
+
+    .proj-card-1 { top: 40px; left: 60px; }
+    .proj-card-2 { bottom: 40px; left: 80px; }
+    .proj-card-3 { top: 50%; right: 40px; transform: translateY(-50%); }
+    .proj-card-3:hover { transform: translateY(-50%) scale(1.06); }
+
+    .proj-card-icon {
+      font-size: 24px;
+    }
+
+    .proj-card-name {
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--text-black);
+    }
+
+    .proj-card-metric {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--accent-cobalt);
+    }
+
+    .proj-card-sub {
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    /* --- [4] GUESTBOOK 뷰: 궤도 마그넷 띠 --- */
+    .guestbook-orbital-wrap {
+      width: 860px;
+      height: 520px;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    /* 궤도 주변 유영하는 방명록 마그넷 칩 군집 */
+    .orbital-chips-swarm {
+      position: relative;
+      width: 100%;
+      flex: 1;
+      overflow: hidden;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      padding: 20px;
+    }
+
+    .orbital-magnet-chip {
+      background: #ffffff;
+      border: 1px solid var(--ring-border);
+      border-radius: 30px;
+      padding: 10px 18px;
+      font-size: 12.5px;
+      color: var(--text-black);
+      box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      animation: chipFloat 4s ease-in-out infinite alternate;
+      transition: all 0.25s;
+    }
+
+    .orbital-magnet-chip:hover {
+      transform: scale(1.08);
+      border-color: var(--accent-cobalt);
+      box-shadow: 0 8px 24px var(--accent-glow);
+    }
+
+    @keyframes chipFloat {
+      0% { transform: translateY(0) rotate(0deg); }
+      100% { transform: translateY(-8px) rotate(1deg); }
+    }
+
+    @keyframes snapMagnet {
+      0% { transform: scale(0.6) translateY(20px); opacity: 0; }
+      70% { transform: scale(1.1) translateY(-4px); opacity: 1; }
+      100% { transform: scale(1) translateY(0); }
+    }
+
+    .chip-author-label {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--accent-cobalt);
+    }
+
+    /* 하단 미니멀 원라인 인풋 바 */
+    .orbital-input-strip {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: #ffffff;
+      border: 1px solid var(--ring-border);
+      padding: 6px 14px;
+      border-radius: 40px;
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.05);
+      width: 520px;
+      max-width: 90%;
+    }
+
+    .strip-input {
+      border: none;
+      outline: none;
+      font-family: var(--font-sans);
+      font-size: 13px;
+      color: var(--text-black);
+      background: transparent;
+    }
+
+    .input-author {
+      width: 110px;
+      font-weight: 600;
+      border-right: 1px solid var(--ring-faint);
+      padding-right: 8px;
+    }
+
+    .input-message {
+      flex: 1;
+    }
+
+    .btn-orbit-send {
+      background: var(--text-black);
+      color: #ffffff;
+      border: none;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      transition: all 0.2s;
+      flex-shrink: 0;
+    }
+
+    .btn-orbit-send:hover {
+      background: var(--accent-cobalt);
+      transform: scale(1.08);
+    }
+
+    /* =================================================== */
+    /* 하단 미니멀 HUD 가이드 */
+    /* =================================================== */
+    .spatial-bottom-hud {
+      position: fixed;
+      bottom: 24px;
+      left: 44px;
+      right: 44px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-muted);
+      pointer-events: none;
+    }
+
+    .hud-left-data {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .pulse-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent-cobalt);
+      box-shadow: 0 0 8px var(--accent-cobalt);
+    }
+
+    .hud-right-nav {
+      pointer-events: auto;
+    }
+
+    .hud-right-nav a {
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .hud-right-nav a:hover {
+      color: var(--accent-cobalt);
+    }
+
+    /* 모바일 뷰포트 대응 */
+    @media (max-width: 860px) {
+      .orbital-system-root {
+        transform: scale(0.75);
+      }
+      .about-constellation-wrap,
+      .projects-orbital-wrap,
+      .guestbook-orbital-wrap {
+        width: 100vw;
+        flex-direction: column;
+        gap: 16px;
+      }
+      .project-satellite-card {
+        position: relative;
+        inset: auto !important;
+        transform: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 은은한 대기 광원 오브 -->
+  <div class="spatial-ambient-light" aria-hidden="true"></div>
+
+  <!-- 상단 플로팅 미니멀 텍스트 헤더 -->
+  <header class="orbital-top-nav">
+    <div class="orbital-brand-block">
+      <span class="brand-logo-text">SUPIANNA</span>
+      <span class="brand-status-tag">CONCEPT 15 · SPATIAL ORBITAL</span>
+    </div>
+
+    <!-- 미니멀 텍스트 메뉴 -->
+    <nav class="orbital-menu-cluster">
+      <button class="orbital-tab-link active" data-tab="home">Home</button>
+      <button class="orbital-tab-link" data-tab="about">About</button>
+      <button class="orbital-tab-link" data-tab="projects">Projects</button>
+      <button class="orbital-tab-link" data-tab="guestbook">Guestbook</button>
+    </nav>
+
+    <div class="orbital-right-hub">
+      <a href="index.html" class="hub-link">← 허브</a>
+      <a href="14_clean_ai_bento_suite.html" class="hub-link">14. 벤토</a>
+    </div>
+  </header>
+
+  <!-- 메인 스페이셜 캔버스 스테이지 -->
+  <main class="spatial-stage">
+    
+    <!-- 중앙 궤도 시스템 (Orbital Ring System) -->
+    <div class="orbital-system-root" id="orbital-root">
+      
+      <!-- 동심원 궤도선 (1px Minimal Lines) -->
+      <div class="orbit-ring ring-core" id="ring-core"></div>
+      <div class="orbit-ring ring-outer" id="ring-outer"></div>
+      <div class="orbit-ring ring-satellite"></div>
+
+      <!-- 공전하는 위성 트랙 & 점 -->
+      <div class="satellite-track">
+        <div class="orbit-satellite-dot dot-1" title="Inference Latency: 4.2ms"></div>
+        <div class="orbit-satellite-dot dot-2" title="Precision: 99.4%"></div>
+      </div>
+      <div class="satellite-track reverse">
+        <div class="orbit-satellite-dot dot-3" title="Zero Data Loss"></div>
+      </div>
+
+      <!-- 중앙 뉴럴 파티클 캔버스 (마우스 반응형 코어) -->
+      <div class="neural-canvas-wrap">
+        <canvas id="neuralCanvas" width="380" height="380"></canvas>
+      </div>
+
+    </div>
+
+    <!-- ============================================== -->
+    <!-- [1] HOME 뷰: 정체성 & 뉴럴 코어 -->
+    <!-- ============================================== -->
+    <div class="spatial-content-pane active" id="pane-home">
+      <div class="home-center-identity">
+        <span class="identity-core-badge">Precision Intelligence</span>
+        <h1 class="identity-main-name">
+          Supianna <span class="light">Lab</span>
+        </h1>
+        <p class="identity-descriptor">
+          네모난 틀을 벗어나 순백의 공간과 정밀한 궤도 위에서 지능형 시스템의 본질을 시각화합니다.
+        </p>
+        <div class="orbit-quick-stats">
+          <div>LATENCY <span class="val">4.2ms</span></div>
+          <div>•</div>
+          <div>PRECISION <span class="val">99.4%</span></div>
+          <div>•</div>
+          <div>STATUS <span class="val">ONLINE</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================== -->
+    <!-- [2] ABOUT 뷰: 유기적 성좌 파이프라인 -->
+    <!-- ============================================== -->
+    <div class="spatial-content-pane" id="pane-about">
+      <div class="about-constellation-wrap">
+        
+        <!-- 성좌 연결 SVG 라인 -->
+        <svg class="constellation-svg" viewBox="0 0 820 480">
+          <path class="constellation-line" d="M 110 240 Q 410 120 710 240" fill="none" />
+          <path class="constellation-line" d="M 110 240 Q 410 360 710 240" fill="none" />
+        </svg>
+
+        <!-- 노드 1: INPUT -->
+        <div class="orbital-node" style="align-self: center;">
+          <span class="node-tag">ORBIT 01 · PROBLEM</span>
+          <h3 class="node-title">해결할 난제</h3>
+          <p class="node-desc">수작업 데이터 병목, 비정형 텍스트 및 저화질 이미지의 실시간 정밀 추론 부재.</p>
+        </div>
+
+        <!-- 노드 2: ENGINE (중앙) -->
+        <div class="orbital-node" style="align-self: flex-start; margin-top: 30px; border-color: var(--accent-cobalt);">
+          <span class="node-tag">ORBIT 02 · ARCHITECTURE</span>
+          <h3 class="node-title">핵심 엔지니어링</h3>
+          <p class="node-desc">TensorRT C++ 커널 최적화, Qdrant 벡터 검색 엔진, Kafka 스트리밍 파이프라인.</p>
+        </div>
+
+        <!-- 노드 3: OUTPUT -->
+        <div class="orbital-node" style="align-self: flex-end; margin-bottom: 30px;">
+          <span class="node-tag">ORBIT 03 · IMPACT</span>
+          <h3 class="node-title">실질적 가치</h3>
+          <p class="node-desc">검사 소요 40분 → 4.2ms 단축, 오류 누락률 0.001% 미만, 연 8천만 원 절감.</p>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ============================================== -->
+    <!-- [3] PROJECTS 뷰: 오비탈 행성 갤러리 -->
+    <!-- ============================================== -->
+    <div class="spatial-content-pane" id="pane-projects">
+      <div class="projects-orbital-wrap">
+        
+        <!-- 프로젝트 1: 비전 AI -->
+        <div class="project-satellite-card proj-card-1" onclick="triggerNodePulse(this)">
+          <div class="proj-card-icon">👁️</div>
+          <div class="proj-card-name">엣지 비전 AI 결함 탐지</div>
+          <div class="proj-card-metric">4.2ms / 120 FPS</div>
+          <p class="proj-card-sub">TensorRT C++ 기반 산업용 실시간 표면 결함 무인 전수 검사.</p>
+        </div>
+
+        <!-- 프로젝트 2: RAG 벡터 엔진 -->
+        <div class="project-satellite-card proj-card-2" onclick="triggerNodePulse(this)">
+          <div class="proj-card-icon">📄</div>
+          <div class="proj-card-name">엔터프라이즈 RAG 엔진</div>
+          <div class="proj-card-metric">142ms Hybrid Search</div>
+          <p class="proj-card-sub">비정형 기술 문서와 도면을 Qdrant 벡터 지능으로 즉각 인용.</p>
+        </div>
+
+        <!-- 프로젝트 3: 데이터 레이크 -->
+        <div class="project-satellite-card proj-card-3" onclick="triggerNodePulse(this)">
+          <div class="proj-card-icon">🌊</div>
+          <div class="proj-card-name">실시간 이벤트 스트림 레이크</div>
+          <div class="proj-card-metric">125K evt/s 무손실</div>
+          <p class="proj-card-sub">Apache Kafka & Iceberg 기반 페타바이트급 트랜잭션 수집 체계.</p>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ============================================== -->
+    <!-- [4] GUESTBOOK 뷰: 궤도 마그넷 띠 -->
+    <!-- ============================================== -->
+    <div class="spatial-content-pane" id="pane-guestbook">
+      <div class="guestbook-orbital-wrap">
+        
+        <div style="text-align: center; margin-top: 10px;">
+          <span style="font-family: var(--font-mono); font-size: 11px; color: var(--accent-cobalt); letter-spacing: 1px;">MAGNETIC ORBITAL CARDS</span>
+        </div>
+
+        <!-- 부유하는 방명록 마그넷 칩 군집 -->
+        <div class="orbital-chips-swarm" id="chips-swarm">
+          <div class="orbital-magnet-chip">
+            <span class="chip-author-label">@K_Designer:</span>
+            <span>네모난 박스가 없는 순백의 궤도 인터페이스가 정말 혁신적입니다 ✨</span>
+          </div>
+          <div class="orbital-magnet-chip" style="animation-delay: -1.5s;">
+            <span class="chip-author-label">@AI_Lead:</span>
+            <span>가운데 유영하는 뉴럴 입자와 반응형 링의 호흡이 예술이네요.</span>
+          </div>
+          <div class="orbital-magnet-chip" style="animation-delay: -3s;">
+            <span class="chip-author-label">@CTO:</span>
+            <span>수치 중심의 정밀한 엔지니어링 미학이 완벽히 전달됩니다.</span>
+          </div>
+          <div class="orbital-magnet-chip" style="animation-delay: -2s;">
+            <span class="chip-author-label">@Visitor_H:</span>
+            <span>궤도 위를 유영하는 방명록 칩들이 너무 아름답습니다!</span>
+          </div>
+        </div>
+
+        <!-- 미니멀 원라인 인풋 스트립 -->
+        <form class="orbital-input-strip" id="orbit-form">
+          <input type="text" class="strip-input input-author" id="orbit-author" placeholder="닉네임" required maxlength="10">
+          <input type="text" class="strip-input input-message" id="orbit-msg" placeholder="중앙 궤도 주변으로 새하얀 칩을 띄워보세요..." required maxlength="36">
+          <button type="submit" class="btn-orbit-send">↗</button>
+        </form>
+
+      </div>
+    </div>
+
+  </main>
+
+  <!-- 하단 미니멀 HUD 상태 바 -->
+  <footer class="spatial-bottom-hud">
+    <div class="hud-left-data">
+      <span class="pulse-dot"></span>
+      <span>SPATIAL ORBITAL PROTOCOL // HARMONIC 60 FPS</span>
+    </div>
+    <div class="hud-right-nav">
+      <a href="index.html">← 허브로 돌아가기</a>
+    </div>
+  </footer>
+
+  <!-- 인터랙티브 스크립트 -->
+  <script>
+    // [1] 중앙 뉴럴 네트워크 입자 캔버스 (Canvas Particle Swarm)
+    const canvas = document.getElementById("neuralCanvas");
+    const ctx = canvas.getContext("2d");
+
+    let mouse = { x: canvas.width / 2, y: canvas.height / 2, active: false };
+
+    const PARTICLE_COUNT = 38;
+    const particles = [];
+
+    class Particle {
+      constructor() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.vx = (Math.random() - 0.5) * 0.8;
+        this.vy = (Math.random() - 0.5) * 0.8;
+        this.radius = Math.random() * 2 + 1.5;
+        this.baseRadius = this.radius;
+      }
+
+      update() {
+        this.x += this.vx;
+        this.y += this.vy;
+
+        // 원형 바운더리 내부 반사
+        const dx = this.x - canvas.width / 2;
+        const dy = this.y - canvas.height / 2;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        const maxDist = 170;
+
+        if (dist > maxDist) {
+          this.vx *= -1;
+          this.vy *= -1;
+          this.x += this.vx * 2;
+          this.y += this.vy * 2;
+        }
+
+        // 마우스 상호작용
+        if (mouse.active) {
+          const mdx = mouse.x - this.x;
+          const mdy = mouse.y - this.y;
+          const mDist = Math.sqrt(mdx * mdx + mdy * mdy);
+          if (mDist < 80) {
+            this.x -= (mdx / mDist) * 1.5;
+            this.y -= (mdy / mDist) * 1.5;
+          }
+        }
+      }
+
+      draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+        ctx.fillStyle = "rgba(37, 99, 235, 0.75)";
+        ctx.fill();
+      }
+    }
+
+    for (let i = 0; i < PARTICLE_COUNT; i++) {
+      particles.push(new Particle());
+    }
+
+    function animateParticles() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // 입자 간 유기적 연결선
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const dx = particles[i].x - particles[j].x;
+          const dy = particles[i].y - particles[j].y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+
+          if (dist < 65) {
+            ctx.beginPath();
+            ctx.moveTo(particles[i].x, particles[i].y);
+            ctx.lineTo(particles[j].x, particles[j].y);
+            ctx.strokeStyle = `rgba(37, 99, 235, ${0.35 * (1 - dist / 65)})`;
+            ctx.lineWidth = 0.8;
+            ctx.stroke();
+          }
+        }
+      }
+
+      particles.forEach(p => {
+        p.update();
+        p.draw();
+      });
+
+      requestAnimationFrame(animateParticles);
+    }
+
+    animateParticles();
+
+    // 마우스 좌표 추적
+    window.addEventListener("mousemove", (e) => {
+      const rect = canvas.getBoundingClientRect();
+      mouse.x = e.clientX - rect.left;
+      mouse.y = e.clientY - rect.top;
+      mouse.active = true;
+    });
+
+    window.addEventListener("mouseleave", () => {
+      mouse.active = false;
+    });
+
+    // [2] 탭 전환 시 오비탈 링 모핑 (Ring Morphing Animation)
+    const tabBtns = document.querySelectorAll(".orbital-tab-link");
+    const panes = document.querySelectorAll(".spatial-content-pane");
+    const orbitalRoot = document.getElementById("orbital-root");
+    const ringCore = document.getElementById("ring-core");
+    const ringOuter = document.getElementById("ring-outer");
+
+    function switchOrbitalTab(tabKey) {
+      tabBtns.forEach(btn => {
+        btn.classList.toggle("active", btn.getAttribute("data-tab") === tabKey);
+      });
+
+      panes.forEach(pane => {
+        pane.classList.toggle("active", pane.id === `pane-${tabKey}`);
+      });
+
+      // 탭별 궤도 링 모핑 변형
+      if (tabKey === "home") {
+        orbitalRoot.style.transform = "scale(1)";
+        ringCore.style.borderColor = "var(--ring-border)";
+        ringOuter.style.borderColor = "var(--ring-faint)";
+      } else if (tabKey === "about") {
+        orbitalRoot.style.transform = "scale(1.28)";
+        ringCore.style.borderColor = "rgba(37, 99, 235, 0.25)";
+        ringOuter.style.borderColor = "rgba(37, 99, 235, 0.08)";
+      } else if (tabKey === "projects") {
+        orbitalRoot.style.transform = "scale(1.15) rotate(15deg)";
+        ringCore.style.borderColor = "rgba(6, 182, 212, 0.3)";
+        ringOuter.style.borderColor = "rgba(37, 99, 235, 0.12)";
+      } else if (tabKey === "guestbook") {
+        orbitalRoot.style.transform = "scale(0.85)";
+        ringCore.style.borderColor = "var(--ring-border)";
+        ringOuter.style.borderColor = "var(--ring-faint)";
+      }
+    }
+
+    tabBtns.forEach(btn => {
+      btn.addEventListener("click", () => {
+        switchOrbitalTab(btn.getAttribute("data-tab"));
+      });
+    });
+
+    // [3] 프로젝트 카드 펄스 효과
+    function triggerNodePulse(card) {
+      card.style.boxShadow = "0 0 40px rgba(37, 99, 235, 0.5)";
+      card.style.borderColor = "var(--accent-cobalt)";
+      setTimeout(() => {
+        card.style.boxShadow = "";
+        card.style.borderColor = "";
+      }, 600);
+    }
+
+    // [4] 방명록 마그넷 칩 부착 인터랙션
+    const orbitForm = document.getElementById("orbit-form");
+    const swarm = document.getElementById("chips-swarm");
+
+    orbitForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const author = document.getElementById("orbit-author").value.trim();
+      const msg = document.getElementById("orbit-msg").value.trim();
+
+      if (!author || !msg) return;
+
+      const chip = document.createElement("div");
+      chip.className = "orbital-magnet-chip";
+      chip.style.animation = "snapMagnet 0.45s cubic-bezier(0.16, 1, 0.3, 1)";
+      chip.innerHTML = `
+        <span class="chip-author-label">@${author}:</span>
+        <span>${msg}</span>
+      `;
+
+      swarm.prepend(chip);
+
+      document.getElementById("orbit-msg").value = "";
+    });
+  </script>
+
+</body>
+</html>
