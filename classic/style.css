@@ -1,0 +1,2003 @@
+/* ==========================================================================
+   Supia.log | Modern Minimalist Clean Blog Stylesheet
+   - 바탕화면 배경: 윤슬 바다 (윤슬바다.avif) 전체 페이지 적용
+   - 테마: 서귀포의 이른 봄 (5가지 핵심 색상 팔레트)
+     1. #272A59 (Deep Midnight Navy - 로고, 주요 헤딩, 활성 탭, 주요 버튼)
+     2. #58748C (Slate Blue - 보조 텍스트, 설명글, 메타데이터, 보더)
+     3. #80A2BF (Soft Cerulean - 인터랙션 하이라이트, 호버 림, 악센트 태그)
+     4. #A0C3D9 (Pastel Sky - 뱃지 배경, 파스텔 필, 은은한 하이라이트)
+     5. #F2F2F2 / #F8FAFC (Soft Off-White - 페이지 배경 베이스, 코드블록 배경)
+     + #FFFFFF (Pure White - 카드 및 모달 서피스)
+   - 타이포그래피: Pretendard & Fira Code
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. 디자인 토큰 및 CSS 변수
+   -------------------------------------------------------------------------- */
+:root {
+  /* 서귀포의 이른 봄 5색 팔레트 */
+  --color-navy: #272a59;
+  --color-slate: #58748c;
+  --color-soft-blue: #80a2bf;
+  --color-sky: #a0c3d9;
+  --color-offwhite: #f2f2f2;
+  --color-pure-white: #ffffff;
+  --color-bg-page: #dce7f0;
+
+  /* 글래스모피즘 반투명 서피스 */
+  --glass-bg: rgba(255, 255, 255, 0.86);
+  --glass-bg-hover: rgba(255, 255, 255, 0.96);
+  --glass-border: rgba(255, 255, 255, 0.75);
+  --glass-nav: rgba(255, 255, 255, 0.82);
+
+  /* 시맨틱 색상 매핑 */
+  --text-primary: var(--color-navy);
+  --text-secondary: var(--color-slate);
+  --text-accent: var(--color-soft-blue);
+  
+  --border-subtle: #e2e8f0;
+  --border-card: rgba(88, 116, 140, 0.18);
+  --border-hover: var(--color-soft-blue);
+
+  --font-sans: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'Fira Code', monospace;
+
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-full: 9999px;
+
+  --shadow-sm: 0 4px 14px rgba(39, 42, 89, 0.05);
+  --shadow-md: 0 8px 24px -3px rgba(39, 42, 89, 0.09);
+  --shadow-lg: 0 16px 36px -4px rgba(39, 42, 89, 0.14);
+
+  --transition-fast: 0.18s ease;
+  --transition-normal: 0.25s cubic-bezier(0.2, 0, 0, 1);
+  --max-content-width: 980px;
+}
+
+/* --------------------------------------------------------------------------
+   2. 리셋 및 글로벌 기본 스타일 & 윤슬 바다 바탕화면
+   -------------------------------------------------------------------------- */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--color-bg-page);
+  color: var(--text-primary);
+  line-height: 1.65;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  position: relative;
+}
+
+/* ==========================================================================
+   ★ 바다 비디오 배경 레이어 (AI Image-to-Video 루핑 mp4 영상 & 정적 이미지 폴백)
+   ========================================================================== */
+.ocean-bg-layer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  background: var(--color-bg-page) url('윤슬바다.avif') center center / cover no-repeat;
+}
+
+.ocean-bg-video {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  min-width: 100%;
+  min-height: 100%;
+  width: auto;
+  height: auto;
+  transform: translate(-50%, -50%);
+  object-fit: cover;
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* 텍스트 가독성 및 글래스모피즘 톤을 정돈하는 파스텔 오버레이 */
+.ocean-bg-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.22) 0%, rgba(255, 255, 255, 0.08) 45%, rgba(220, 238, 252, 0.28) 100%);
+  pointer-events: none;
+}
+
+/* ==========================================================================
+   ★ 핵심 요구사항: HOME 탭일 때 스크롤 내리지 않고 한 화면(100vh)에 고정
+   ========================================================================== */
+@media (min-width: 769px) and (min-height: 620px) {
+  body[data-active-tab="home"] {
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  body[data-active-tab="home"] .main-container {
+    position: relative;
+    z-index: 10;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 0.5rem 1.5rem;
+    overflow: hidden;
+  }
+
+  body[data-active-tab="home"] .home-dashboard {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100%;
+    gap: clamp(0.75rem, 1.8vh, 1.35rem);
+  }
+
+  body[data-active-tab="home"] .footer {
+    position: relative;
+    z-index: 10;
+    padding: 0.75rem 1.5rem;
+    flex-shrink: 0;
+  }
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button, input, textarea, select {
+  font-family: inherit;
+  color: inherit;
+}
+
+/* --------------------------------------------------------------------------
+   3. 상단 헤더 & GNB (글래스모피즘 & 로고 + 4대 탭)
+   -------------------------------------------------------------------------- */
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background-color: var(--glass-nav);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--glass-border);
+  box-shadow: 0 2px 10px rgba(39, 42, 89, 0.03);
+  flex-shrink: 0;
+}
+
+.nav-container {
+  max-width: var(--max-content-width);
+  margin: 0 auto;
+  padding: 0.85rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.nav-logo {
+  font-size: 1.28rem;
+  font-weight: 800;
+  color: var(--color-navy);
+  letter-spacing: -0.03em;
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.logo-accent {
+  color: var(--color-soft-blue);
+  font-weight: 600;
+}
+
+.nav-tabs {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.tab-btn {
+  background: none;
+  border: none;
+  padding: 0.45rem 0.75rem;
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--color-slate);
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  position: relative;
+  transition: var(--transition-fast);
+}
+
+.tab-btn:hover {
+  color: var(--color-navy);
+  background-color: rgba(255, 255, 255, 0.6);
+}
+
+.tab-btn.active {
+  color: var(--color-navy);
+  background-color: rgba(255, 255, 255, 0.85);
+  box-shadow: 0 2px 6px rgba(39, 42, 89, 0.06);
+  font-weight: 700;
+}
+
+.tab-btn.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 20%;
+  right: 20%;
+  height: 2.5px;
+  background-color: var(--color-navy);
+  border-radius: var(--radius-full);
+}
+
+/* --------------------------------------------------------------------------
+   4. 메인 컨테이너 및 탭 패널 공통
+   -------------------------------------------------------------------------- */
+.main-container {
+  position: relative;
+  z-index: 10;
+  flex: 1;
+  max-width: var(--max-content-width);
+  width: 100%;
+  margin: 0 auto;
+  padding: 2.5rem 1.5rem 4rem;
+}
+
+.tab-panel {
+  display: none;
+  opacity: 0;
+}
+
+.tab-panel.active {
+  display: block;
+  opacity: 1;
+  animation: tabFadeIn 0.28s ease-out forwards;
+}
+
+@keyframes tabFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 탭 공통 상단 인트로 헤더 (Who am I, Projects, Free Board) */
+.section-intro {
+  margin-bottom: 2.2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1.5px solid rgba(160, 195, 217, 0.4);
+}
+
+.page-title {
+  font-size: 1.95rem;
+  font-weight: 800;
+  color: var(--color-navy);
+  letter-spacing: -0.03em;
+  margin-bottom: 0.35rem;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.85);
+}
+
+.page-desc {
+  font-size: 1.02rem;
+  color: var(--color-slate);
+  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.7);
+}
+
+/* --------------------------------------------------------------------------
+   5. 탭 1: HOME (원스크린 카드섹션 대시보드)
+   -------------------------------------------------------------------------- */
+.home-dashboard {
+  width: 100%;
+}
+
+.home-intro {
+  text-align: center;
+  margin-bottom: 0.5rem;
+}
+
+.intro-badge {
+  display: inline-block;
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-navy);
+  background-color: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  padding: 3px 12px;
+  border-radius: var(--radius-full);
+  margin-bottom: 0.5rem;
+  border: 1px solid rgba(160, 195, 217, 0.45);
+  box-shadow: 0 2px 8px rgba(39, 42, 89, 0.04);
+}
+
+.home-title {
+  font-size: clamp(1.4rem, 2.2vw, 1.95rem);
+  font-weight: 800;
+  color: var(--color-navy);
+  letter-spacing: -0.03em;
+  line-height: 1.3;
+  margin-bottom: 0.3rem;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.85);
+}
+
+.home-desc {
+  font-size: clamp(0.88rem, 1.1vw, 1rem);
+  color: var(--color-slate);
+  margin: 0 auto;
+  max-width: 580px;
+  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.7);
+}
+
+/* 3대 핵심 카드 섹션 그리드 (3열 균형 배치) */
+.home-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(0.85rem, 1.6vh, 1.25rem);
+  width: 100%;
+}
+
+.home-card {
+  background-color: var(--glass-bg);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
+  padding: clamp(1.1rem, 2vh, 1.45rem) clamp(1.2rem, 1.6vw, 1.5rem);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast), border-color var(--transition-fast), background-color var(--transition-fast);
+  position: relative;
+  overflow: hidden;
+}
+
+.home-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background-color: var(--color-soft-blue);
+  opacity: 0;
+  transition: opacity var(--transition-fast);
+}
+
+.home-card:hover {
+  transform: translateY(-3px);
+  background-color: var(--glass-bg-hover);
+  border-color: var(--color-soft-blue);
+  box-shadow: var(--shadow-md);
+}
+
+.home-card:hover::before {
+  opacity: 1;
+}
+
+/* 카드 헤더 */
+.card-header-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.6rem;
+}
+
+.card-pill {
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: var(--color-navy);
+  background-color: rgba(160, 195, 217, 0.35);
+  padding: 2px 8px;
+  border-radius: var(--radius-xs);
+  letter-spacing: -0.01em;
+}
+
+.card-pill.accent {
+  background-color: var(--color-navy);
+  color: var(--color-pure-white);
+}
+
+.card-date {
+  font-size: 0.78rem;
+  color: var(--color-slate);
+  font-family: var(--font-mono);
+}
+
+/* 카드 타이틀 & 설명 */
+.card-title {
+  font-size: clamp(1.05rem, 1.25vw, 1.18rem);
+  font-weight: 700;
+  color: var(--color-navy);
+  line-height: 1.38;
+  margin-bottom: 0.45rem;
+  letter-spacing: -0.02em;
+  transition: color var(--transition-fast);
+}
+
+.home-card:hover .card-title {
+  color: var(--color-soft-blue);
+}
+
+.card-snippet {
+  font-size: clamp(0.82rem, 0.95vw, 0.9rem);
+  color: var(--color-slate);
+  line-height: 1.55;
+  margin-bottom: 0.85rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* 카드 하단 액션 링크 */
+.card-footer-action {
+  display: flex;
+  align-items: center;
+  margin-top: auto;
+  padding-top: 0.4rem;
+  border-top: 1px dashed rgba(88, 116, 140, 0.25);
+}
+
+.action-text {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--color-soft-blue);
+  transition: color var(--transition-fast), transform var(--transition-fast);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.home-card:hover .action-text {
+  color: var(--color-navy);
+  transform: translateX(3px);
+}
+
+/* ==========================================================================
+   5-1. 인터랙티브 3종 조개 쉘 (가리비 · 소라 · 진주조개) 3D 애니메이션 스타일
+   ========================================================================== */
+
+/* 3D 원근 공간 설정 및 자연스러운 모래사장 비대칭 랜덤 배치 그리드 */
+.shell-cards-grid {
+  perspective: 1200px;
+  margin-top: 1.2rem;
+  margin-bottom: 2rem;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(1.2rem, 2.5vw, 2.2rem);
+  align-items: start;
+  min-height: 380px;
+}
+
+/* 개별 조개 카드 공통 컨테이너 */
+.shell-card {
+  position: relative;
+  height: 330px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  outline: none;
+  border-radius: var(--radius-lg);
+  user-select: none;
+  background: transparent;
+  border: none;
+  padding: 0;
+  box-shadow: none;
+  transition: transform 0.45s cubic-bezier(0.2, 0.9, 0.3, 1), margin-top 0.4s ease;
+}
+
+/* --------------------------------------------------------------------------
+   자연스러운 바닷가 백사장 랜덤(Organic Seashore) 오프셋 & 각도
+   -------------------------------------------------------------------------- */
+
+/* 1. 가리비: 상단 좌측으로 살짝 올라와 왼쪽으로 기욺 */
+.shell-scallop {
+  margin-top: 0px;
+  transform: rotate(-3.5deg) translateY(-6px);
+  animation: shellFloatScallop 4.6s ease-in-out infinite;
+}
+
+/* 2. 소라: 파도에 밀려 굴러온 듯 아래로 툭 떨어져 오른쪽으로 기욺 */
+.shell-conch {
+  margin-top: clamp(38px, 5.5vh, 58px);
+  transform: rotate(4.8deg) translateY(6px);
+  animation: shellFloatConch 5.1s ease-in-out infinite;
+  animation-delay: 1.4s;
+}
+
+/* 3. 진주조개: 가리비와 소라 사이의 높이에서 살짝 비스듬히 안착 */
+.shell-oyster {
+  margin-top: clamp(14px, 2.2vh, 24px);
+  transform: rotate(-2.2deg) translateY(-2px);
+  animation: shellFloatOyster 4.8s ease-in-out infinite;
+  animation-delay: 2.7s;
+}
+
+/* 호버 시: 자연스러운 각도에서 똑바로 정돈되며 부드럽게 강조 */
+.shell-scallop:hover,
+.shell-scallop:focus-within,
+.shell-scallop.is-open {
+  transform: rotate(0deg) translateY(-14px) scale(1.03);
+  animation-play-state: paused;
+  z-index: 20;
+}
+
+.shell-conch:hover,
+.shell-conch:focus-within,
+.shell-conch.is-open {
+  transform: rotate(0deg) translateY(clamp(22px, 3.5vh, 38px)) scale(1.03);
+  animation-play-state: paused;
+  z-index: 20;
+}
+
+.shell-oyster:hover,
+.shell-oyster:focus-within,
+.shell-oyster.is-open {
+  transform: rotate(0deg) translateY(-8px) scale(1.03);
+  animation-play-state: paused;
+  z-index: 20;
+}
+
+/* 각 조개별 랜덤 각도를 살린 잔잔한 파도 부유(Bobbing) 키프레임 */
+@keyframes shellFloatScallop {
+  0%, 100% {
+    transform: rotate(-3.5deg) translateY(-6px);
+  }
+  50% {
+    transform: rotate(-2.8deg) translateY(-14px);
+  }
+}
+
+@keyframes shellFloatConch {
+  0%, 100% {
+    transform: rotate(4.8deg) translateY(6px);
+  }
+  50% {
+    transform: rotate(5.6deg) translateY(-2px);
+  }
+}
+
+@keyframes shellFloatOyster {
+  0%, 100% {
+    transform: rotate(-2.2deg) translateY(-2px);
+  }
+  50% {
+    transform: rotate(-1.5deg) translateY(-10px);
+  }
+}
+
+/* 조개 3D 래퍼 */
+.shell-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  max-width: 320px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform-style: preserve-3d;
+}
+
+/* 조개 뒤편의 신비로운 윤슬 바다 글로우 오라 */
+.shell-glow-aura {
+  position: absolute;
+  width: 86%;
+  height: 82%;
+  border-radius: 50%;
+  filter: blur(34px);
+  pointer-events: none;
+  opacity: 0.55;
+  transition: opacity 0.5s ease, transform 0.5s ease;
+  z-index: 0;
+  background: radial-gradient(circle, rgba(160, 215, 235, 0.7) 0%, rgba(135, 195, 225, 0.3) 60%, transparent 80%);
+}
+
+.shell-glow-aura.conch-aura {
+  background: radial-gradient(circle, rgba(145, 190, 225, 0.7) 0%, rgba(245, 205, 165, 0.35) 60%, transparent 80%);
+}
+
+.shell-glow-aura.oyster-aura {
+  background: radial-gradient(circle, rgba(230, 210, 250, 0.75) 0%, rgba(170, 215, 245, 0.45) 60%, transparent 80%);
+}
+
+.shell-card:hover .shell-glow-aura,
+.shell-card:focus-within .shell-glow-aura,
+.shell-card.is-open .shell-glow-aura {
+  opacity: 0.95;
+  transform: scale(1.18);
+}
+
+/* 하단 패각 베이스 */
+.shell-base {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+  filter: drop-shadow(0 14px 22px rgba(25, 55, 80, 0.16));
+  pointer-events: none;
+  transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+/* 호버 시 하단 패각이 아래로 살짝 밀려나며 조개가 깊게 열리는 공간감 형성 */
+.shell-card:hover .shell-base,
+.shell-card:focus-within .shell-base,
+.shell-card.is-open .shell-base {
+  transform: translateY(14px) scale(1.02);
+}
+
+/* 조개 SVG 크기 및 최적화 */
+.shell-svg {
+  width: 100%;
+  height: 100%;
+  max-height: 255px;
+  object-fit: contain;
+  display: block;
+}
+
+/* --------------------------------------------------------------------------
+   조개 내부 컨텐츠 카드 (호버 시 껍질에 가리지 않고 100% 선명하게 전면 노출)
+   -------------------------------------------------------------------------- */
+.shell-inner {
+  position: absolute;
+  z-index: 2; /* 닫혀 있을 땐 내부 */
+  width: 90%;
+  max-width: 275px;
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1.5px solid rgba(255, 255, 255, 0.98);
+  border-radius: 18px;
+  padding: 1.15rem 1.15rem 1rem;
+  box-shadow: 0 14px 34px rgba(18, 48, 75, 0.2), inset 0 1px 1px rgba(255, 255, 255, 0.95);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  opacity: 0;
+  transform: translateY(22px) scale(0.9);
+  pointer-events: none;
+  transition: opacity 0.35s ease, transform 0.45s cubic-bezier(0.2, 0.9, 0.3, 1.1), z-index 0s 0.2s;
+}
+
+/* 호버/포커스/오픈 시: z-index를 최상위(10)로 격상하여 껍질 위로 완벽하게 도출 */
+.shell-card:hover .shell-inner,
+.shell-card:focus-within .shell-inner,
+.shell-card.is-open .shell-inner {
+  z-index: 10;
+  opacity: 1;
+  transform: translateY(6px) scale(1);
+  pointer-events: auto;
+  transition-delay: 0.08s;
+}
+
+/* 내부 텍스트 가독성 강화 */
+.shell-inner .card-title {
+  font-size: 1.05rem;
+  line-height: 1.35;
+  margin-bottom: 0.4rem;
+}
+
+.shell-inner .card-snippet {
+  font-size: 0.82rem;
+  line-height: 1.5;
+  margin-bottom: 0.75rem;
+  color: #4A6378;
+}
+
+/* --------------------------------------------------------------------------
+   조개 상단 덮개 (위쪽으로 완전히 시원하게 젖혀져 내용물을 가리지 않음)
+   -------------------------------------------------------------------------- */
+.shell-lid {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 3;
+  transform-style: preserve-3d;
+  transition: transform 0.7s cubic-bezier(0.25, 1.2, 0.4, 1), opacity 0.4s ease;
+  pointer-events: none;
+}
+
+/* 각 조개 형태별 회전축 (Hinge) 설정 */
+.shell-scallop .shell-lid {
+  transform-origin: 50% 92%;
+}
+
+.shell-conch .shell-lid {
+  transform-origin: 30% 88%;
+}
+
+.shell-oyster .shell-lid {
+  transform-origin: 50% 94%;
+}
+
+/* 마우스 호버 시: 상단 패각이 위쪽으로 시원하게 활짝 열림 (내용을 일절 가리지 않음) */
+.shell-scallop:hover .shell-lid,
+.shell-scallop:focus-within .shell-lid,
+.shell-scallop.is-open .shell-lid {
+  transform: perspective(1000px) rotateX(-82deg) translateY(-48px) scale(0.92);
+  opacity: 0.85;
+}
+
+.shell-conch:hover .shell-lid,
+.shell-conch:focus-within .shell-lid,
+.shell-conch.is-open .shell-lid {
+  transform: perspective(1000px) rotateX(-76deg) rotateY(20deg) translateY(-54px) scale(0.9);
+  opacity: 0.85;
+}
+
+.shell-oyster:hover .shell-lid,
+.shell-oyster:focus-within .shell-lid,
+.shell-oyster.is-open .shell-lid {
+  transform: perspective(1000px) rotateX(-84deg) translateY(-50px) scale(0.92);
+  opacity: 0.85;
+}
+
+/* 닫혀 있을 때 덮개 정면에 노출되는 엠블럼 뱃지 & 안내 */
+.shell-lid-badge {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  padding: 8px 18px;
+  border-radius: 22px;
+  border: 1px solid rgba(255, 255, 255, 0.95);
+  box-shadow: 0 6px 20px rgba(35, 65, 90, 0.14);
+  pointer-events: none;
+  transition: opacity 0.35s ease, transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+  z-index: 4;
+}
+
+.lid-chip {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--color-soft-blue);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.lid-title {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--color-navy);
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+
+.lid-hint {
+  font-size: 0.72rem;
+  color: var(--color-slate);
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.sparkle-icon {
+  color: #F59E0B;
+  display: inline-block;
+  animation: sparklePulse 1.8s ease-in-out infinite alternate;
+}
+
+@keyframes sparklePulse {
+  0% {
+    transform: scale(0.9) rotate(0deg);
+    opacity: 0.7;
+  }
+  100% {
+    transform: scale(1.3) rotate(20deg);
+    opacity: 1;
+  }
+}
+
+/* 열렸을 때는 라벨 뱃지가 상단으로 자연스럽게 페이드아웃 */
+.shell-card:hover .shell-lid-badge,
+.shell-card:focus-within .shell-lid-badge,
+.shell-card.is-open .shell-lid-badge {
+  opacity: 0;
+  transform: scale(0.85) translateY(-16px);
+}
+
+/* 3. 진주조개 내부의 실시간 발광 3D 진주 구체 */
+.shell-pearl-sphere {
+  position: absolute;
+  bottom: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  z-index: 1;
+  background: radial-gradient(circle at 35% 32%, #FFFFFF 0%, #FFF2F9 25%, #E5F0FA 60%, #9EBFDA 100%);
+  box-shadow: 0 4px 14px rgba(135, 175, 205, 0.55), 0 0 24px rgba(255, 255, 255, 0.85), inset -2px -2px 6px rgba(120, 160, 190, 0.35);
+  animation: pearlPulse 3.2s ease-in-out infinite alternate;
+  pointer-events: none;
+  transition: transform 0.5s ease;
+}
+
+/* 호버 시 진주가 살짝 아래로 비껴가며 컨텐츠 뒤에서 은은하게 빛남 */
+.shell-oyster:hover .shell-pearl-sphere,
+.shell-oyster:focus-within .shell-pearl-sphere,
+.shell-oyster.is-open .shell-pearl-sphere {
+  transform: translateX(-50%) translateY(8px) scale(1.1);
+  box-shadow: 0 6px 22px rgba(145, 195, 235, 0.75), 0 0 35px rgba(255, 255, 255, 0.95);
+}
+
+.pearl-highlight {
+  position: absolute;
+  top: 7px;
+  left: 10px;
+  width: 10px;
+  height: 6px;
+  border-radius: 50%;
+  background: #FFFFFF;
+  filter: blur(0.5px);
+  transform: rotate(-25deg);
+}
+
+.pearl-glow-ring {
+  position: absolute;
+  top: -4px;
+  left: -4px;
+  right: -4px;
+  bottom: -4px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255, 255, 255, 0.7);
+  opacity: 0.4;
+  animation: sparklePulse 2.4s ease-in-out infinite alternate;
+}
+
+@keyframes pearlPulse {
+  0% {
+    transform: translateX(-50%) scale(1);
+    filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.6));
+  }
+  100% {
+    transform: translateX(-50%) scale(1.08);
+    filter: drop-shadow(0 0 16px rgba(185, 225, 255, 0.9));
+  }
+}
+
+.shell-oyster:hover .shell-pearl-sphere,
+.shell-oyster:focus-within .shell-pearl-sphere,
+.shell-oyster.is-open .shell-pearl-sphere {
+  transform: translateX(-50%) scale(1.15);
+  box-shadow: 0 6px 20px rgba(145, 195, 235, 0.7), 0 0 35px rgba(255, 255, 255, 0.95);
+}
+
+/* --------------------------------------------------------------------------
+   6. 탭 2: Who am I ? (상단 제일 왼쪽 해달 + 우측 소개글 2열 무대 레이아웃)
+   -------------------------------------------------------------------------- */
+
+/* 2열 유연한 무대 레이아웃 (스크롤 없이 첫 화면에서 바로 보이고 글을 가리지 않음) */
+.who-am-i-layout {
+  display: flex;
+  align-items: flex-start;
+  gap: clamp(1.8rem, 3.2vw, 2.8rem);
+  width: 100%;
+  position: relative;
+}
+
+/* 상단 제일 왼쪽 해달 무대 (스크롤 시 부드럽게 따라오는 sticky 배치) */
+.otter-stage {
+  position: sticky;
+  top: 90px;
+  flex-shrink: 0;
+  width: clamp(230px, 22vw, 285px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  z-index: 25;
+  padding-top: 0.6rem;
+}
+
+/* 큼직하고 귀여운 해달 캐릭터 */
+.otter-character {
+  position: relative;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+  z-index: 25;
+  animation: otterBob 4.4s ease-in-out infinite;
+  transition: transform 0.35s cubic-bezier(0.2, 0.9, 0.3, 1);
+  outline: none;
+}
+
+.otter-character:hover {
+  transform: scale(1.06) translateY(-5px);
+}
+
+.otter-character:active {
+  transform: scale(0.96) translateY(2px);
+}
+
+/* 수면 위 둥둥 부유 모션 */
+@keyframes otterBob {
+  0%, 100% {
+    transform: translateY(0px) rotate(-1.5deg);
+  }
+  50% {
+    transform: translateY(-8px) rotate(2deg);
+  }
+}
+
+/* 큼직한 해달 SVG */
+.otter-svg {
+  width: 100%;
+  max-width: 280px;
+  height: auto;
+  aspect-ratio: 160 / 140;
+  filter: drop-shadow(0 12px 24px rgba(15, 35, 55, 0.26));
+  transition: filter 0.35s ease;
+  display: block;
+}
+
+.otter-character:hover .otter-svg {
+  filter: drop-shadow(0 16px 32px rgba(15, 45, 75, 0.36));
+}
+
+/* 해달 밑의 큼직한 물결 파문 */
+.otter-water-ripples {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 200px;
+  height: 55px;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.water-ripple {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  border: 1.8px solid rgba(165, 215, 245, 0.7);
+  animation: waterRipple 3.8s ease-out infinite;
+}
+
+.water-ripple.ripple-2 {
+  animation-delay: 1.9s;
+}
+
+@keyframes waterRipple {
+  0% {
+    width: 50px;
+    height: 22px;
+    opacity: 0.95;
+    border-color: rgba(215, 240, 255, 0.9);
+  }
+  100% {
+    width: 250px;
+    height: 75px;
+    opacity: 0;
+    border-color: rgba(130, 185, 220, 0.08);
+  }
+}
+
+/* 해달 말풍선 */
+.otter-speech-bubble {
+  position: absolute;
+  top: -44px;
+  left: 50%;
+  transform: translateX(-50%) translateY(6px) scale(0.88);
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  padding: 7px 16px;
+  border-radius: 20px;
+  font-size: 0.88rem;
+  font-weight: 800;
+  color: var(--color-navy);
+  box-shadow: 0 8px 22px rgba(15, 40, 65, 0.16);
+  border: 1.5px solid rgba(255, 255, 255, 0.98);
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease, transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  z-index: 30;
+}
+
+.otter-speech-bubble::after {
+  content: '';
+  position: absolute;
+  bottom: -7px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 7px 7px 0;
+  border-style: solid;
+  border-color: rgba(255, 255, 255, 0.96) transparent;
+}
+
+.otter-character:hover .otter-speech-bubble {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0px) scale(1);
+}
+
+/* 앞발 투척 모션 */
+.otter-character.is-throwing .otter-paws {
+  animation: pawsToss 0.65s cubic-bezier(0.2, 0.9, 0.3, 1);
+}
+
+.otter-character.is-throwing .otter-chest-shell {
+  opacity: 0;
+}
+
+@keyframes pawsToss {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  35% {
+    transform: translateY(-18px) rotate(-14deg);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   날아가는 마법 조개 (왼쪽 해달에서 오른쪽 소개글로 시원하게 포물선 비행)
+   -------------------------------------------------------------------------- */
+.otter-flying-shell {
+  position: absolute;
+  right: 15px;
+  top: 70px;
+  z-index: 35;
+  pointer-events: none;
+  opacity: 0;
+  transform-origin: center center;
+}
+
+.flying-shell-svg {
+  width: 62px;
+  height: 56px;
+  display: block;
+}
+
+/* 마법 빛줄기 꼬리 */
+.shell-magic-trail {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 85px;
+  height: 85px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(225, 245, 255, 0.85) 0%, rgba(140, 205, 245, 0.35) 50%, transparent 70%);
+  filter: blur(10px);
+  z-index: -1;
+}
+
+/* 왼쪽 해달에서 오른쪽 본문으로 날아가는 3D 포물선 애니메이션 */
+.otter-flying-shell.is-flying {
+  animation: shellArcFlight 0.85s cubic-bezier(0.25, 0.8, 0.35, 1) forwards;
+}
+
+@keyframes shellArcFlight {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0) scale(0.6) rotate(0deg);
+  }
+  15% {
+    opacity: 1;
+    transform: translate(60px, -55px) scale(1.1) rotate(90deg);
+  }
+  45% {
+    opacity: 1;
+    transform: translate(calc(14vw + 70px), -100px) scale(1.35) rotate(340deg);
+  }
+  75% {
+    opacity: 1;
+    transform: translate(calc(22vw + 120px), -40px) scale(1.1) rotate(580deg);
+  }
+  95% {
+    opacity: 1;
+    transform: translate(calc(28vw + 160px), 15px) scale(0.95) rotate(740deg);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(calc(28vw + 160px), 20px) scale(0.2) rotate(780deg);
+  }
+}
+
+/* 중앙 착지 지점 스파클 파열 이펙트 (우측 본문 상단 중앙) */
+.shell-landing-burst {
+  position: absolute;
+  top: 60px;
+  left: calc(100% + clamp(1.8rem, 3.2vw, 2.8rem) + 40%);
+  transform: translate(-50%, -50%);
+  z-index: 30;
+  pointer-events: none;
+  opacity: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.burst-particle {
+  position: absolute;
+  font-size: 1.8rem;
+  opacity: 0;
+}
+
+.shell-landing-burst.burst-active {
+  opacity: 1;
+}
+
+.shell-landing-burst.burst-active .p1 {
+  animation: burstP1 0.75s ease-out forwards;
+}
+.shell-landing-burst.burst-active .p2 {
+  animation: burstP2 0.75s ease-out forwards;
+}
+.shell-landing-burst.burst-active .p3 {
+  animation: burstP3 0.75s ease-out forwards;
+}
+.shell-landing-burst.burst-active .p4 {
+  animation: burstP4 0.75s ease-out forwards;
+}
+.shell-landing-burst.burst-active .p5 {
+  animation: burstP5 0.75s ease-out forwards;
+}
+
+@keyframes burstP1 {
+  0% { transform: translate(0, 0) scale(0.3); opacity: 1; }
+  100% { transform: translate(-65px, -65px) scale(1.4); opacity: 0; }
+}
+@keyframes burstP2 {
+  0% { transform: translate(0, 0) scale(0.3); opacity: 1; }
+  100% { transform: translate(65px, -65px) scale(1.3); opacity: 0; }
+}
+@keyframes burstP3 {
+  0% { transform: translate(0, 0) scale(0.3); opacity: 1; }
+  100% { transform: translate(-70px, 50px) scale(1.5); opacity: 0; }
+}
+@keyframes burstP4 {
+  0% { transform: translate(0, 0) scale(0.3); opacity: 1; }
+  100% { transform: translate(70px, 50px) scale(1.2); opacity: 0; }
+}
+@keyframes burstP5 {
+  0% { transform: translate(0, 0) scale(0.5); opacity: 1; }
+  100% { transform: translate(0, -90px) scale(1.7) rotate(25deg); opacity: 0; }
+}
+
+/* --------------------------------------------------------------------------
+   우측 소개글 컨테이너 (글을 전혀 가리지 않고 시원하게 펼쳐짐)
+   -------------------------------------------------------------------------- */
+.profile-reveal-container {
+  flex: 1;
+  min-width: 0;
+  position: relative;
+  opacity: 0;
+  transform: translateY(32px) scale(0.95);
+  filter: blur(6px);
+  pointer-events: none;
+  transition: opacity 0.75s cubic-bezier(0.2, 0.9, 0.3, 1), transform 0.75s cubic-bezier(0.2, 0.9, 0.3, 1.1), filter 0.6s ease;
+}
+
+.profile-reveal-container.is-revealed {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  filter: blur(0);
+  pointer-events: auto;
+}
+
+/* 해달 뱃지 */
+.intro-otter-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 16px;
+  background: rgba(140, 195, 225, 0.3);
+  border: 1px solid rgba(140, 195, 225, 0.5);
+  border-radius: 20px;
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: var(--color-navy);
+  margin-bottom: 0.75rem;
+}
+
+.profile-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.content-block {
+
+  background-color: var(--glass-bg);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
+  padding: 1.6rem 1.8rem;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.block-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--color-navy);
+  padding-bottom: 0.4rem;
+  border-bottom: 1.5px solid rgba(160, 195, 217, 0.35);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.text-paragraph {
+  font-size: 0.98rem;
+  color: #272a59;
+  line-height: 1.75;
+}
+
+.simple-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.simple-list li {
+  position: relative;
+  padding-left: 1.25rem;
+  color: #272a59;
+  font-size: 0.95rem;
+  line-height: 1.65;
+}
+
+.simple-list li::before {
+  content: '▸';
+  position: absolute;
+  left: 0;
+  color: var(--color-soft-blue);
+  font-weight: bold;
+}
+
+.skills-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+}
+
+.skill-tag {
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: var(--color-navy);
+  background-color: rgba(255, 255, 255, 0.75);
+  border: 1px solid rgba(128, 162, 191, 0.45);
+  padding: 0.35rem 0.85rem;
+  border-radius: var(--radius-full);
+  box-shadow: 0 1px 4px rgba(39, 42, 89, 0.04);
+}
+
+.links-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.text-link-btn {
+  background-color: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(160, 195, 217, 0.5);
+  color: var(--color-navy);
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  padding: 0.55rem 1.1rem;
+  border-radius: var(--radius-sm);
+  transition: var(--transition-fast);
+}
+
+.text-link-btn:hover {
+  background-color: var(--color-navy);
+  color: var(--color-pure-white);
+  border-color: var(--color-navy);
+}
+
+/* --------------------------------------------------------------------------
+   7. 탭 3: Projects (★ 포트폴리오 웹사이트 대표 카드 전면 배치)
+   -------------------------------------------------------------------------- */
+.projects-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.4rem;
+}
+
+.project-item {
+  background-color: var(--glass-bg);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
+  padding: 1.6rem 1.85rem;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast), border-color var(--transition-fast), background-color var(--transition-fast);
+}
+
+.project-item:hover {
+  transform: translateY(-2px);
+  background-color: var(--glass-bg-hover);
+  box-shadow: var(--shadow-md);
+  border-color: var(--color-soft-blue);
+}
+
+/* ★ 대표 프로젝트: Supianna 디지털 포트폴리오 웹사이트 카드 */
+.portfolio-featured-card {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(200, 228, 250, 0.85) 100%);
+  border: 1.8px solid var(--color-soft-blue);
+  box-shadow: var(--shadow-md);
+  position: relative;
+}
+
+.portfolio-featured-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--color-navy), var(--color-soft-blue), var(--color-sky));
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
+}
+
+.portfolio-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: var(--color-navy);
+  background-color: rgba(160, 195, 217, 0.35);
+  border: 1px solid rgba(160, 195, 217, 0.6);
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
+  margin-bottom: 0.35rem;
+}
+
+.project-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+}
+
+.project-name {
+  font-size: 1.28rem;
+  font-weight: 700;
+  color: var(--color-navy);
+  letter-spacing: -0.02em;
+}
+
+.project-year {
+  font-size: 0.82rem;
+  color: var(--color-slate);
+  font-family: var(--font-mono);
+  font-weight: 500;
+}
+
+.project-summary {
+  font-size: 0.95rem;
+  color: #272a59;
+  line-height: 1.65;
+}
+
+.project-meta {
+  font-size: 0.86rem;
+  color: var(--color-slate);
+  background-color: rgba(255, 255, 255, 0.65);
+  padding: 0.6rem 0.85rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(160, 195, 217, 0.35);
+}
+
+.meta-label {
+  font-weight: 700;
+  color: var(--color-navy);
+}
+
+.project-links {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 0.3rem;
+}
+
+/* 포트폴리오 바로가기 대표 버튼 */
+.btn-portfolio-launch {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background-color: var(--color-navy);
+  color: var(--color-pure-white);
+  font-size: 0.92rem;
+  font-weight: 600;
+  padding: 0.65rem 1.4rem;
+  border-radius: var(--radius-sm);
+  box-shadow: 0 4px 14px rgba(39, 42, 89, 0.2);
+  transition: var(--transition-fast);
+}
+
+.btn-portfolio-launch:hover {
+  background-color: var(--color-slate);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(39, 42, 89, 0.28);
+}
+
+.btn-simple-action {
+  background-color: rgba(255, 255, 255, 0.8);
+  border: 1px solid var(--color-slate);
+  color: var(--color-navy);
+  font-size: 0.88rem;
+  font-weight: 600;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: var(--transition-fast);
+}
+
+.btn-simple-action:hover {
+  background-color: var(--color-navy);
+  color: var(--color-pure-white);
+  border-color: var(--color-navy);
+}
+
+/* --------------------------------------------------------------------------
+   8. 탭 4: Free Board (열린 방명록 & 피드)
+   -------------------------------------------------------------------------- */
+.simple-board-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  margin-bottom: 2.5rem;
+  padding: 1.6rem;
+  background-color: var(--glass-bg);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+}
+
+.form-inputs-row {
+  display: flex;
+  gap: 0.85rem;
+}
+
+.form-inputs-row input,
+.form-inputs-row select {
+  padding: 0.55rem 0.85rem;
+  border: 1px solid rgba(160, 195, 217, 0.45);
+  border-radius: var(--radius-sm);
+  background-color: rgba(255, 255, 255, 0.85);
+  outline: none;
+  color: var(--color-navy);
+  font-size: 0.92rem;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.form-inputs-row input {
+  flex: 1;
+}
+
+.form-inputs-row select {
+  width: 120px;
+}
+
+.simple-board-form textarea {
+  width: 100%;
+  padding: 0.75rem 0.85rem;
+  border: 1px solid rgba(160, 195, 217, 0.45);
+  border-radius: var(--radius-sm);
+  background-color: rgba(255, 255, 255, 0.85);
+  outline: none;
+  resize: vertical;
+  color: var(--color-navy);
+  line-height: 1.6;
+  font-size: 0.92rem;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.simple-board-form input:focus,
+.simple-board-form select:focus,
+.simple-board-form textarea:focus {
+  border-color: var(--color-soft-blue);
+  box-shadow: 0 0 0 3px rgba(128, 162, 191, 0.3);
+  background-color: var(--color-pure-white);
+}
+
+.form-bottom-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.char-notice {
+  font-size: 0.78rem;
+  color: var(--color-slate);
+  font-family: var(--font-mono);
+}
+
+.btn-submit {
+  background-color: var(--color-navy);
+  color: var(--color-pure-white);
+  border: none;
+  padding: 0.55rem 1.4rem;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: var(--transition-fast);
+}
+
+.btn-submit:hover {
+  background-color: var(--color-slate);
+}
+
+/* 방명록 피드 리스트 */
+.feed-count-bar {
+  font-size: 0.92rem;
+  color: var(--color-navy);
+  font-weight: 600;
+  padding-bottom: 0.65rem;
+  border-bottom: 1.5px solid rgba(160, 195, 217, 0.4);
+  margin-bottom: 1rem;
+}
+
+.board-items-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.board-item {
+  background-color: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-sm);
+  padding: 1.2rem 1.4rem;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.board-item-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.85rem;
+}
+
+.board-user {
+  font-weight: 700;
+  color: var(--color-navy);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.board-category-chip {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--color-navy);
+  background-color: rgba(160, 195, 217, 0.35);
+  padding: 2px 7px;
+  border-radius: var(--radius-xs);
+}
+
+.board-time {
+  color: var(--color-slate);
+  font-size: 0.78rem;
+  font-family: var(--font-mono);
+}
+
+.board-text {
+  font-size: 0.94rem;
+  color: #272a59;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.board-actions {
+  display: flex;
+  gap: 0.85rem;
+  justify-content: flex-end;
+}
+
+.btn-board-action {
+  background: none;
+  border: none;
+  font-size: 0.8rem;
+  color: var(--color-slate);
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: var(--radius-xs);
+  transition: var(--transition-fast);
+}
+
+.btn-board-action:hover {
+  color: var(--color-navy);
+  background-color: rgba(255, 255, 255, 0.8);
+}
+
+/* --------------------------------------------------------------------------
+   9. 아티클 상세 읽기 모달 팝업
+   -------------------------------------------------------------------------- */
+.modal-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background-color: rgba(39, 42, 89, 0.5);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  opacity: 0;
+  transition: opacity var(--transition-fast);
+}
+
+.modal-backdrop.show {
+  display: flex;
+  opacity: 1;
+}
+
+.modal-dialog {
+  background-color: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  max-width: 720px;
+  width: 100%;
+  max-height: 85vh;
+  overflow-y: auto;
+  position: relative;
+  box-shadow: 0 20px 45px -10px rgba(39, 42, 89, 0.25);
+  padding: 2.2rem;
+}
+
+.modal-close-btn {
+  position: absolute;
+  top: 1.25rem;
+  right: 1.25rem;
+  background: none;
+  border: none;
+  font-size: 1.25rem;
+  color: var(--color-slate);
+  cursor: pointer;
+  line-height: 1;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-full);
+  transition: var(--transition-fast);
+}
+
+.modal-close-btn:hover {
+  color: var(--color-navy);
+  background-color: rgba(160, 195, 217, 0.25);
+}
+
+.modal-header-section {
+  margin-bottom: 1.75rem;
+  padding-bottom: 1.2rem;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.modal-article-meta {
+  font-size: 0.82rem;
+  color: var(--color-slate);
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.6rem;
+}
+
+.category-tag-badge {
+  font-weight: 700;
+  color: var(--color-navy);
+  background-color: rgba(160, 195, 217, 0.35);
+  padding: 2px 8px;
+  border-radius: var(--radius-xs);
+}
+
+.modal-article-title {
+  font-size: 1.7rem;
+  font-weight: 800;
+  color: var(--color-navy);
+  line-height: 1.35;
+  letter-spacing: -0.025em;
+  margin-bottom: 0.75rem;
+}
+
+.article-row-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.row-tag {
+  font-size: 0.76rem;
+  color: var(--color-slate);
+  background-color: rgba(255, 255, 255, 0.8);
+  border: 1px solid var(--border-subtle);
+  padding: 2px 7px;
+  border-radius: var(--radius-xs);
+}
+
+.modal-article-body {
+  font-size: 1rem;
+  line-height: 1.85;
+  color: #272a59;
+}
+
+.modal-article-body h3 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--color-navy);
+  margin: 1.8rem 0 0.65rem;
+}
+
+.modal-article-body p {
+  margin-bottom: 1.1rem;
+}
+
+.modal-article-body blockquote {
+  border-left: 3.5px solid var(--color-soft-blue);
+  background-color: rgba(160, 195, 217, 0.2);
+  padding: 0.85rem 1.25rem;
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  margin: 1.35rem 0;
+  font-style: italic;
+  color: var(--color-slate);
+}
+
+.modal-article-body pre {
+  background-color: #1e2238;
+  color: #e2e8f0;
+  border-radius: var(--radius-sm);
+  padding: 1.1rem;
+  overflow-x: auto;
+  font-family: var(--font-mono);
+  font-size: 0.86rem;
+  line-height: 1.6;
+  margin: 1.35rem 0;
+}
+
+.modal-article-body ul, 
+.modal-article-body ol {
+  margin: 0.85rem 0 1.1rem 1.5rem;
+}
+
+.modal-article-body li {
+  margin-bottom: 0.35rem;
+}
+
+/* --------------------------------------------------------------------------
+   10. 푸터
+   -------------------------------------------------------------------------- */
+.footer {
+  position: relative;
+  z-index: 10;
+  border-top: 1px solid var(--glass-border);
+  background-color: var(--glass-nav);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  padding: 1.5rem;
+  margin-top: auto;
+}
+
+.footer-container {
+  max-width: var(--max-content-width);
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  font-size: 0.85rem;
+  color: var(--color-slate);
+}
+
+.footer-nav {
+  display: flex;
+  gap: 1rem;
+}
+
+.footer-link-btn {
+  background: none;
+  border: none;
+  color: var(--color-slate);
+  font-size: 0.85rem;
+  cursor: pointer;
+  padding: 0;
+  transition: var(--transition-fast);
+}
+
+.footer-link-btn:hover {
+  color: var(--color-navy);
+}
+
+/* --------------------------------------------------------------------------
+   11. 모바일 & 태블릿 반응형 미디어 쿼리
+   -------------------------------------------------------------------------- */
+@media (max-width: 860px) {
+  .nav-tabs {
+    gap: 0.35rem;
+  }
+  
+  .tab-btn {
+    font-size: 0.84rem;
+    padding: 0.4rem 0.55rem;
+  }
+
+  .main-container {
+    padding: 1.5rem 1rem 3rem;
+  }
+
+  .home-cards-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .shell-cards-grid {
+    gap: 2.2rem;
+    perspective: none;
+    min-height: auto;
+  }
+
+  .shell-card {
+    height: 320px;
+    margin-top: 0 !important;
+  }
+
+  .shell-scallop {
+    transform: rotate(-2deg);
+  }
+
+  .shell-conch {
+    transform: rotate(2.5deg);
+  }
+
+  .shell-oyster {
+    transform: rotate(-1.5deg);
+  }
+
+  .shell-wrapper {
+    max-width: 330px;
+  }
+
+  .who-am-i-layout {
+    flex-direction: column;
+    align-items: center;
+    gap: 1.2rem;
+  }
+
+  .otter-stage {
+    position: relative;
+    top: 0;
+    width: 210px;
+    padding-top: 0;
+    margin-bottom: 0.4rem;
+  }
+
+  .otter-svg {
+    width: 200px;
+    height: auto;
+  }
+
+  .otter-flying-shell {
+    position: absolute;
+    right: 20px;
+    top: 65px;
+  }
+
+  @keyframes shellArcFlight {
+    0% {
+      opacity: 0;
+      transform: translate(0, 0) scale(0.6) rotate(0deg);
+    }
+    20% {
+      opacity: 1;
+      transform: translate(20px, -45px) scale(1.1) rotate(90deg);
+    }
+    60% {
+      opacity: 1;
+      transform: translate(30px, 35px) scale(1.2) rotate(320deg);
+    }
+    90% {
+      opacity: 1;
+      transform: translate(35px, 85px) scale(0.95) rotate(600deg);
+    }
+    100% {
+      opacity: 0;
+      transform: translate(35px, 95px) scale(0.2) rotate(680deg);
+    }
+  }
+
+  .shell-landing-burst {
+    top: 250px;
+    left: 50%;
+  }
+
+  .page-title {
+    font-size: 1.65rem;
+  }
+
+  .form-inputs-row {
+    flex-direction: column;
+  }
+
+  .form-inputs-row select {
+    width: 100%;
+  }
+
+  .modal-dialog {
+    padding: 1.5rem;
+  }
+
+  .footer-container {
+    flex-direction: column;
+    text-align: center;
+    gap: 0.75rem;
+  }
+}

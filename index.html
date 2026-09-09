@@ -1,691 +1,1122 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
+  <!-- 파일명: index.html (메인 엔트리포인트) -->
+  <!-- 목적: Supianna 2026 메인 블로그 & 포트폴리오 - 스페이셜 오비탈 인터페이스 (Spatial Orbital UI) -->
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Supia.log | 기술과 생각을 기록하는 모던 블로그</title>
-  
-  <!-- 웹폰트: Pretendard & Fira Code -->
-  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+  <title>Supianna | Spatial Orbital Architecture & Tech Log</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
-  
-  <!-- 스타일시트 연결 -->
-  <link rel="stylesheet" href="style.css?v=20260909_0935">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700;800;900&family=Pretendard:wght@200;300;400;500;600;700;800;900&family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-pure: #ffffff;
+      --bg-soft: #f8fafc;
+      --ring-border: rgba(15, 23, 42, 0.12);
+      --ring-faint: rgba(15, 23, 42, 0.05);
+      --accent-cobalt: #2563eb;
+      --accent-cyan: #06b6d4;
+      --accent-glow: rgba(37, 99, 235, 0.25);
+      
+      --text-black: #090d16;
+      --text-gray: #475569;
+      --text-muted: #94a3b8;
+      --text-faint: #cbd5e1;
+
+      --spring-motion: cubic-bezier(0.16, 1, 0.3, 1);
+      --font-sans: 'Inter', 'Pretendard', -apple-system, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* 사각형 테두리와 스크롤을 완전히 배제한 순백의 스페이셜 캔버스 */
+    html, body {
+      height: 100vh;
+      width: 100vw;
+      overflow: hidden;
+      background-color: var(--bg-pure);
+      color: var(--text-black);
+      font-family: var(--font-sans);
+      user-select: none;
+      position: relative;
+    }
+
+    /* 은은한 대기 광원 오브 */
+    .spatial-ambient-light {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      background: radial-gradient(circle at 50% 50%, rgba(37, 99, 235, 0.04) 0%, rgba(255, 255, 255, 0) 65%);
+    }
+
+    /* =================================================== */
+    /* 최상단 플로팅 미니멀 텍스트 헤더 */
+    /* =================================================== */
+    .orbital-top-nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      padding: 24px 44px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: linear-gradient(to bottom, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0) 100%);
+      pointer-events: none;
+    }
+
+    .orbital-brand-block {
+      pointer-events: auto;
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+    }
+
+    .brand-logo-text {
+      font-size: 15px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      color: var(--text-black);
+    }
+
+    .brand-status-tag {
+      font-family: var(--font-mono);
+      font-size: 10.5px;
+      color: var(--accent-cobalt);
+      letter-spacing: 0.5px;
+    }
+
+    /* 중앙 플로팅 텍스트 메뉴 */
+    .orbital-menu-cluster {
+      pointer-events: auto;
+      display: flex;
+      align-items: center;
+      gap: 32px;
+    }
+
+    .orbital-tab-link {
+      background: none;
+      border: none;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 6px 0;
+      position: relative;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      transition: color 0.3s var(--spring-motion);
+    }
+
+    .orbital-tab-link:hover {
+      color: var(--text-black);
+    }
+
+    .orbital-tab-link.active {
+      color: var(--accent-cobalt);
+      font-weight: 700;
+    }
+
+    .orbital-tab-link.active::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 1.5px;
+      background: var(--accent-cobalt);
+      border-radius: 2px;
+      animation: dotPop 0.3s var(--spring-motion);
+    }
+
+    @keyframes dotPop {
+      0% { transform: scaleX(0); }
+      100% { transform: scaleX(1); }
+    }
+
+    .orbital-right-hub {
+      pointer-events: auto;
+      display: flex;
+      gap: 14px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+    }
+
+    .hub-link {
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .hub-link:hover {
+      color: var(--accent-cobalt);
+    }
+
+    .hub-badge-link {
+      background: rgba(37, 99, 235, 0.08);
+      color: var(--accent-cobalt);
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-weight: 600;
+    }
+
+    /* =================================================== */
+    /* 메인 스페이셜 캔버스 스테이지 */
+    /* =================================================== */
+    .spatial-stage {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+    }
+
+    /* 중앙 궤도 시스템 */
+    .orbital-system-root {
+      position: relative;
+      width: 540px;
+      height: 540px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.8s var(--spring-motion);
+    }
+
+    /* 동심원 궤도선 (1px Ultra Thin Minimal Lines) */
+    .orbit-ring {
+      position: absolute;
+      border-radius: 50%;
+      pointer-events: none;
+      transition: all 0.9s var(--spring-motion);
+    }
+
+    .ring-core {
+      width: 440px;
+      height: 440px;
+      border: 1px solid var(--ring-border);
+    }
+
+    .ring-outer {
+      width: 620px;
+      height: 620px;
+      border: 1px dashed var(--ring-faint);
+    }
+
+    .ring-satellite {
+      width: 780px;
+      height: 780px;
+      border: 1px solid rgba(15, 23, 42, 0.03);
+    }
+
+    /* 공전 위성 트랙 & 점 */
+    .satellite-track {
+      position: absolute;
+      inset: -50px;
+      border-radius: 50%;
+      pointer-events: none;
+      animation: orbitSpin 80s linear infinite;
+    }
+
+    .satellite-track.reverse {
+      inset: -110px;
+      animation: orbitSpinRev 120s linear infinite;
+    }
+
+    @keyframes orbitSpin {
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes orbitSpinRev {
+      to { transform: rotate(-360deg); }
+    }
+
+    .orbit-satellite-dot {
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #ffffff;
+      border: 1.5px solid var(--accent-cobalt);
+      box-shadow: 0 0 12px var(--accent-cobalt);
+      pointer-events: auto;
+      cursor: pointer;
+      transition: transform 0.3s;
+    }
+
+    .orbit-satellite-dot:hover {
+      transform: scale(1.6);
+    }
+
+    .dot-1 { top: 12%; left: 16%; }
+    .dot-2 { bottom: 18%; right: 14%; }
+    .dot-3 { top: 50%; right: -4px; }
+
+    /* 중앙 뉴럴 파티클 캔버스 */
+    .neural-canvas-wrap {
+      position: absolute;
+      width: 400px;
+      height: 400px;
+      border-radius: 50%;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1;
+    }
+
+    #neuralCanvas {
+      width: 400px;
+      height: 400px;
+      filter: drop-shadow(0 0 24px rgba(37, 99, 235, 0.12));
+    }
+
+    /* 탭별 유기적 모핑 콘텐츠 레이어 */
+    .spatial-content-pane {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+      opacity: 0;
+      transform: scale(0.94);
+      transition: opacity 0.6s var(--spring-motion), transform 0.6s var(--spring-motion);
+      z-index: 20;
+    }
+
+    .spatial-content-pane.active {
+      opacity: 1;
+      transform: scale(1);
+      pointer-events: auto;
+    }
+
+    /* --- [1] HOME 뷰 콘텐츠 --- */
+    .home-center-identity {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+      pointer-events: auto;
+    }
+
+    .identity-core-badge {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 2px;
+      color: var(--accent-cobalt);
+      text-transform: uppercase;
+      background: rgba(37, 99, 235, 0.06);
+      padding: 5px 16px;
+      border-radius: 20px;
+    }
+
+    .identity-main-name {
+      font-size: clamp(36px, 5vw, 56px);
+      font-weight: 900;
+      letter-spacing: -2px;
+      line-height: 1.05;
+      color: var(--text-black);
+    }
+
+    .identity-main-name span.light {
+      font-weight: 200;
+      color: var(--text-muted);
+    }
+
+    .identity-descriptor {
+      font-size: 14px;
+      color: var(--text-gray);
+      max-width: 360px;
+      line-height: 1.6;
+      word-break: keep-all;
+    }
+
+    .orbit-quick-stats {
+      display: flex;
+      gap: 24px;
+      margin-top: 14px;
+      font-family: var(--font-mono);
+      font-size: 11.5px;
+      color: var(--text-muted);
+    }
+
+    .orbit-quick-stats span.val {
+      font-weight: 700;
+      color: var(--accent-cobalt);
+    }
+
+    /* --- [2] ABOUT 뷰: 성좌 파이프라인 --- */
+    .about-constellation-wrap {
+      width: 900px;
+      height: 480px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .constellation-svg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .constellation-line {
+      stroke: var(--ring-border);
+      stroke-width: 1.5;
+      stroke-dasharray: 4 4;
+      animation: linePulse 20s linear infinite;
+    }
+
+    @keyframes linePulse {
+      to { stroke-dashoffset: -500; }
+    }
+
+    .orbital-node {
+      position: relative;
+      z-index: 2;
+      width: 240px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding: 18px 22px;
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(12px);
+      border-radius: 16px;
+      border: 1px solid var(--ring-border);
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.04);
+      transition: all 0.3s var(--spring-motion);
+    }
+
+    .orbital-node:hover {
+      transform: translateY(-5px);
+      border-color: var(--accent-cobalt);
+      box-shadow: 0 16px 40px var(--accent-glow);
+    }
+
+    .node-tag {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--accent-cobalt);
+    }
+
+    .node-title {
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--text-black);
+    }
+
+    .node-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* --- [3] PROJECTS 뷰: 오비탈 행성 갤러리 --- */
+    .projects-orbital-wrap {
+      width: 1020px;
+      height: 520px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .project-satellite-card {
+      position: absolute;
+      width: 240px;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--ring-border);
+      border-radius: 18px;
+      padding: 18px;
+      box-shadow: 0 12px 35px rgba(15, 23, 42, 0.05);
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      transition: all 0.35s var(--spring-motion);
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .project-satellite-card:hover {
+      transform: scale(1.06);
+      border-color: var(--accent-cobalt);
+      box-shadow: 0 20px 50px var(--accent-glow);
+    }
+
+    /* 5대 프로젝트 노드 배치 */
+    .proj-card-1 { top: 30px; left: 60px; }
+    .proj-card-2 { bottom: 40px; left: 80px; }
+    .proj-card-3 { top: 30px; right: 60px; }
+    .proj-card-4 { bottom: 40px; right: 80px; border-color: rgba(37, 99, 235, 0.35); background: linear-gradient(135deg, #fff 0%, #f0f7ff 100%); }
+    .proj-card-5 { top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 5; }
+    .proj-card-5:hover { transform: translate(-50%, -50%) scale(1.08); }
+
+    .proj-card-icon {
+      font-size: 22px;
+    }
+
+    .proj-card-name {
+      font-size: 14.5px;
+      font-weight: 800;
+      color: var(--text-black);
+    }
+
+    .proj-card-metric {
+      font-family: var(--font-mono);
+      font-size: 11.5px;
+      font-weight: 700;
+      color: var(--accent-cobalt);
+    }
+
+    .proj-card-sub {
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    /* --- [4] GUESTBOOK 뷰: 궤도 마그넷 띠 --- */
+    .guestbook-orbital-wrap {
+      width: 900px;
+      height: 520px;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .orbital-chips-swarm {
+      position: relative;
+      width: 100%;
+      flex: 1;
+      overflow: hidden;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      padding: 16px;
+    }
+
+    .orbital-magnet-chip {
+      background: #ffffff;
+      border: 1px solid var(--ring-border);
+      border-radius: 30px;
+      padding: 9px 18px;
+      font-size: 12.5px;
+      color: var(--text-black);
+      box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      animation: chipFloat 4s ease-in-out infinite alternate;
+      transition: all 0.25s;
+    }
+
+    .orbital-magnet-chip:hover {
+      transform: scale(1.08);
+      border-color: var(--accent-cobalt);
+      box-shadow: 0 8px 24px var(--accent-glow);
+    }
+
+    @keyframes chipFloat {
+      0% { transform: translateY(0) rotate(0deg); }
+      100% { transform: translateY(-8px) rotate(1deg); }
+    }
+
+    @keyframes snapMagnet {
+      0% { transform: scale(0.6) translateY(20px); opacity: 0; }
+      70% { transform: scale(1.1) translateY(-4px); opacity: 1; }
+      100% { transform: scale(1) translateY(0); }
+    }
+
+    .chip-author-label {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--accent-cobalt);
+    }
+
+    /* 하단 미니멀 원라인 인풋 스트립 */
+    .orbital-input-strip {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: #ffffff;
+      border: 1px solid var(--ring-border);
+      padding: 6px 14px;
+      border-radius: 40px;
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.05);
+      width: 520px;
+      max-width: 90%;
+    }
+
+    .strip-input {
+      border: none;
+      outline: none;
+      font-family: var(--font-sans);
+      font-size: 13px;
+      color: var(--text-black);
+      background: transparent;
+    }
+
+    .input-author {
+      width: 110px;
+      font-weight: 600;
+      border-right: 1px solid var(--ring-faint);
+      padding-right: 8px;
+    }
+
+    .input-message {
+      flex: 1;
+    }
+
+    .btn-orbit-send {
+      background: var(--text-black);
+      color: #ffffff;
+      border: none;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      transition: all 0.2s;
+      flex-shrink: 0;
+    }
+
+    .btn-orbit-send:hover {
+      background: var(--accent-cobalt);
+      transform: scale(1.08);
+    }
+
+    /* 하단 미니멀 HUD 상태 바 */
+    .spatial-bottom-hud {
+      position: fixed;
+      bottom: 24px;
+      left: 44px;
+      right: 44px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-muted);
+      pointer-events: none;
+    }
+
+    .hud-left-data {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .pulse-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent-cobalt);
+      box-shadow: 0 0 8px var(--accent-cobalt);
+    }
+
+    .hud-right-nav {
+      pointer-events: auto;
+      display: flex;
+      gap: 16px;
+    }
+
+    .hud-right-nav a {
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .hud-right-nav a:hover {
+      color: var(--accent-cobalt);
+    }
+
+    /* 모바일 뷰포트 대응 */
+    @media (max-width: 860px) {
+      .orbital-system-root {
+        transform: scale(0.72);
+      }
+      .about-constellation-wrap,
+      .projects-orbital-wrap,
+      .guestbook-orbital-wrap {
+        width: 100vw;
+        flex-direction: column;
+        gap: 14px;
+      }
+      .project-satellite-card {
+        position: relative;
+        inset: auto !important;
+        transform: none !important;
+      }
+    }
+  </style>
 </head>
-<body data-active-tab="home">
+<body>
 
-  <!-- =================================================================== -->
-  <!-- 바다 루핑 비디오 배경 레이어 (AI Image-to-Video / MP4 영상 지원) -->
-  <!-- =================================================================== -->
-  <div class="ocean-bg-layer" aria-hidden="true">
-    <video class="ocean-bg-video" autoplay loop muted playsinline poster="윤슬바다.avif">
-      <source src="윤슬바다.mp4" type="video/mp4">
-    </video>
-    <div class="ocean-bg-overlay"></div>
-  </div>
+  <!-- 은은한 대기 광원 오브 -->
+  <div class="spatial-ambient-light" aria-hidden="true"></div>
 
-  <!-- 상단 네비게이션 바 (로고 + 4대 탭) -->
-  <header class="navbar">
-    <div class="nav-container">
-      <a href="#home" class="nav-logo" data-target-tab="home">
-        <span class="logo-text">Supia<span class="logo-accent">.log</span></span>
-      </a>
+  <!-- 상단 플로팅 미니멀 텍스트 헤더 -->
+  <header class="orbital-top-nav">
+    <div class="orbital-brand-block">
+      <span class="brand-logo-text">SUPIANNA</span>
+      <span class="brand-status-tag">SPATIAL ORBITAL · 2026</span>
+    </div>
 
-      <!-- 4대 메인 탭 -->
-      <nav class="nav-tabs" aria-label="블로그 메인 메뉴">
-        <button class="tab-btn active" data-tab="home">HOME</button>
-        <button class="tab-btn" data-tab="who-am-i">Who am I ?</button>
-        <button class="tab-btn" data-tab="projects">Projects</button>
-        <button class="tab-btn" data-tab="free-board">Free Board</button>
-      </nav>
+    <!-- 미니멀 텍스트 메뉴 -->
+    <nav class="orbital-menu-cluster">
+      <button class="orbital-tab-link active" data-tab="home">Home</button>
+      <button class="orbital-tab-link" data-tab="about">About</button>
+      <button class="orbital-tab-link" data-tab="projects">Projects</button>
+      <button class="orbital-tab-link" data-tab="guestbook">Guestbook</button>
+    </nav>
+
+    <div class="orbital-right-hub">
+      <a href="classic/index.html" class="hub-link hub-badge-link">🌊 클래식 블로그 (v1)</a>
+      <a href="gitblog/index.html" class="hub-link">✨ 15대 프로토타입 허브</a>
     </div>
   </header>
 
-  <!-- 메인 레이아웃 -->
-  <main class="main-container">
-
-    <!-- ================================================================= -->
-    <!-- 탭 1: HOME (스크롤 내리지 않고 한 화면에 보는 카드섹션 대시보드) -->
-    <!-- ================================================================= -->
-    <section id="home" class="tab-panel active">
-      <div class="home-dashboard">
-        
-        <!-- 홈 상단 인트로 헤더 -->
-        <div class="home-intro">
-          <div class="intro-badge">Tech & Thought Archive</div>
-          <h1 class="home-title">생각을 정돈하고, 가치를 코딩합니다.</h1>
-          <p class="home-desc">개발자 Supianna의 기술 탐구와 프로젝트를 한눈에 둘러보세요.</p>
-        </div>
-
-        <!-- 핵심 3대 인터랙티브 조개 쉘 섹션 그리드 -->
-        <div class="home-cards-grid shell-cards-grid">
-          
-          <!-- 조개 1: 부채꼴 가리비 (Scallop Shell) - Who am I ? 소개 -->
-          <article class="shell-card shell-scallop" data-target-tab="who-am-i" tabindex="0" role="button" aria-label="Who am I ? 가리비 조개 열기">
-            <div class="shell-wrapper">
-              <div class="shell-glow-aura"></div>
-              
-              <!-- 하단 패각 베이스 (Shell Base) -->
-              <div class="shell-base">
-                <svg class="shell-svg" viewBox="0 0 280 240" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <defs>
-                    <linearGradient id="scallopBaseGrad" x1="140" y1="20" x2="140" y2="230" gradientUnits="userSpaceOnUse">
-                      <stop offset="0%" stop-color="#E8F4F8" stop-opacity="0.95"/>
-                      <stop offset="60%" stop-color="#C2E0ED" stop-opacity="0.85"/>
-                      <stop offset="100%" stop-color="#7EA6C4" stop-opacity="0.95"/>
-                    </linearGradient>
-                    <linearGradient id="scallopBaseRim" x1="30" y1="30" x2="250" y2="210" gradientUnits="userSpaceOnUse">
-                      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.9"/>
-                      <stop offset="50%" stop-color="#A2CADF" stop-opacity="0.7"/>
-                      <stop offset="100%" stop-color="#557C9E" stop-opacity="0.9"/>
-                    </linearGradient>
-                  </defs>
-                  <!-- 힌지 이어 -->
-                  <path d="M 85 222 L 68 196 L 102 196 Z" fill="url(#scallopBaseGrad)" stroke="url(#scallopBaseRim)" stroke-width="2"/>
-                  <path d="M 195 222 L 212 196 L 178 196 Z" fill="url(#scallopBaseGrad)" stroke="url(#scallopBaseRim)" stroke-width="2"/>
-                  <!-- 하단 패각 접시 -->
-                  <path d="M 100 205 C 70 200 28 160 22 118 C 18 78 50 32 95 16 C 122 6 158 6 185 16 C 230 32 262 78 258 118 C 252 160 210 200 180 205 C 160 208 120 208 100 205 Z" fill="url(#scallopBaseGrad)" stroke="url(#scallopBaseRim)" stroke-width="2.5"/>
-                  <!-- 내부 자개 반사광 음영 -->
-                  <ellipse cx="140" cy="120" rx="90" ry="65" fill="#FFFFFF" fill-opacity="0.25"/>
-                  <path d="M 140 205 L 140 18 M 140 205 Q 120 110 95 22 M 140 205 Q 160 110 185 22 M 140 205 Q 95 125 60 45 M 140 205 Q 185 125 220 45 M 140 205 Q 75 145 35 90 M 140 205 Q 205 145 245 90" stroke="#7BA2BF" stroke-width="1.2" stroke-opacity="0.4" stroke-dasharray="3 2"/>
-                </svg>
-              </div>
-
-              <!-- 내부 컨텐츠 (조개 열림 시 선명하게 노출) -->
-              <div class="shell-inner">
-                <div class="card-header-bar">
-                  <span class="card-pill">Scallop · Profile</span>
-                  <span class="card-date">INFJ · Explorer</span>
-                </div>
-                <h2 class="card-title">AI 에이전트와 함께 짓는 코드와 배움</h2>
-                <p class="card-snippet">
-                  AI 도구를 페어 프로그래머로 삼아 실제 동작하는 프로젝트를 만들며 깊이 있게 배우고 있는 INFJ 개발자 Supianna입니다.
-                </p>
-                <div class="card-footer-action">
-                  <span class="action-text">Who am I ? 보러가기 →</span>
-                </div>
-              </div>
-
-              <!-- 상단 덮개 패각 (Shell Lid : 3D 회전하며 열림) -->
-              <div class="shell-lid">
-                <svg class="shell-svg" viewBox="0 0 280 240" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <defs>
-                    <linearGradient id="scallopLidGrad" x1="140" y1="10" x2="140" y2="225" gradientUnits="userSpaceOnUse">
-                      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.95"/>
-                      <stop offset="35%" stop-color="#DDF0F7" stop-opacity="0.9"/>
-                      <stop offset="75%" stop-color="#A5CEE2" stop-opacity="0.9"/>
-                      <stop offset="100%" stop-color="#6791B3" stop-opacity="0.95"/>
-                    </linearGradient>
-                    <linearGradient id="scallopRibGlow" x1="50" y1="30" x2="230" y2="200" gradientUnits="userSpaceOnUse">
-                      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.9"/>
-                      <stop offset="50%" stop-color="#8BBAD2" stop-opacity="0.7"/>
-                      <stop offset="100%" stop-color="#3F6B8E" stop-opacity="0.8"/>
-                    </linearGradient>
-                    <filter id="scallopShine" x="-20%" y="-20%" width="140%" height="140%">
-                      <feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#3D6888" flood-opacity="0.25"/>
-                    </filter>
-                  </defs>
-                  <g filter="url(#scallopShine)">
-                    <!-- 힌지 이어 -->
-                    <path d="M 85 220 L 70 195 L 104 195 Z" fill="url(#scallopLidGrad)" stroke="url(#scallopRibGlow)" stroke-width="1.8"/>
-                    <path d="M 195 220 L 210 195 L 176 195 Z" fill="url(#scallopLidGrad)" stroke="url(#scallopRibGlow)" stroke-width="1.8"/>
-                    <!-- 가리비 패각 본체 -->
-                    <path d="M 100 205 C 70 200 28 160 22 118 C 18 78 50 32 95 16 C 122 6 158 6 185 16 C 230 32 262 78 258 118 C 252 160 210 200 180 205 C 160 208 120 208 100 205 Z" fill="url(#scallopLidGrad)" stroke="url(#scallopRibGlow)" stroke-width="2.5"/>
-                    <!-- 방사형 부채꼴 주름 능선 (Ribs) -->
-                    <path d="M 140 205 L 140 16" stroke="url(#scallopRibGlow)" stroke-width="2.2" stroke-linecap="round"/>
-                    <path d="M 140 205 Q 122 105 95 16" stroke="url(#scallopRibGlow)" stroke-width="2" stroke-linecap="round"/>
-                    <path d="M 140 205 Q 158 105 185 16" stroke="url(#scallopRibGlow)" stroke-width="2" stroke-linecap="round"/>
-                    <path d="M 140 205 Q 98 118 60 38" stroke="url(#scallopRibGlow)" stroke-width="1.8" stroke-linecap="round"/>
-                    <path d="M 140 205 Q 182 118 220 38" stroke="url(#scallopRibGlow)" stroke-width="1.8" stroke-linecap="round"/>
-                    <path d="M 140 205 Q 80 135 36 78" stroke="url(#scallopRibGlow)" stroke-width="1.6" stroke-linecap="round"/>
-                    <path d="M 140 205 Q 200 135 244 78" stroke="url(#scallopRibGlow)" stroke-width="1.6" stroke-linecap="round"/>
-                    <path d="M 140 205 Q 70 160 26 122" stroke="url(#scallopRibGlow)" stroke-width="1.4" stroke-linecap="round"/>
-                    <path d="M 140 205 Q 210 160 254 122" stroke="url(#scallopRibGlow)" stroke-width="1.4" stroke-linecap="round"/>
-                    <!-- 상단 테두리 가리비 웨이브 하이라이트 -->
-                    <path d="M 35 100 C 45 60 85 24 140 24 C 195 24 235 60 245 100" stroke="#FFFFFF" stroke-width="1.8" stroke-linecap="round" stroke-opacity="0.8"/>
-                  </g>
-                </svg>
-                <!-- 닫혀 있을 때 보이는 엠블럼 뱃지 & 안내 -->
-                <div class="shell-lid-badge">
-                  <span class="lid-chip">Scallop Shell</span>
-                  <h3 class="lid-title">Who am I ?</h3>
-                  <span class="lid-hint">가리비 열어보기 <span class="sparkle-icon">✦</span></span>
-                </div>
-              </div>
-
-            </div>
-          </article>
-
-          <!-- 조개 2: 나선형 뿔소라 (Conch Shell) - Projects 포트폴리오 -->
-          <article class="shell-card shell-conch" data-target-tab="projects" tabindex="0" role="button" aria-label="Projects 뿔소라 열기">
-            <div class="shell-wrapper">
-              <div class="shell-glow-aura conch-aura"></div>
-              
-              <!-- 하단 패각 베이스 (Shell Base) -->
-              <div class="shell-base">
-                <svg class="shell-svg" viewBox="0 0 280 240" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <defs>
-                    <linearGradient id="conchBaseGrad" x1="60" y1="30" x2="220" y2="220" gradientUnits="userSpaceOnUse">
-                      <stop offset="0%" stop-color="#EBF4F9" stop-opacity="0.95"/>
-                      <stop offset="50%" stop-color="#BED9EB" stop-opacity="0.85"/>
-                      <stop offset="100%" stop-color="#6F98B8" stop-opacity="0.95"/>
-                    </linearGradient>
-                    <linearGradient id="conchBaseLip" x1="120" y1="80" x2="260" y2="200" gradientUnits="userSpaceOnUse">
-                      <stop offset="0%" stop-color="#FFE8D6" stop-opacity="0.9"/>
-                      <stop offset="50%" stop-color="#87B4D1" stop-opacity="0.8"/>
-                      <stop offset="100%" stop-color="#3C6688" stop-opacity="0.9"/>
-                    </linearGradient>
-                  </defs>
-                  <!-- 소라 내부 챔버 및 입구 립(Lip) -->
-                  <path d="M 135 16 C 115 35 95 62 80 92 C 60 130 52 165 70 198 C 88 228 130 236 170 228 C 215 218 258 185 264 135 C 270 90 238 52 195 35 C 168 24 148 16 135 16 Z" fill="url(#conchBaseGrad)" stroke="url(#conchBaseLip)" stroke-width="2.5"/>
-                  <!-- 나선형 소용돌이 깊이감 음영 -->
-                  <path d="M 135 16 Q 160 55 145 85 Q 120 115 110 145 Q 105 185 145 208 Q 195 218 238 185" stroke="#4C789B" stroke-width="2" stroke-opacity="0.35" fill="none"/>
-                  <ellipse cx="175" cy="140" rx="60" ry="45" fill="#FFFFFF" fill-opacity="0.2"/>
-                </svg>
-              </div>
-
-              <!-- 내부 컨텐츠 (소라 열림 시 선명하게 노출) -->
-              <div class="shell-inner">
-                <div class="card-header-bar">
-                  <span class="card-pill accent">Conch · Showcase</span>
-                  <span class="card-date">Projects</span>
-                </div>
-                <h2 class="card-title">포트폴리오 & 프로젝트 아카이브</h2>
-                <p class="card-snippet">
-                  공식 포트폴리오 웹사이트부터 실시간 방명록, 워크플로우 자동화까지 직접 구축한 결과물들을 확인해 보세요.
-                </p>
-                <div class="card-footer-action">
-                  <span class="action-text">Projects 바로가기 →</span>
-                </div>
-              </div>
-
-              <!-- 상단 덮개 패각 (Shell Lid : 비스듬히 입체 회전하며 열림) -->
-              <div class="shell-lid">
-                <svg class="shell-svg" viewBox="0 0 280 240" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <defs>
-                    <linearGradient id="conchLidGrad" x1="120" y1="12" x2="160" y2="230" gradientUnits="userSpaceOnUse">
-                      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.95"/>
-                      <stop offset="30%" stop-color="#D7EBF4" stop-opacity="0.92"/>
-                      <stop offset="70%" stop-color="#9BC7DE" stop-opacity="0.9"/>
-                      <stop offset="100%" stop-color="#5582A5" stop-opacity="0.95"/>
-                    </linearGradient>
-                    <linearGradient id="conchRidgeStroke" x1="60" y1="40" x2="250" y2="210" gradientUnits="userSpaceOnUse">
-                      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.9"/>
-                      <stop offset="50%" stop-color="#76A5C0" stop-opacity="0.8"/>
-                      <stop offset="100%" stop-color="#2D587B" stop-opacity="0.9"/>
-                    </linearGradient>
-                    <filter id="conchShine" x="-20%" y="-20%" width="140%" height="140%">
-                      <feDropShadow dx="2" dy="8" stdDeviation="10" flood-color="#2C516F" flood-opacity="0.28"/>
-                    </filter>
-                  </defs>
-                  <g filter="url(#conchShine)">
-                    <!-- 소라 껍질 외형 (Spire & Aperture Body) -->
-                    <path d="M 135 16 C 115 35 95 62 80 92 C 60 130 52 165 70 198 C 88 228 130 236 170 228 C 215 218 258 185 264 135 C 270 90 238 52 195 35 C 168 24 148 16 135 16 Z" fill="url(#conchLidGrad)" stroke="url(#conchRidgeStroke)" stroke-width="2.5"/>
-                    <!-- 소라 나선형 주름 텍스처 (Spiral ridges & Spines) -->
-                    <path d="M 135 16 Q 148 42 165 52 Q 185 62 208 55" stroke="url(#conchRidgeStroke)" stroke-width="2.2" stroke-linecap="round"/>
-                    <path d="M 118 42 Q 138 72 175 80 Q 215 88 238 75" stroke="url(#conchRidgeStroke)" stroke-width="2.2" stroke-linecap="round"/>
-                    <path d="M 98 75 Q 120 105 165 112 Q 225 120 255 105" stroke="url(#conchRidgeStroke)" stroke-width="2" stroke-linecap="round"/>
-                    <path d="M 80 115 Q 105 142 155 148 Q 220 155 262 135" stroke="url(#conchRidgeStroke)" stroke-width="2" stroke-linecap="round"/>
-                    <path d="M 68 155 Q 98 178 145 182 Q 200 185 245 165" stroke="url(#conchRidgeStroke)" stroke-width="1.8" stroke-linecap="round"/>
-                    <path d="M 75 195 Q 115 210 165 208 Q 215 202 238 185" stroke="url(#conchRidgeStroke)" stroke-width="1.6" stroke-linecap="round"/>
-                    <!-- 소라 뿔 돌기 포인트 하이라이트 -->
-                    <circle cx="135" cy="18" r="3.5" fill="#FFFFFF" stroke="#6893B2" stroke-width="1.5"/>
-                    <circle cx="108" cy="58" r="2.5" fill="#FFFFFF" stroke="#6893B2" stroke-width="1"/>
-                    <circle cx="85" cy="98" r="3" fill="#FFFFFF" stroke="#6893B2" stroke-width="1"/>
-                  </g>
-                </svg>
-                <!-- 닫혀 있을 때 보이는 엠블럼 뱃지 & 안내 -->
-                <div class="shell-lid-badge">
-                  <span class="lid-chip">Conch Shell</span>
-                  <h3 class="lid-title">Projects</h3>
-                  <span class="lid-hint">소라고둥 열어보기 <span class="sparkle-icon">✦</span></span>
-                </div>
-              </div>
-
-            </div>
-          </article>
-
-          <!-- 조개 3: 오팔 진주조개 (Pearl Oyster) - Free Board 방명록 -->
-          <article class="shell-card shell-oyster" data-target-tab="free-board" tabindex="0" role="button" aria-label="Free Board 진주조개 열기">
-            <div class="shell-wrapper">
-              <div class="shell-glow-aura oyster-aura"></div>
-              
-              <!-- 하단 패각 베이스 (Shell Base) -->
-              <div class="shell-base">
-                <svg class="shell-svg" viewBox="0 0 280 240" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <defs>
-                    <linearGradient id="oysterBaseGrad" x1="140" y1="20" x2="140" y2="230" gradientUnits="userSpaceOnUse">
-                      <stop offset="0%" stop-color="#FFFDF9" stop-opacity="0.95"/>
-                      <stop offset="45%" stop-color="#E5ECF6" stop-opacity="0.9"/>
-                      <stop offset="80%" stop-color="#C5D9EB" stop-opacity="0.85"/>
-                      <stop offset="100%" stop-color="#8CAFC9" stop-opacity="0.95"/>
-                    </linearGradient>
-                    <linearGradient id="oysterBaseRim" x1="20" y1="40" x2="260" y2="210" gradientUnits="userSpaceOnUse">
-                      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.9"/>
-                      <stop offset="50%" stop-color="#B8D3E6" stop-opacity="0.75"/>
-                      <stop offset="100%" stop-color="#6086A6" stop-opacity="0.9"/>
-                    </linearGradient>
-                  </defs>
-                  <!-- 오팔 조개 접시 패각 -->
-                  <path d="M 90 216 C 48 206 18 166 16 122 C 14 74 58 26 120 16 C 166 8 222 18 252 64 C 276 104 266 160 232 200 C 196 230 132 226 90 216 Z" fill="url(#oysterBaseGrad)" stroke="url(#oysterBaseRim)" stroke-width="2.5"/>
-                  <!-- 내부 자개 동심원 성장선 -->
-                  <path d="M 32 115 Q 130 75 245 95" stroke="#8CAFC9" stroke-width="1.4" stroke-opacity="0.45" stroke-dasharray="4 2"/>
-                  <path d="M 30 145 Q 135 110 248 135" stroke="#8CAFC9" stroke-width="1.4" stroke-opacity="0.45" stroke-dasharray="4 2"/>
-                  <path d="M 45 175 Q 140 150 235 175" stroke="#8CAFC9" stroke-width="1.4" stroke-opacity="0.45" stroke-dasharray="4 2"/>
-                </svg>
-
-                <!-- 영롱하게 빛나는 3D 진주 구체 (Glowing Pearl) -->
-                <div class="shell-pearl-sphere" title="영롱한 바다 진주">
-                  <div class="pearl-core"></div>
-                  <div class="pearl-highlight"></div>
-                  <div class="pearl-glow-ring"></div>
-                </div>
-              </div>
-
-              <!-- 내부 컨텐츠 (진주조개 열림 시 선명하게 노출) -->
-              <div class="shell-inner">
-                <div class="card-header-bar">
-                  <span class="card-pill">Oyster · Community</span>
-                  <span class="card-date">Guestbook</span>
-                </div>
-                <h2 class="card-title">소통과 교류의 인터랙티브 방명록</h2>
-                <p class="card-snippet">
-                  방문자 누구나 자유롭게 메시지를 남기고 이모지 반응을 나눌 수 있는 실시간 인터랙티브 방명록 공간입니다.
-                </p>
-                <div class="card-footer-action">
-                  <span class="action-text">Free Board 바로가기 →</span>
-                </div>
-              </div>
-
-              <!-- 상단 덮개 패각 (Shell Lid : 3D 회전하며 위로 열림) -->
-              <div class="shell-lid">
-                <svg class="shell-svg" viewBox="0 0 280 240" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <defs>
-                    <linearGradient id="oysterLidGrad" x1="140" y1="12" x2="140" y2="225" gradientUnits="userSpaceOnUse">
-                      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.95"/>
-                      <stop offset="35%" stop-color="#EDF3FA" stop-opacity="0.92"/>
-                      <stop offset="70%" stop-color="#BED7EB" stop-opacity="0.9"/>
-                      <stop offset="100%" stop-color="#7298B7" stop-opacity="0.95"/>
-                    </linearGradient>
-                    <linearGradient id="oysterRingStroke" x1="30" y1="30" x2="250" y2="210" gradientUnits="userSpaceOnUse">
-                      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.9"/>
-                      <stop offset="50%" stop-color="#A5C8DF" stop-opacity="0.8"/>
-                      <stop offset="100%" stop-color="#4B7495" stop-opacity="0.9"/>
-                    </linearGradient>
-                    <filter id="oysterShine" x="-20%" y="-20%" width="140%" height="140%">
-                      <feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#3C6280" flood-opacity="0.26"/>
-                    </filter>
-                  </defs>
-                  <g filter="url(#oysterShine)">
-                    <!-- 오팔 조개 패각 덮개 -->
-                    <path d="M 90 216 C 48 206 18 166 16 122 C 14 74 58 26 120 16 C 166 8 222 18 252 64 C 276 104 266 160 232 200 C 196 230 132 226 90 216 Z" fill="url(#oysterLidGrad)" stroke="url(#oysterRingStroke)" stroke-width="2.5"/>
-                    <!-- 조개 껍질 물결 능선 & 성장선 (Growth rings) -->
-                    <path d="M 32 115 Q 130 65 245 85" stroke="url(#oysterRingStroke)" stroke-width="2" stroke-linecap="round"/>
-                    <path d="M 28 142 Q 135 95 250 122" stroke="url(#oysterRingStroke)" stroke-width="2" stroke-linecap="round"/>
-                    <path d="M 40 170 Q 140 130 240 158" stroke="url(#oysterRingStroke)" stroke-width="1.8" stroke-linecap="round"/>
-                    <path d="M 65 195 Q 145 168 215 188" stroke="url(#oysterRingStroke)" stroke-width="1.6" stroke-linecap="round"/>
-                    <!-- 자갯빛 오팔 프리즘 하이라이트 -->
-                    <path d="M 45 80 C 75 35 130 25 185 35 C 225 45 245 75 250 100" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-opacity="0.85"/>
-                  </g>
-                </svg>
-                <!-- 닫혀 있을 때 보이는 엠블럼 뱃지 & 안내 -->
-                <div class="shell-lid-badge">
-                  <span class="lid-chip">Pearl Oyster</span>
-                  <h3 class="lid-title">Free Board</h3>
-                  <span class="lid-hint">진주조개 열어보기 <span class="sparkle-icon">✦</span></span>
-                </div>
-              </div>
-
-            </div>
-          </article>
-
-        </div>
-
-      </div>
-    </section>
-
-    <!-- ================================================================= -->
-    <!-- 탭 2: Who am I ? (귀여운 해달이 조개를 던져 소개를 여는 인터랙션) -->
-    <!-- ================================================================= -->
-    <section id="who-am-i" class="tab-panel">
+  <!-- 메인 스페이셜 캔버스 스테이지 -->
+  <main class="spatial-stage">
+    
+    <!-- 중앙 궤도 시스템 (Orbital Ring System) -->
+    <div class="orbital-system-root" id="orbital-root">
       
-      <!-- 2열 레이아웃: 좌측 상단 해달 + 우측 소개글 (글을 전혀 가리지 않는 완벽한 구조) -->
-      <div class="who-am-i-layout">
+      <!-- 동심원 궤도선 (1px Minimal Lines) -->
+      <div class="orbit-ring ring-core" id="ring-core"></div>
+      <div class="orbit-ring ring-outer" id="ring-outer"></div>
+      <div class="orbit-ring ring-satellite"></div>
 
-        <!-- 좌측 상단 해달 & 조개 시네마틱 무대 -->
-        <div class="otter-stage" id="otter-stage">
-          
-          <!-- 좌측 둥둥 떠있는 큼직하고 귀여운 해달 캐릭터 -->
-          <div class="otter-character" id="otter-character" role="button" tabindex="0" title="해달을 클릭하면 조개를 다시 던져요!">
-            <!-- 말풍선 -->
-            <div class="otter-speech-bubble" id="otter-speech">
-              <span>조개 또 던져볼까? 🦦</span>
-            </div>
-            
-            <!-- 물결 파문 이펙트 -->
-            <div class="otter-water-ripples">
-              <span class="water-ripple ripple-1"></span>
-              <span class="water-ripple ripple-2"></span>
-            </div>
+      <!-- 공전하는 위성 트랙 & 점 -->
+      <div class="satellite-track">
+        <div class="orbit-satellite-dot dot-1" title="Inference Latency: 4.2ms"></div>
+        <div class="orbit-satellite-dot dot-2" title="Precision: 99.4%"></div>
+      </div>
+      <div class="satellite-track reverse">
+        <div class="orbit-satellite-dot dot-3" title="Zero Data Loss"></div>
+      </div>
 
-            <!-- 사랑스러운 큼직한 해달 SVG -->
-            <svg class="otter-svg" viewBox="0 0 160 140" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <defs>
-                <linearGradient id="otterFurGrad" x1="40" y1="40" x2="130" y2="120" gradientUnits="userSpaceOnUse">
-                  <stop offset="0%" stop-color="#9C6B58"/>
-                  <stop offset="50%" stop-color="#805343"/>
-                  <stop offset="100%" stop-color="#653D30"/>
-                </linearGradient>
-                <linearGradient id="otterBellyGrad" x1="60" y1="55" x2="110" y2="105" gradientUnits="userSpaceOnUse">
-                  <stop offset="0%" stop-color="#F5DFCA"/>
-                  <stop offset="100%" stop-color="#E2BE9B"/>
-                </linearGradient>
-              </defs>
-
-              <!-- 꼬리 -->
-              <path d="M 22 92 Q 10 102 14 114 Q 26 116 35 100 Z" fill="#6E4435"/>
-
-              <!-- 해달 몸통 (배를 내밀고 누운 자세) -->
-              <path d="M 32 82 C 26 52 58 42 98 46 C 132 50 144 74 138 98 C 128 122 62 122 32 82 Z" fill="url(#otterFurGrad)"/>
-
-              <!-- 배 부분 베이지 털 -->
-              <path d="M 46 80 C 44 62 66 54 94 57 C 118 60 124 76 118 96 C 110 112 62 112 46 80 Z" fill="url(#otterBellyGrad)"/>
-
-              <!-- 뒷발 (물 위로 살짝 들린 앙증맞은 발) -->
-              <ellipse cx="38" cy="98" rx="8.5" ry="6.5" fill="#6E4435" transform="rotate(-15 38 98)"/>
-              <ellipse cx="50" cy="106" rx="8" ry="6" fill="#6E4435" transform="rotate(10 50 106)"/>
-
-              <!-- 동그란 두 귀 -->
-              <circle cx="106" cy="32" r="7" fill="#6E4435"/>
-              <circle cx="106" cy="32" r="4.5" fill="#E2BE9B"/>
-              <circle cx="138" cy="34" r="7" fill="#6E4435"/>
-              <circle cx="138" cy="34" r="4.5" fill="#E2BE9B"/>
-
-              <!-- 머리통 -->
-              <ellipse cx="122" cy="48" rx="25" ry="23" fill="url(#otterFurGrad)"/>
-
-              <!-- 볼과 주둥이 (베이지) -->
-              <ellipse cx="127" cy="54" rx="14" ry="11" fill="#F8E7D8"/>
-
-              <!-- 까만 콩 코 -->
-              <ellipse cx="127" cy="49" rx="4.5" ry="3.5" fill="#281A15"/>
-
-              <!-- W 모양의 행복한 입 -->
-              <path d="M 122 54 Q 127 57 127 54 Q 127 57 132 54" stroke="#281A15" stroke-width="1.6" stroke-linecap="round" fill="none"/>
-
-              <!-- 반짝이는 눈동자 -->
-              <circle cx="115" cy="44" r="3.2" fill="#281A15"/>
-              <circle cx="114" cy="43" r="1.1" fill="#FFFFFF"/>
-              <circle cx="133" cy="45" r="3.2" fill="#281A15"/>
-              <circle cx="132" cy="44" r="1.1" fill="#FFFFFF"/>
-
-              <!-- 사랑스러운 핑크 볼터치 -->
-              <ellipse cx="112" cy="52" rx="4.5" ry="2.8" fill="#F8A3A8" opacity="0.75"/>
-              <ellipse cx="137" cy="53" rx="4.5" ry="2.8" fill="#F8A3A8" opacity="0.75"/>
-
-              <!-- 앙증맞은 수염 -->
-              <path d="M 108 51 L 98 49 M 108 54 L 97 55" stroke="#E2BE9B" stroke-width="1.2" stroke-linecap="round"/>
-              <path d="M 140 52 L 150 50 M 140 55 L 151 56" stroke="#E2BE9B" stroke-width="1.2" stroke-linecap="round"/>
-
-              <!-- 배 위의 앙증맞은 두 앞발 (조개를 쥐고 있는 손) -->
-              <g class="otter-paws" id="otter-paws">
-                <!-- 작은 조개 아이콘 (가슴 위) -->
-                <path class="otter-chest-shell" d="M 86 73 C 81 68 76 60 84 57 C 91 55 96 55 101 58 C 107 62 103 70 98 73 Z" fill="#D6EAF8" stroke="#5D8AA8" stroke-width="1.2"/>
-                <!-- 왼쪽 앞발 & 오른쪽 앞발 -->
-                <ellipse cx="82" cy="69" rx="7.5" ry="5.5" fill="#754838" transform="rotate(25 82 69)"/>
-                <ellipse cx="102" cy="70" rx="7.5" ry="5.5" fill="#754838" transform="rotate(-25 102 70)"/>
-              </g>
-            </svg>
-          </div>
-
-          <!-- 해달의 손에서 출발해 오른쪽 본문으로 날아가는 마법의 조개 -->
-          <div class="otter-flying-shell" id="otter-flying-shell">
-            <svg class="flying-shell-svg" viewBox="0 0 70 60" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <defs>
-                <linearGradient id="flyShellGrad" x1="35" y1="4" x2="35" y2="54" gradientUnits="userSpaceOnUse">
-                  <stop offset="0%" stop-color="#FFFFFF"/>
-                  <stop offset="40%" stop-color="#D8EEF8"/>
-                  <stop offset="100%" stop-color="#7EA7C6"/>
-                </linearGradient>
-                <filter id="flyShellGlow" x="-20%" y="-20%" width="140%" height="140%">
-                  <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#4A7596" flood-opacity="0.35"/>
-                </filter>
-              </defs>
-              <g filter="url(#flyShellGlow)">
-                <path d="M 25 52 C 16 50 6 40 5 30 C 4 20 12 8 24 4 C 30 2 40 2 46 4 C 58 8 66 20 65 30 C 64 40 54 50 45 52 Z" fill="url(#flyShellGrad)" stroke="#4A7596" stroke-width="2"/>
-                <path d="M 35 52 L 35 4 M 35 52 Q 30 28 24 5 M 35 52 Q 40 28 46 5 M 35 52 Q 22 32 15 12 M 35 52 Q 48 32 55 12" stroke="#4A7596" stroke-width="1.5" stroke-linecap="round"/>
-              </g>
-            </svg>
-            <div class="shell-magic-trail"></div>
-          </div>
-
-          <!-- 조개 착지 스파클 이펙트 -->
-          <div class="shell-landing-burst" id="shell-landing-burst">
-            <span class="burst-particle p1">✨</span>
-            <span class="burst-particle p2">✦</span>
-            <span class="burst-particle p3">🌟</span>
-            <span class="burst-particle p4">✧</span>
-            <span class="burst-particle p5">🦪</span>
-          </div>
-
-        </div>
-
-        <!-- 우측 소개 본문 (해달의 오른쪽에 배치되어 글이 전혀 가려지지 않음) -->
-        <div class="profile-reveal-container" id="profile-reveal-container">
-        <header class="section-intro">
-          <div class="intro-otter-badge">🦦 해달이 건넨 소중한 이야기</div>
-          <h1 class="page-title">Who am I ?</h1>
-          <p class="page-desc">AI Agent와 협업하며 원리를 깊이 파고들고, 매일 배우며 성장하는 개발자 Supianna입니다.</p>
-        </header>
-
-        <div class="profile-content">
-          <!-- 1. 소개 본문 -->
-          <div class="content-block">
-            <h2 class="block-title">소개 (About)</h2>
-            <p class="text-paragraph">
-              안녕하세요! AI Agent를 페어 프로그래머 삼아 아이디어를 실제 동작하는 소프트웨어로 구현해나가고 있는 <strong>Supianna(수피아나)</strong>입니다.
-            </p>
-            <p class="text-paragraph">
-              아직 실무 경력은 없지만, AI 시대를 주도적으로 맞이하는 개발자로서 탄탄한 기본기와 실전 감각을 동시에 기르고 있습니다. 단순히 AI에게 코드를 맡기는 것에 그치지 않고, <em>"왜 이렇게 동작하는가?"</em>, <em>"더 읽기 쉽고 책임이 명확한 구조(SRP)는 무엇인가?"</em>를 끊임없이 고민하며 한 줄 한 줄 원리를 깊이 있게 흡수하고 있습니다.
-            </p>
-            <p class="text-paragraph">
-              MBTI 성향은 <strong>INFJ (옹호자)</strong>입니다. 조용하지만 깊은 통찰력과 강한 책임감을 가지고 문제를 바라봅니다. 사용자에게 진정으로 도움이 되는 따뜻하고 의미 있는 가치를 만들기 위해 매일 한 걸음씩 꾸준히 나아갑니다.
-            </p>
-          </div>
-
-          <!-- 2. 지향점 & 가치 -->
-          <div class="content-block">
-            <h2 class="block-title">지향점 및 태도 (Mindset)</h2>
-            <ul class="simple-list">
-              <li><strong>AI-Native Explorer</strong>: 최신 AI Agent 도구를 능숙하게 지휘하여 문제 해결의 폭과 속도를 넓히되, 결과물의 논리와 아키텍처는 꼼꼼히 검증합니다.</li>
-              <li><strong>지속적인 배움과 기록</strong>: 경력의 유무보다 중요한 것은 '어제보다 성장한 오늘'이라는 믿음으로, 매일 마주하는 기술적 고민과 깨달음을 기록으로 체계화합니다.</li>
-              <li><strong>INFJ의 통찰과 배려</strong>: 복잡함 속에서 본질을 짚어내고, 동료가 편안하게 읽을 수 있는 정갈한 코드와 사용자를 배려하는 UI를 설계합니다.</li>
-              <li><strong>단일 책임 원칙 (SRP) & 클린 코드</strong>: 작은 기능이라도 명확한 하나의 역할만을 수행하도록 정돈하여 유지보수하기 쉬운 결과물을 만듭니다.</li>
-            </ul>
-          </div>
-
-          <!-- 3. 기술 스택 -->
-          <div class="content-block">
-            <h2 class="block-title">기술 스택 & 관심 분야 (Tech & Focus)</h2>
-            <div class="skills-list">
-              <span class="skill-tag">AI Agent & LLM Workflow</span>
-              <span class="skill-tag">HTML5 / Semantic Web</span>
-              <span class="skill-tag">CSS3 / Responsive Design</span>
-              <span class="skill-tag">JavaScript (ES6+)</span>
-              <span class="skill-tag">Canvas API</span>
-              <span class="skill-tag">Clean Code & SRP</span>
-              <span class="skill-tag">Git & Atomic Commits</span>
-              <span class="skill-tag">GitHub Pages</span>
-            </div>
-          </div>
-        </div>
+      <!-- 중앙 뉴럴 파티클 캔버스 (마우스 반응형 코어) -->
+      <div class="neural-canvas-wrap">
+        <canvas id="neuralCanvas" width="400" height="400"></canvas>
       </div>
 
     </div>
-  </section>
 
-    <!-- ================================================================= -->
-    <!-- 탭 3: Projects (포트폴리오 전면 배치 & 프로젝트 쇼케이스) -->
-    <!-- ================================================================= -->
-    <section id="projects" class="tab-panel">
-      <header class="section-intro">
-        <h1 class="page-title">Projects</h1>
-        <p class="page-desc">직접 설계하고 구현한 포트폴리오 및 기술 프로젝트 아카이브입니다.</p>
-      </header>
-
-      <div class="projects-list">
-
-        <!-- ★ 대표 프로젝트: Supianna 디지털 포트폴리오 웹사이트! -->
-        <article class="project-item portfolio-featured-card">
-          <div class="project-header">
-            <div class="project-title-box">
-              <span class="portfolio-badge">🌟 Official Portfolio</span>
-              <h2 class="project-name">Supianna Digital Portfolio & Showcase</h2>
-            </div>
-            <span class="project-year">2026</span>
-          </div>
-          <p class="project-summary">
-            신비로운 오로라 & 글래스모피즘 테마를 적용한 Supianna의 공식 메인 포트폴리오 웹사이트입니다. 60fps 캔버스 별빛 파티클 애니메이션과 스크롤 없는 원스크린 대시보드, 핵심 역량과 이력 타임라인을 순수 바닐라 자바스크립트로 구현했습니다.
-          </p>
-          <div class="project-meta">
-            <span class="meta-label">핵심 기술:</span> Vanilla JS, Canvas Particle Engine, Deep Glassmorphism, CSS Flex/Grid
-          </div>
-          <div class="project-links">
-            <a href="portfolio/index.html" class="btn-portfolio-launch" title="오로라 포트폴리오 웹사이트 바로가기">
-              <span>포트폴리오 바로가기</span>
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3"/></svg>
-            </a>
-          </div>
-        </article>
-
-        <!-- 프로젝트 2: 롯데자이언츠 뉴스 수집기 & AI 일일 브리핑 -->
-        <article class="project-item">
-          <div class="project-header">
-            <h2 class="project-name">⚾ 롯데자이언츠 뉴스 수집기 & AI 일일 브리핑</h2>
-            <span class="project-year">2026</span>
-          </div>
-          <p class="project-summary">
-            NAVER API HUB 검색 API 및 웹 스크래핑을 연동하여 롯데자이언츠 메인 뉴스를 실시간으로 자동 수집하고, 특정 날짜를 선택하면 OpenAI 'gpt-5.6-luna' 모델이 기사들을 종합 분석하여 마크다운(.md) 일일 브리핑 보고서를 자동 생성하는 pywebview 기반 데스크톱 애플리케이션입니다.
-          </p>
-          <div class="project-meta">
-            <span class="meta-label">기술:</span> Python, pywebview, OpenAI (gpt-5.6-luna), NAVER API HUB, Pandas, BeautifulSoup
-          </div>
-          <div class="project-links">
-            <a href="lotte-news/index.html" class="btn-portfolio-launch" title="롯데자이언츠 뉴스 수집기 & AI 보고서 웹 데모 체험하기">
-              <span>웹 데모 체험하기 ⚾</span>
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3"/></svg>
-            </a>
-          </div>
-        </article>
-
-        <!-- 프로젝트 3: 도스 고전 너구리 게임 (Ponpoko Web Remake) -->
-        <article class="project-item">
-          <div class="project-header">
-            <h2 class="project-name">🦝 Ponpoko 너구리 게임 (Web Remake)</h2>
-            <span class="project-year">2026</span>
-          </div>
-          <p class="project-summary">
-            1980~90년대 추억의 도스 명작 아케이드 게임 너구리를 순수 HTML5 Canvas와 바닐라 자바스크립트로 구현한 웹 게임입니다. 방향키 이동, 사다리 등반, 관성 포물선 점프, 압정과 뱀 회피, 8비트 레트로 효과음 및 모바일 터치 패드를 지원합니다.
-          </p>
-          <div class="project-meta">
-            <span class="meta-label">기술:</span> HTML5 Canvas, Web Audio API, 2D Physics & Collision, Touch Controls
-          </div>
-          <div class="project-links">
-            <a href="neoguri/index.html" class="btn-portfolio-launch" title="너구리 게임 플레이하기">
-              <span>게임 플레이하기 🦝</span>
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3"/></svg>
-            </a>
-          </div>
-        </article>
-
-        <!-- 프로젝트 3: 인터랙티브 방명록 -->
-        <article class="project-item">
-          <div class="project-header">
-            <h2 class="project-name">Interactive Free Board & Guestbook</h2>
-            <span class="project-year">2026</span>
-          </div>
-          <p class="project-summary">
-            외부 서버 없이 브라우저 로컬 스토리지(localStorage)와 연동하여 실시간으로 방명록 작성, 보존, 공감(좋아요) 및 삭제가 가능한 인터랙티브 게시판 웹 애플리케이션입니다.
-          </p>
-          <div class="project-meta">
-            <span class="meta-label">기술:</span> JavaScript ES6+, LocalStorage API, UI Validation, CSS Animations
-          </div>
-          <div class="project-links">
-            <button class="btn-simple-action" data-target-tab="free-board">방명록 직접 써보기 →</button>
-          </div>
-        </article>
-
-      </div>
-    </section>
-
-    <!-- ================================================================= -->
-    <!-- 탭 4: Free Board (단정한 방명록 & 자유게시판) -->
-    <!-- ================================================================= -->
-    <section id="free-board" class="tab-panel">
-      <header class="section-intro">
-        <h1 class="page-title">Free Board</h1>
-        <p class="page-desc">자유롭게 소통하고 방명록을 남길 수 있는 열린 공간입니다.</p>
-      </header>
-
-      <!-- 글 작성 폼 -->
-      <form id="board-form" class="simple-board-form">
-        <div class="form-inputs-row">
-          <input type="text" id="board-nickname" placeholder="닉네임" required maxlength="20">
-          <select id="board-category">
-            <option value="응원">응원</option>
-            <option value="질문">질문</option>
-            <option value="자유">자유</option>
-            <option value="피드백">피드백</option>
-          </select>
-        </div>
-        <textarea id="board-message" rows="3" placeholder="남기실 메시지를 입력해 주세요 (브라우저 로컬 저장소에 안전하게 보존됩니다)." required maxlength="300"></textarea>
-        <div class="form-bottom-row">
-          <span class="char-notice"><span id="char-count">0</span> / 300자</span>
-          <button type="submit" class="btn-submit">등록하기</button>
-        </div>
-      </form>
-
-      <!-- 방명록 피드 리스트 -->
-      <div class="board-feed">
-        <div class="feed-count-bar">
-          <span>남겨진 메시지 (<strong id="total-board-count">0</strong>)</span>
-        </div>
-        <div class="board-items-wrap" id="board-cards-grid">
-          <!-- 스크립트에서 렌더링 -->
+    <!-- ============================================== -->
+    <!-- [1] HOME 뷰: 정체성 & 뉴럴 코어 -->
+    <!-- ============================================== -->
+    <div class="spatial-content-pane active" id="pane-home">
+      <div class="home-center-identity">
+        <span class="identity-core-badge">Precision Intelligence</span>
+        <h1 class="identity-main-name">
+          Supianna <span class="light">Lab</span>
+        </h1>
+        <p class="identity-descriptor">
+          네모난 틀을 벗어나 순백의 공간과 정밀한 궤도 위에서 지능형 시스템의 본질을 시각화합니다.
+        </p>
+        <div class="orbit-quick-stats">
+          <div>LATENCY <span class="val">4.2ms</span></div>
+          <div>•</div>
+          <div>PRECISION <span class="val">99.4%</span></div>
+          <div>•</div>
+          <div>STATUS <span class="val">PRODUCTION UP</span></div>
         </div>
       </div>
-    </section>
+    </div>
+
+    <!-- ============================================== -->
+    <!-- [2] ABOUT 뷰: 유기적 성좌 파이프라인 -->
+    <!-- ============================================== -->
+    <div class="spatial-content-pane" id="pane-about">
+      <div class="about-constellation-wrap">
+        
+        <!-- 성좌 연결 SVG 라인 -->
+        <svg class="constellation-svg" viewBox="0 0 900 480">
+          <path class="constellation-line" d="M 120 240 Q 450 110 780 240" fill="none" />
+          <path class="constellation-line" d="M 120 240 Q 450 370 780 240" fill="none" />
+        </svg>
+
+        <!-- 노드 1: INPUT -->
+        <div class="orbital-node" style="align-self: center;">
+          <span class="node-tag">ORBIT 01 · PROBLEM</span>
+          <h3 class="node-title">해결할 난제</h3>
+          <p class="node-desc">수작업 데이터 병목, 비정형 텍스트 및 저화질 이미지의 실시간 정밀 추론 부재.</p>
+        </div>
+
+        <!-- 노드 2: ENGINE (중앙) -->
+        <div class="orbital-node" style="align-self: flex-start; margin-top: 20px; border-color: var(--accent-cobalt);">
+          <span class="node-tag">ORBIT 02 · ARCHITECTURE</span>
+          <h3 class="node-title">핵심 엔지니어링</h3>
+          <p class="node-desc">TensorRT C++ 커널 최적화, Qdrant 벡터 검색 엔진, Kafka 스트리밍 파이프라인.</p>
+        </div>
+
+        <!-- 노드 3: OUTPUT -->
+        <div class="orbital-node" style="align-self: flex-end; margin-bottom: 20px;">
+          <span class="node-tag">ORBIT 03 · IMPACT</span>
+          <h3 class="node-title">실질적 가치</h3>
+          <p class="node-desc">검사 소요 40분 → 4.2ms 단축, 오류 누락률 0.001% 미만, 연 8천만 원 절감.</p>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ============================================== -->
+    <!-- [3] PROJECTS 뷰: 오비탈 행성 갤러리 (기존 블로그 연동 포함) -->
+    <!-- ============================================== -->
+    <div class="spatial-content-pane" id="pane-projects">
+      <div class="projects-orbital-wrap">
+        
+        <!-- 프로젝트 1: 비전 AI -->
+        <div class="project-satellite-card proj-card-1" onclick="triggerNodePulse(this)">
+          <div class="proj-card-icon">👁️</div>
+          <div class="proj-card-name">엣지 비전 AI 결함 탐지</div>
+          <div class="proj-card-metric">4.2ms / 120 FPS</div>
+          <p class="proj-card-sub">TensorRT C++ 기반 산업용 실시간 표면 결함 무인 전수 검사.</p>
+        </div>
+
+        <!-- 프로젝트 2: RAG 벡터 엔진 -->
+        <div class="project-satellite-card proj-card-2" onclick="triggerNodePulse(this)">
+          <div class="proj-card-icon">📄</div>
+          <div class="proj-card-name">엔터프라이즈 RAG 엔진</div>
+          <div class="proj-card-metric">142ms Hybrid Search</div>
+          <p class="proj-card-sub">비정형 기술 문서와 도면을 Qdrant 벡터 지능으로 즉각 인용.</p>
+        </div>
+
+        <!-- 프로젝트 3: 데이터 레이크 -->
+        <div class="project-satellite-card proj-card-3" onclick="triggerNodePulse(this)">
+          <div class="proj-card-icon">🌊</div>
+          <div class="proj-card-name">실시간 이벤트 스트림 레이크</div>
+          <div class="proj-card-metric">125K evt/s 무손실</div>
+          <p class="proj-card-sub">Apache Kafka & Iceberg 기반 페타바이트급 트랜잭션 수집 체계.</p>
+        </div>
+
+        <!-- 프로젝트 4: 기존 Supia.log 클래식 블로그 바로가기 -->
+        <a href="classic/index.html" class="project-satellite-card proj-card-4">
+          <div class="proj-card-icon">🌊</div>
+          <div class="proj-card-name">Supia.log 클래식 블로그 (v1)</div>
+          <div class="proj-card-metric">Classic Archive ↗</div>
+          <p class="proj-card-sub">바다 영상 배경, 기술 아티클 및 피드 중심의 기존 블로그로 이동합니다.</p>
+        </a>
+
+        <!-- 프로젝트 5: 15대 프로토타입 컬렉션 -->
+        <a href="gitblog/index.html" class="project-satellite-card proj-card-5">
+          <div class="proj-card-icon">✨</div>
+          <div class="proj-card-name">15대 인터랙티브 시각화 쇼케이스</div>
+          <div class="proj-card-metric">15 Prototypes ↗</div>
+          <p class="proj-card-sub">다크 코스믹, 미니멀 화이트, 벤토 스위트 등 15대 디자인 모음.</p>
+        </a>
+
+      </div>
+    </div>
+
+    <!-- ============================================== -->
+    <!-- [4] GUESTBOOK 뷰: 궤도 마그넷 띠 (기존 방명록 LocalStorage 호환) -->
+    <!-- ============================================== -->
+    <div class="spatial-content-pane" id="pane-guestbook">
+      <div class="guestbook-orbital-wrap">
+        
+        <div style="text-align: center; margin-top: 10px;">
+          <span style="font-family: var(--font-mono); font-size: 11px; color: var(--accent-cobalt); letter-spacing: 1px;">MAGNETIC ORBITAL CARDS // REALTIME LOCALSTORAGE</span>
+        </div>
+
+        <!-- 부유하는 방명록 마그넷 칩 군집 -->
+        <div class="orbital-chips-swarm" id="chips-swarm">
+          <!-- JS 동적 렌더링 -->
+        </div>
+
+        <!-- 미니멀 원라인 인풋 스트립 -->
+        <form class="orbital-input-strip" id="orbit-form">
+          <input type="text" class="strip-input input-author" id="orbit-author" placeholder="닉네임" required maxlength="10">
+          <input type="text" class="strip-input input-message" id="orbit-msg" placeholder="중앙 궤도 주변으로 새하얀 칩을 띄워보세요..." required maxlength="36">
+          <button type="submit" class="btn-orbit-send">↗</button>
+        </form>
+
+      </div>
+    </div>
 
   </main>
 
-  <!-- =================================================================== -->
-  <!-- 아티클 상세 읽기 모달 -->
-  <!-- =================================================================== -->
-  <div id="article-modal" class="modal-backdrop" aria-hidden="true">
-    <div class="modal-dialog">
-      <button class="modal-close-btn" id="modal-close-btn" aria-label="닫기">✕</button>
-      <div class="modal-content" id="modal-content">
-        <!-- 스크립트에서 동적 삽입 -->
-      </div>
+  <!-- 하단 미니멀 HUD 상태 바 -->
+  <footer class="spatial-bottom-hud">
+    <div class="hud-left-data">
+      <span class="pulse-dot"></span>
+      <span>SPATIAL ORBITAL PROTOCOL // HARMONIC 60 FPS</span>
     </div>
-  </div>
-
-  <!-- 푸터 -->
-  <footer class="footer">
-    <div class="footer-container">
-      <p>&copy; 2026 Supianna. All rights reserved.</p>
-      <div class="footer-nav">
-        <button class="footer-link-btn" data-target-tab="home">HOME</button>
-        <button class="footer-link-btn" data-target-tab="who-am-i">Who am I ?</button>
-        <button class="footer-link-btn" data-target-tab="projects">Projects</button>
-        <button class="footer-link-btn" data-target-tab="free-board">Free Board</button>
-      </div>
+    <div class="hud-right-nav">
+      <a href="classic/index.html">🌊 클래식 블로그 바로가기</a>
+      <a href="gitblog/index.html">✨ 15대 프로토타입 랩</a>
     </div>
   </footer>
 
-  <!-- 자바스크립트 연결 -->
-  <script src="script.js?v=20260909_0935"></script>
+  <!-- 인터랙티브 스크립트 -->
+  <script>
+    // [1] 중앙 뉴럴 네트워크 입자 캔버스 (Canvas Particle Swarm)
+    const canvas = document.getElementById("neuralCanvas");
+    const ctx = canvas.getContext("2d");
+
+    let mouse = { x: canvas.width / 2, y: canvas.height / 2, active: false };
+
+    const PARTICLE_COUNT = 42;
+    const particles = [];
+
+    class Particle {
+      constructor() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.vx = (Math.random() - 0.5) * 0.8;
+        this.vy = (Math.random() - 0.5) * 0.8;
+        this.radius = Math.random() * 2 + 1.5;
+        this.baseRadius = this.radius;
+      }
+
+      update() {
+        this.x += this.vx;
+        this.y += this.vy;
+
+        // 원형 바운더리 내부 반사
+        const dx = this.x - canvas.width / 2;
+        const dy = this.y - canvas.height / 2;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        const maxDist = 180;
+
+        if (dist > maxDist) {
+          this.vx *= -1;
+          this.vy *= -1;
+          this.x += this.vx * 2;
+          this.y += this.vy * 2;
+        }
+
+        // 마우스 상호작용
+        if (mouse.active) {
+          const mdx = mouse.x - this.x;
+          const mdy = mouse.y - this.y;
+          const mDist = Math.sqrt(mdx * mdx + mdy * mdy);
+          if (mDist < 90) {
+            this.x -= (mdx / mDist) * 1.5;
+            this.y -= (mdy / mDist) * 1.5;
+          }
+        }
+      }
+
+      draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+        ctx.fillStyle = "rgba(37, 99, 235, 0.75)";
+        ctx.fill();
+      }
+    }
+
+    for (let i = 0; i < PARTICLE_COUNT; i++) {
+      particles.push(new Particle());
+    }
+
+    function animateParticles() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // 입자 간 유기적 연결선
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const dx = particles[i].x - particles[j].x;
+          const dy = particles[i].y - particles[j].y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+
+          if (dist < 70) {
+            ctx.beginPath();
+            ctx.moveTo(particles[i].x, particles[i].y);
+            ctx.lineTo(particles[j].x, particles[j].y);
+            ctx.strokeStyle = `rgba(37, 99, 235, ${0.35 * (1 - dist / 70)})`;
+            ctx.lineWidth = 0.8;
+            ctx.stroke();
+          }
+        }
+      }
+
+      particles.forEach(p => {
+        p.update();
+        p.draw();
+      });
+
+      requestAnimationFrame(animateParticles);
+    }
+
+    animateParticles();
+
+    // 마우스 좌표 추적
+    window.addEventListener("mousemove", (e) => {
+      const rect = canvas.getBoundingClientRect();
+      mouse.x = e.clientX - rect.left;
+      mouse.y = e.clientY - rect.top;
+      mouse.active = true;
+    });
+
+    window.addEventListener("mouseleave", () => {
+      mouse.active = false;
+    });
+
+    // [2] 탭 전환 시 오비탈 링 모핑 (Ring Morphing Animation)
+    const tabBtns = document.querySelectorAll(".orbital-tab-link");
+    const panes = document.querySelectorAll(".spatial-content-pane");
+    const orbitalRoot = document.getElementById("orbital-root");
+    const ringCore = document.getElementById("ring-core");
+    const ringOuter = document.getElementById("ring-outer");
+
+    function switchOrbitalTab(tabKey) {
+      tabBtns.forEach(btn => {
+        btn.classList.toggle("active", btn.getAttribute("data-tab") === tabKey);
+      });
+
+      panes.forEach(pane => {
+        pane.classList.toggle("active", pane.id === `pane-${tabKey}`);
+      });
+
+      // 탭별 궤도 링 모핑 변형
+      if (tabKey === "home") {
+        orbitalRoot.style.transform = "scale(1)";
+        ringCore.style.borderColor = "var(--ring-border)";
+        ringOuter.style.borderColor = "var(--ring-faint)";
+      } else if (tabKey === "about") {
+        orbitalRoot.style.transform = "scale(1.3)";
+        ringCore.style.borderColor = "rgba(37, 99, 235, 0.25)";
+        ringOuter.style.borderColor = "rgba(37, 99, 235, 0.08)";
+      } else if (tabKey === "projects") {
+        orbitalRoot.style.transform = "scale(1.22) rotate(15deg)";
+        ringCore.style.borderColor = "rgba(6, 182, 212, 0.3)";
+        ringOuter.style.borderColor = "rgba(37, 99, 235, 0.12)";
+      } else if (tabKey === "guestbook") {
+        orbitalRoot.style.transform = "scale(0.85)";
+        ringCore.style.borderColor = "var(--ring-border)";
+        ringOuter.style.borderColor = "var(--ring-faint)";
+      }
+    }
+
+    tabBtns.forEach(btn => {
+      btn.addEventListener("click", () => {
+        switchOrbitalTab(btn.getAttribute("data-tab"));
+      });
+    });
+
+    // [3] 프로젝트 카드 펄스 효과
+    function triggerNodePulse(card) {
+      card.style.boxShadow = "0 0 40px rgba(37, 99, 235, 0.5)";
+      card.style.borderColor = "var(--accent-cobalt)";
+      setTimeout(() => {
+        card.style.boxShadow = "";
+        card.style.borderColor = "";
+      }, 600);
+    }
+
+    // [4] 방명록 마그넷 칩 부착 & 기존 블로그 LocalStorage 호환 연동
+    const STORAGE_KEY = 'supia_gitblog_board_posts_v1';
+    const orbitForm = document.getElementById("orbit-form");
+    const swarm = document.getElementById("chips-swarm");
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    function getBoardPosts() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) {
+          const defaults = [
+            { id: '1', nickname: '우주탐험가', message: '스페이셜 오비탈 인터페이스가 너무 신선하고 아름답습니다!' },
+            { id: '2', nickname: '클린코더', message: '복잡한 사각형 박스를 탈피한 순백의 궤도 디자인 최고입니다 ✨' },
+            { id: '3', nickname: 'AI_Researcher', message: '중앙 뉴럴 파티클 코어와 지표 중심 구성이 신뢰를 주네요.' }
+          ];
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(defaults));
+          return defaults;
+        }
+        return JSON.parse(raw);
+      } catch (e) {
+        return [];
+      }
+    }
+
+    function saveBoardPosts(posts) {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(posts));
+      } catch (e) {}
+    }
+
+    function renderChips() {
+      const posts = getBoardPosts();
+      swarm.innerHTML = posts.slice(0, 10).map((p, idx) => `
+        <div class="orbital-magnet-chip" style="animation-delay: -${(idx % 4) * 1.2}s;">
+          <span class="chip-author-label">@${escapeHtml(p.nickname || '방문자')}:</span>
+          <span>${escapeHtml(p.message)}</span>
+        </div>
+      `).join('');
+    }
+
+    orbitForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const author = document.getElementById("orbit-author").value.trim();
+      const msg = document.getElementById("orbit-msg").value.trim();
+
+      if (!author || !msg) return;
+
+      const now = new Date();
+      const formattedDate = `${now.getFullYear()}.${String(now.getMonth() + 1).padStart(2, '0')}.${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+
+      const newPost = {
+        id: 'post_' + Date.now(),
+        nickname: author,
+        category: '응원',
+        message: msg,
+        createdAt: formattedDate,
+        likes: 0
+      };
+
+      const posts = getBoardPosts();
+      posts.unshift(newPost);
+      saveBoardPosts(posts);
+
+      // DOM 칩 생성
+      const chip = document.createElement("div");
+      chip.className = "orbital-magnet-chip";
+      chip.style.animation = "snapMagnet 0.45s cubic-bezier(0.16, 1, 0.3, 1)";
+      chip.innerHTML = `
+        <span class="chip-author-label">@${escapeHtml(author)}:</span>
+        <span>${escapeHtml(msg)}</span>
+      `;
+      swarm.prepend(chip);
+
+      document.getElementById("orbit-msg").value = "";
+    });
+
+    // 초기 실행
+    renderChips();
+  </script>
+
 </body>
 </html>
