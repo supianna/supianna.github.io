@@ -693,13 +693,13 @@ button, input, textarea, select {
   transition: opacity 0.35s ease, transform 0.45s cubic-bezier(0.2, 0.9, 0.3, 1.1), z-index 0s 0.2s;
 }
 
-/* 호버/포커스/오픈 시: z-index를 최상위(10)로 격상하여 껍질 위로 완벽하게 도출 */
+/* 호버/포커스/오픈 시: z-index를 최상위(10) 및 translateZ로 격상하여 껍질 위로 완벽하게 도출 */
 .shell-card:hover .shell-inner,
 .shell-card:focus-within .shell-inner,
 .shell-card.is-open .shell-inner {
   z-index: 10;
   opacity: 1;
-  transform: translateY(6px) scale(1);
+  transform: translateY(6px) scale(1) translateZ(40px);
   pointer-events: auto;
   transition-delay: 0.08s;
 }
@@ -742,7 +742,7 @@ button, input, textarea, select {
 }
 
 .shell-conch .shell-lid {
-  transform-origin: 30% 88%;
+  transform-origin: 50% 92%;
 }
 
 .shell-oyster .shell-lid {
@@ -750,24 +750,30 @@ button, input, textarea, select {
 }
 
 /* 마우스 호버 시: 상단 패각이 위쪽으로 시원하게 활짝 열림 (내용을 일절 가리지 않음) */
+.shell-card:hover .shell-lid,
+.shell-card:focus-within .shell-lid,
+.shell-card.is-open .shell-lid {
+  z-index: 1;
+}
+
 .shell-scallop:hover .shell-lid,
 .shell-scallop:focus-within .shell-lid,
 .shell-scallop.is-open .shell-lid {
-  transform: perspective(1000px) rotateX(-82deg) translateY(-48px) scale(0.92);
+  transform: translateZ(-30px) rotateX(-82deg) translateY(-48px) scale(0.92);
   opacity: 0.85;
 }
 
 .shell-conch:hover .shell-lid,
 .shell-conch:focus-within .shell-lid,
 .shell-conch.is-open .shell-lid {
-  transform: perspective(1000px) rotateX(-76deg) rotateY(20deg) translateY(-54px) scale(0.9);
-  opacity: 0.85;
+  transform: translateZ(-30px) rotateX(-85deg) translateY(-75px) scale(0.9);
+  opacity: 0.8;
 }
 
 .shell-oyster:hover .shell-lid,
 .shell-oyster:focus-within .shell-lid,
 .shell-oyster.is-open .shell-lid {
-  transform: perspective(1000px) rotateX(-84deg) translateY(-50px) scale(0.92);
+  transform: translateZ(-30px) rotateX(-84deg) translateY(-50px) scale(0.92);
   opacity: 0.85;
 }
 
