@@ -181,6 +181,7 @@ function createGlowSprite(color, radius) {
   const tabPanels = document.querySelectorAll('.tab-panel');
 
   function activateTab(tabId) {
+    if (tabId === 'about') tabId = 'who-am-i';
     const validTabs = ['home', 'who-am-i', 'projects', 'free-board'];
     if (!validTabs.includes(tabId)) {
       tabId = 'home';
@@ -319,7 +320,8 @@ function createGlowSprite(color, radius) {
 
   // 브라우저 뒤로가기/앞으로가기 및 직접 URL 해시 진입 지원
   function handleHashChange() {
-    const hash = window.location.hash.replace('#', '');
+    let hash = window.location.hash.replace('#', '');
+    if (hash === 'about') hash = 'who-am-i';
     if (hash) {
       activateTab(hash);
     } else {
