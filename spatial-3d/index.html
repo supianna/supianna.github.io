@@ -1,0 +1,1325 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <!-- 파일명: spatial-3d/index.html -->
+  <!-- 목적: Three.js 3D 글래스 구체, 마이크로 틸트, 유기적 화면 전환이 적용된 독립 프리뷰 환경 -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Supianna 3D Spatial | Next-Gen Orbital Preview</title>
+
+  <!-- 웹폰트: Pretendard, Inter & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Pretendard:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Three.js (r128 CDN) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+  <style>
+    :root {
+      --bg-pure: #ffffff;
+      --bg-soft: #f8fafc;
+      --ring-border: rgba(15, 23, 42, 0.1);
+      --ring-faint: rgba(15, 23, 42, 0.04);
+      --accent-cobalt: #2563eb;
+      --accent-cyan: #06b6d4;
+      --accent-glow: rgba(37, 99, 235, 0.18);
+      
+      --text-black: #090d16;
+      --text-gray: #475569;
+      --text-muted: #94a3b8;
+      --text-faint: #cbd5e1;
+
+      --spring-motion: cubic-bezier(0.16, 1, 0.3, 1);
+      --font-sans: 'Inter', 'Pretendard', -apple-system, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      height: 100vh;
+      width: 100vw;
+      overflow: hidden;
+      background-color: var(--bg-pure);
+      color: var(--text-black);
+      font-family: var(--font-sans);
+      user-select: none;
+      position: relative;
+    }
+
+    /* 은은한 대기 광원 오브 */
+    .spatial-ambient-light {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      background: radial-gradient(circle at 50% 50%, rgba(37, 99, 235, 0.035) 0%, rgba(255, 255, 255, 0) 70%);
+    }
+
+    /* =================================================== */
+    /* Three.js 3D WebGL 캔버스 컨테이너 (중앙 배경 렌더링) */
+    /* =================================================== */
+    #webgl-canvas-container {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      pointer-events: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: filter 0.8s var(--spring-motion);
+    }
+
+    #threeCanvas {
+      width: 100% !important;
+      height: 100% !important;
+      display: block;
+    }
+
+    /* =================================================== */
+    /* 최상단 플로팅 미니멀 텍스트 헤더 */
+    /* =================================================== */
+    .orbital-top-nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      padding: 24px 44px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: linear-gradient(to bottom, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0) 100%);
+      pointer-events: none;
+    }
+
+    .orbital-brand-block {
+      pointer-events: auto;
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+    }
+
+    .brand-logo-text {
+      font-size: 15px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      color: var(--text-black);
+    }
+
+    .brand-status-tag {
+      font-family: var(--font-mono);
+      font-size: 10.5px;
+      color: var(--accent-cobalt);
+      letter-spacing: 0.5px;
+      background: rgba(37, 99, 235, 0.08);
+      padding: 3px 8px;
+      border-radius: 6px;
+    }
+
+    /* 중앙 플로팅 텍스트 메뉴 */
+    .orbital-menu-cluster {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      gap: 36px;
+      pointer-events: auto;
+    }
+
+    .orbital-tab-link {
+      font-family: var(--font-sans);
+      font-size: 13.5px;
+      font-weight: 500;
+      color: var(--text-muted);
+      cursor: pointer;
+      border: none;
+      background: transparent;
+      padding: 6px 4px;
+      position: relative;
+      transition: color 0.3s var(--spring-motion);
+    }
+
+    .orbital-tab-link:hover {
+      color: var(--text-black);
+    }
+
+    .orbital-tab-link.active {
+      color: var(--text-black);
+      font-weight: 700;
+    }
+
+    .orbital-tab-link.active::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: var(--accent-cobalt);
+      border-radius: 2px;
+      animation: tabUnderline 0.4s var(--spring-motion);
+    }
+
+    @keyframes tabUnderline {
+      from { transform: scaleX(0); }
+      to { transform: scaleX(1); }
+    }
+
+    /* 우측 메인 블로그 복귀 버튼 */
+    .nav-right-actions {
+      pointer-events: auto;
+    }
+
+    .btn-return-main {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--text-gray);
+      text-decoration: none;
+      padding: 7px 15px;
+      border-radius: 20px;
+      border: 1px solid var(--ring-border);
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(8px);
+      transition: all 0.25s var(--spring-motion);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-return-main:hover {
+      color: var(--accent-cobalt);
+      border-color: var(--accent-cobalt);
+      background: #ffffff;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 14px var(--accent-glow);
+    }
+
+    /* =================================================== */
+    /* 메인 스페이셜 스테이지 & 탭별 모핑 콘텐츠 레이어 */
+    /* =================================================== */
+    .spatial-stage {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      z-index: 10;
+    }
+
+    .spatial-content-pane {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+      opacity: 0;
+      transform: scale(0.92) translateY(12px);
+      filter: blur(8px);
+      transition: opacity 0.55s var(--spring-motion), transform 0.65s var(--spring-motion), filter 0.5s ease;
+      z-index: 20;
+    }
+
+    .spatial-content-pane.active {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+      filter: blur(0);
+      pointer-events: auto;
+    }
+
+    /* --------------------------------------------------- */
+    /* [1] HOME 뷰: 정체성 & 뉴럴 코어 */
+    /* --------------------------------------------------- */
+    .home-center-identity {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+      pointer-events: auto;
+      max-width: 620px;
+      margin-top: -30px;
+    }
+
+    .identity-core-badge {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 2px;
+      color: var(--accent-cobalt);
+      text-transform: uppercase;
+      background: rgba(37, 99, 235, 0.06);
+      padding: 5px 16px;
+      border-radius: 20px;
+      border: 1px solid rgba(37, 99, 235, 0.15);
+      font-weight: 700;
+    }
+
+    .identity-main-name {
+      font-size: clamp(38px, 5.5vw, 62px);
+      font-weight: 900;
+      letter-spacing: -2px;
+      line-height: 1.05;
+      color: var(--text-black);
+    }
+
+    .identity-main-name span.light {
+      font-weight: 200;
+      color: var(--text-muted);
+    }
+
+    .identity-descriptor {
+      font-size: 15px;
+      color: var(--text-gray);
+      max-width: 480px;
+      line-height: 1.65;
+      word-break: keep-all;
+    }
+
+    .orbit-quick-stats {
+      margin-top: 10px;
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      font-family: var(--font-mono);
+      font-size: 11.5px;
+      color: var(--text-muted);
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(10px);
+      padding: 7px 20px;
+      border-radius: 30px;
+      border: 1px solid var(--ring-border);
+    }
+
+    .orbit-quick-stats span.val {
+      font-weight: 700;
+      color: var(--accent-cobalt);
+    }
+
+    /* --------------------------------------------------- */
+    /* [2] ABOUT 뷰: 바이브 코더 성좌 파이프라인 */
+    /* --------------------------------------------------- */
+    .about-constellation-wrap {
+      width: 1020px;
+      max-width: 94vw;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 22px;
+      z-index: 5;
+    }
+
+    .about-header-block {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      z-index: 3;
+    }
+
+    .about-badge {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 2px;
+      color: var(--accent-cobalt);
+      text-transform: uppercase;
+      background: rgba(37, 99, 235, 0.06);
+      padding: 4px 14px;
+      border-radius: 20px;
+      border: 1px solid rgba(37, 99, 235, 0.18);
+      font-weight: 700;
+    }
+
+    .about-slogan {
+      font-size: clamp(22px, 2.8vw, 32px);
+      font-weight: 900;
+      letter-spacing: -1px;
+      color: var(--text-black);
+      line-height: 1.25;
+    }
+
+    .about-subtitle {
+      font-size: 14px;
+      color: var(--text-gray);
+      max-width: 560px;
+      line-height: 1.55;
+      word-break: keep-all;
+    }
+
+    .about-nodes-cluster {
+      position: relative;
+      width: 100%;
+      height: 250px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+    }
+
+    .constellation-svg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .constellation-line {
+      stroke: var(--ring-border);
+      stroke-width: 1.5;
+      stroke-dasharray: 4 4;
+      animation: linePulse 20s linear infinite;
+    }
+
+    @keyframes linePulse {
+      to { stroke-dashoffset: -500; }
+    }
+
+    .orbital-node {
+      position: relative;
+      z-index: 2;
+      width: 300px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding: 20px 22px;
+      background: rgba(255, 255, 255, 0.94);
+      backdrop-filter: blur(16px);
+      border-radius: 18px;
+      border: 1px solid var(--ring-border);
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.04);
+      transition: all 0.35s var(--spring-motion);
+    }
+
+    .orbital-node:hover {
+      transform: translateY(-6px);
+      border-color: var(--accent-cobalt);
+      box-shadow: 0 18px 45px var(--accent-glow);
+    }
+
+    .node-step-1 { align-self: center; }
+    .node-step-2 {
+      align-self: flex-start;
+      margin-top: 10px;
+      border-color: rgba(37, 99, 235, 0.3);
+      box-shadow: 0 12px 35px rgba(37, 99, 235, 0.06);
+    }
+    .node-step-3 { align-self: flex-end; margin-bottom: 10px; }
+
+    .node-tag {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--accent-cobalt);
+      letter-spacing: 0.5px;
+    }
+
+    .node-title {
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--text-black);
+    }
+
+    .node-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.55;
+      word-break: keep-all;
+    }
+
+    .about-tech-cluster {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      z-index: 3;
+    }
+
+    .tech-stack-group {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.88);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--ring-border);
+      border-radius: 30px;
+      padding: 6px 14px;
+      box-shadow: 0 4px 16px rgba(15, 23, 42, 0.03);
+      font-size: 12.5px;
+      transition: all 0.25s ease;
+    }
+
+    .tech-stack-group:hover {
+      border-color: var(--accent-cobalt);
+      background: #ffffff;
+      transform: translateY(-2px);
+    }
+
+    .tech-group-label {
+      font-family: var(--font-mono);
+      font-size: 10.5px;
+      font-weight: 700;
+      color: var(--accent-cobalt);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      background: rgba(37, 99, 235, 0.08);
+      padding: 2px 8px;
+      border-radius: 12px;
+    }
+
+    .tech-chip {
+      font-weight: 600;
+      color: var(--text-black);
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .tech-chip.highlight {
+      color: var(--accent-cobalt);
+      font-weight: 700;
+    }
+
+    .chip-note {
+      font-size: 11.5px;
+      color: var(--text-muted);
+      font-weight: 400;
+    }
+
+    /* --------------------------------------------------- */
+    /* [3] PROJECTS 뷰: 오비탈 행성 갤러리 */
+    /* --------------------------------------------------- */
+    .projects-orbital-wrap {
+      width: 1040px;
+      height: 520px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .project-satellite-card {
+      position: absolute;
+      width: 250px;
+      background: rgba(255, 255, 255, 0.94);
+      backdrop-filter: blur(18px);
+      border: 1px solid var(--ring-border);
+      border-radius: 20px;
+      padding: 18px 20px;
+      box-shadow: 0 12px 35px rgba(15, 23, 42, 0.05);
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      transition: all 0.35s var(--spring-motion);
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .project-satellite-card:hover {
+      transform: scale(1.06) translateY(-4px);
+      border-color: var(--accent-cobalt);
+      box-shadow: 0 20px 50px var(--accent-glow);
+    }
+
+    .proj-card-portfolio {
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 260px;
+      z-index: 5;
+      border-color: rgba(37, 99, 235, 0.4);
+      background: rgba(255, 255, 255, 0.96);
+    }
+
+    .proj-card-portfolio:hover {
+      transform: translate(-50%, -50%) scale(1.06);
+    }
+
+    .proj-card-lotte {
+      top: 25px;
+      left: 70px;
+      border-color: rgba(225, 29, 72, 0.25);
+    }
+
+    .proj-card-neoguri {
+      top: 25px;
+      right: 70px;
+      border-color: rgba(245, 158, 11, 0.25);
+    }
+
+    .proj-card-classic {
+      bottom: 25px;
+      left: 70px;
+      border-color: rgba(37, 99, 235, 0.25);
+    }
+
+    .proj-card-hub {
+      bottom: 25px;
+      right: 70px;
+      border-color: rgba(147, 51, 234, 0.25);
+    }
+
+    .proj-card-icon { font-size: 22px; }
+    .proj-card-name { font-size: 14.5px; font-weight: 800; color: var(--text-black); }
+    .proj-card-metric {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--accent-cobalt);
+    }
+    .proj-card-sub { font-size: 12px; color: var(--text-muted); line-height: 1.45; }
+
+    /* --------------------------------------------------- */
+    /* [4] GUESTBOOK 뷰: 궤도 마그넷 칩 */
+    /* --------------------------------------------------- */
+    .guestbook-orbital-wrap {
+      width: 900px;
+      height: 520px;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .orbital-chips-swarm {
+      position: relative;
+      width: 100%;
+      flex: 1;
+      overflow: hidden;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      padding: 16px;
+    }
+
+    .orbital-magnet-chip {
+      background: rgba(255, 255, 255, 0.94);
+      backdrop-filter: blur(14px);
+      border: 1px solid var(--ring-border);
+      border-radius: 24px;
+      padding: 10px 18px;
+      font-size: 13px;
+      color: var(--text-black);
+      box-shadow: 0 6px 24px rgba(15, 23, 42, 0.04);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      animation: chipFloat 6s ease-in-out infinite alternate;
+      transition: all 0.25s var(--spring-motion);
+    }
+
+    .orbital-magnet-chip:hover {
+      transform: scale(1.08) translateY(-4px);
+      border-color: var(--accent-cobalt);
+      box-shadow: 0 12px 30px var(--accent-glow);
+    }
+
+    .chip-author-label {
+      font-family: var(--font-mono);
+      font-size: 11.5px;
+      font-weight: 700;
+      color: var(--accent-cobalt);
+    }
+
+    @keyframes chipFloat {
+      0% { transform: translateY(0px) rotate(0deg); }
+      100% { transform: translateY(-8px) rotate(1deg); }
+    }
+
+    .guestbook-input-strip {
+      width: 100%;
+      max-width: 580px;
+      background: rgba(255, 255, 255, 0.94);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--ring-border);
+      border-radius: 40px;
+      padding: 6px 8px 6px 18px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 12px 40px rgba(15, 23, 42, 0.06);
+    }
+
+    .strip-input {
+      border: none;
+      outline: none;
+      font-family: var(--font-sans);
+      font-size: 13px;
+      color: var(--text-black);
+      background: transparent;
+    }
+
+    .input-author {
+      width: 110px;
+      font-weight: 600;
+      border-right: 1px solid var(--ring-faint);
+      padding-right: 8px;
+    }
+
+    .input-message { flex: 1; }
+
+    .btn-orbit-send {
+      background: var(--text-black);
+      color: #ffffff;
+      border: none;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      transition: all 0.2s;
+      flex-shrink: 0;
+    }
+
+    .btn-orbit-send:hover {
+      background: var(--accent-cobalt);
+      transform: scale(1.08);
+    }
+
+    /* --------------------------------------------------- */
+    /* 하단 미니멀 HUD 상태 바 */
+    /* --------------------------------------------------- */
+    .spatial-bottom-hud {
+      position: fixed;
+      bottom: 24px;
+      left: 44px;
+      right: 44px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-muted);
+      pointer-events: none;
+    }
+
+    .hud-left-data {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .pulse-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent-cobalt);
+      box-shadow: 0 0 8px var(--accent-cobalt);
+      animation: pulseAnim 2s infinite;
+    }
+
+    @keyframes pulseAnim {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.85); }
+    }
+
+    /* 모바일 뷰포트 대응 */
+    @media (max-width: 860px) {
+      .orbital-top-nav {
+        padding: 16px 20px;
+        flex-direction: column;
+        gap: 12px;
+      }
+      .orbital-menu-cluster {
+        position: static;
+        transform: none;
+        gap: 18px;
+      }
+      .about-constellation-wrap {
+        width: 92vw;
+        gap: 14px;
+      }
+      .about-nodes-cluster {
+        height: auto;
+        flex-direction: column;
+        gap: 12px;
+      }
+      .about-nodes-cluster .constellation-svg {
+        display: none;
+      }
+      .orbital-node {
+        width: 100%;
+        max-width: 320px;
+        align-self: center !important;
+        margin: 0 !important;
+      }
+      .about-tech-cluster {
+        flex-direction: column;
+        gap: 8px;
+      }
+      .projects-orbital-wrap,
+      .guestbook-orbital-wrap {
+        width: 100vw;
+        flex-direction: column;
+        gap: 14px;
+      }
+      .project-satellite-card {
+        position: relative;
+        inset: auto !important;
+        transform: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 은은한 대기 광원 오브 -->
+  <div class="spatial-ambient-light" aria-hidden="true"></div>
+
+  <!-- Three.js 3D WebGL 캔버스 컨테이너 -->
+  <div id="webgl-canvas-container">
+    <canvas id="threeCanvas"></canvas>
+  </div>
+
+  <!-- 상단 플로팅 미니멀 텍스트 헤더 -->
+  <header class="orbital-top-nav">
+    <div class="orbital-brand-block">
+      <span class="brand-logo-text">SUPIANNA</span>
+      <span class="brand-status-tag">3D SPATIAL PREVIEW</span>
+    </div>
+
+    <!-- 미니멀 텍스트 메뉴 -->
+    <nav class="orbital-menu-cluster">
+      <button class="orbital-tab-link active" data-tab="home">Home</button>
+      <button class="orbital-tab-link" data-tab="about">About</button>
+      <button class="orbital-tab-link" data-tab="projects">Projects</button>
+      <button class="orbital-tab-link" data-tab="guestbook">Guestbook</button>
+    </nav>
+
+    <!-- 우측 메인 블로그 복귀 링크 -->
+    <div class="nav-right-actions">
+      <a href="../index.html" class="btn-return-main">← 메인 블로그로 복귀</a>
+    </div>
+  </header>
+
+  <!-- 메인 스페이셜 스테이지 -->
+  <main class="spatial-stage">
+
+    <!-- ============================================== -->
+    <!-- [1] HOME 뷰: 정체성 & 3D 코어 -->
+    <!-- ============================================== -->
+    <div class="spatial-content-pane active" id="pane-home">
+      <div class="home-center-identity">
+        <span class="identity-core-badge">Precision 3D Intelligence</span>
+        <h1 class="identity-main-name">
+          Supianna <span class="light">Spatial</span>
+        </h1>
+        <p class="identity-descriptor">
+          빛과 굴절의 3D 글래스 오브젝트와 실시간 마이크로 틸트 위에서, 상상을 실체화하는 바이브 코더의 세계를 탐험하세요.
+        </p>
+        <div class="orbit-quick-stats">
+          <div>FPS <span class="val">60</span></div>
+          <div>•</div>
+          <div>MATERIAL <span class="val">PHYSICAL GLASS</span></div>
+          <div>•</div>
+          <div>INTERACTION <span class="val">MICRO TILT</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================== -->
+    <!-- [2] ABOUT 뷰: 바이브 코더 정체성 & 성좌 파이프라인 -->
+    <!-- ============================================== -->
+    <div class="spatial-content-pane" id="pane-about">
+      <div class="about-constellation-wrap">
+        
+        <!-- 1. 핵심 타이틀 (한 줄 슬로건) -->
+        <div class="about-header-block">
+          <span class="about-badge">MAKER · VIBE CODER</span>
+          <h2 class="about-slogan">"아이디어를 코드로 즉시 증명하는 바이브 코더"</h2>
+          <p class="about-subtitle">복잡한 문법의 벽을 넘어, AI와 함께 상상을 실체화하는 개발 여정을 기록합니다.</p>
+        </div>
+
+        <!-- 2. 나의 정체성 & 철학 (3개의 미니멀 칩/포인트) -->
+        <div class="about-nodes-cluster">
+          <!-- 성좌 연결 SVG 라인 -->
+          <svg class="constellation-svg" viewBox="0 0 980 250">
+            <path class="constellation-line" d="M 145 125 Q 490 30 835 155" fill="none" />
+            <path class="constellation-line" d="M 145 125 Q 490 220 835 155" fill="none" />
+          </svg>
+
+          <!-- 노드 1: AI-Native Workflow -->
+          <div class="orbital-node node-step-1">
+            <span class="node-tag">ORBIT 01 · WORKFLOW</span>
+            <h3 class="node-title">AI-Native Workflow</h3>
+            <p class="node-desc">안티그래비티 등 최신 AI 플랫폼을 활용해 기획부터 프로토타이핑, 구현까지 속도감 있게 전개합니다.</p>
+          </div>
+
+          <!-- 노드 2: Practical Automation -->
+          <div class="orbital-node node-step-2">
+            <span class="node-tag">ORBIT 02 · PRACTICAL</span>
+            <h3 class="node-title">Practical Automation</h3>
+            <p class="node-desc">"이거 프로그램으로 만들 수 있겠는데?"라는 생각이 드는 순간, 파이썬을 기반으로 일상의 불편함을 해결하는 실전형 자동화 툴을 만듭니다.</p>
+          </div>
+
+          <!-- 노드 3: Vibe Coding Explorer -->
+          <div class="orbital-node node-step-3">
+            <span class="node-tag">ORBIT 03 · PHILOSOPHY</span>
+            <h3 class="node-title">Vibe Coding Explorer</h3>
+            <p class="node-desc">완벽한 문법 암기보다 문제 해결의 흐름(Vibe)에 집중하며, 매일 코딩의 영감을 확장해 나가는 중입니다.</p>
+          </div>
+        </div>
+
+        <!-- 3. 현재 다루고 있는 툴 & 기술 스택 (미니멀 뱃지 형태) -->
+        <div class="about-tech-cluster">
+          <div class="tech-stack-group">
+            <span class="tech-group-label">Language</span>
+            <span class="tech-chip">Python <span class="chip-note">(기본 로직 구현, 데이터 조작)</span></span>
+          </div>
+          <div class="tech-stack-group">
+            <span class="tech-group-label">Environment</span>
+            <span class="tech-chip">Google Colab</span>
+            <span class="tech-chip">·</span>
+            <span class="tech-chip">VS Code <span class="chip-note">(uv 패키지 매니저)</span></span>
+          </div>
+          <div class="tech-stack-group">
+            <span class="tech-group-label">Ecosystem</span>
+            <span class="tech-chip highlight">Antigravity</span>
+            <span class="tech-chip">·</span>
+            <span class="tech-chip">AI Development Platforms</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ============================================== -->
+    <!-- [3] PROJECTS 뷰: 오비탈 행성 갤러리 -->
+    <!-- ============================================== -->
+    <div class="spatial-content-pane" id="pane-projects">
+      <div class="projects-orbital-wrap">
+        <!-- 프로젝트 1: Supianna 공식 포트폴리오 (중앙 코어 쇼케이스) -->
+        <a href="../portfolio/index.html" class="project-satellite-card proj-card-portfolio">
+          <div class="proj-card-icon">🌟</div>
+          <div class="proj-card-name">Supianna Digital Portfolio</div>
+          <div class="proj-card-metric">60 FPS Canvas · Glassmorphism ↗</div>
+          <p class="proj-card-sub">신비로운 오로라 & 글래스모피즘 테마의 공식 메인 포트폴리오 웹사이트.</p>
+        </a>
+
+        <!-- 프로젝트 2: ⚾ 롯데자이언츠 뉴스 수집기 & AI 일일 브리핑 -->
+        <a href="../lotte-news/index.html" class="project-satellite-card proj-card-lotte">
+          <div class="proj-card-icon">⚾</div>
+          <div class="proj-card-name">롯데자이언츠 뉴스 & AI 브리핑</div>
+          <div class="proj-card-metric">OpenAI GPT · NAVER API ↗</div>
+          <p class="proj-card-sub">네이버 뉴스를 실시간 크롤링하여 GPT로 3줄 핵심 요약 브리핑을 제공하는 자동화 시스템.</p>
+        </a>
+
+        <!-- 프로젝트 3: 🦝 너구리 레트로 플랫포머 아케이드 -->
+        <a href="../neoguri/index.html" class="project-satellite-card proj-card-neoguri">
+          <div class="proj-card-icon">🦝</div>
+          <div class="proj-card-name">Retro Ponpoko Arcade</div>
+          <div class="proj-card-metric">HTML5 Canvas Engine · 60 FPS ↗</div>
+          <p class="proj-card-sub">추억의 너구리 아케이드 명작을 100% 자바스크립트 엔진과 압정/사다리 물리 로직으로 재현.</p>
+        </a>
+
+        <!-- 프로젝트 4: 📝 Supianna 모던 미니멀 블로그 -->
+        <a href="../gitblog/index.html" class="project-satellite-card proj-card-classic">
+          <div class="proj-card-icon">📝</div>
+          <div class="proj-card-name">Modern Minimal Tech Blog</div>
+          <div class="proj-card-metric">Clean Architecture · SRP ↗</div>
+          <p class="proj-card-sub">아티클 검색, 카테고리 필터링, 상세 모달 뷰를 지원하는 클래식 모던 블로그 뷰어.</p>
+        </a>
+
+        <!-- 프로젝트 5: 🌌 오리지널 메인 포털 허브 -->
+        <a href="../classic/index.html" class="project-satellite-card proj-card-hub">
+          <div class="proj-card-icon">🌌</div>
+          <div class="proj-card-name">Original Portal Hub</div>
+          <div class="proj-card-metric">Spatial Landing ↗</div>
+          <p class="proj-card-sub">전체 서비스 및 프로젝트 아카이브를 한눈에 둘러볼 수 있는 메인 랜딩 허브.</p>
+        </a>
+      </div>
+    </div>
+
+    <!-- ============================================== -->
+    <!-- [4] GUESTBOOK 뷰: 궤도 마그넷 방명록 -->
+    <!-- ============================================== -->
+    <div class="spatial-content-pane" id="pane-guestbook">
+      <div class="guestbook-orbital-wrap">
+        <div class="orbital-chips-swarm" id="chips-swarm">
+          <!-- 스크립트에서 동적 로드 -->
+        </div>
+
+        <form class="guestbook-input-strip" id="orbit-form">
+          <input type="text" class="strip-input input-author" id="orbit-author" placeholder="작성자 닉네임" maxlength="12" required autocomplete="off">
+          <input type="text" class="strip-input input-message" id="orbit-msg" placeholder="3D 궤도에 실시간 메시지 칩 남기기..." maxlength="60" required autocomplete="off">
+          <button type="submit" class="btn-orbit-send" aria-label="칩 전송">↑</button>
+        </form>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- 하단 미니멀 HUD 데이터 바 -->
+  <footer class="spatial-bottom-hud">
+    <div class="hud-left-data">
+      <div class="pulse-dot"></div>
+      <span>THREE.JS 3D ENGINE ACTIVE · 60 FPS</span>
+    </div>
+    <div class="hud-center-tip">
+      <span>MOUSE TILT: ACTIVE · CAM INTERPOLATION: LERP</span>
+    </div>
+    <div class="hud-right-nav">
+      <span>SUPIANNA LAB © 2026</span>
+    </div>
+  </footer>
+
+  <!-- =================================================== -->
+  <!-- Three.js 3D 씬 생성 & 마이크로 틸트 & 유기적 모핑 스크립트 -->
+  <!-- =================================================== -->
+  <script>
+    // ----------------------------------------------------
+    // 1. Three.js 씬, 카메라, 렌더러 초기화
+    // ----------------------------------------------------
+    const container = document.getElementById('webgl-canvas-container');
+    const canvas = document.getElementById('threeCanvas');
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.set(0, 0, 8.5);
+
+    const renderer = new THREE.WebGLRenderer({
+      canvas: canvas,
+      antialias: true,
+      alpha: true,
+      powerPreference: 'high-performance'
+    });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.1;
+
+    // ----------------------------------------------------
+    // 2. 부드러운 화이트 & 글래스모피즘 3D 오브젝트 구축
+    // ----------------------------------------------------
+    const orbGroup = new THREE.Group();
+    scene.add(orbGroup);
+
+    // [A] 외부 반투명 글래스 구체 (Physical Glass Material)
+    const glassGeometry = new THREE.SphereGeometry(1.6, 64, 64);
+    const glassMaterial = new THREE.MeshPhysicalMaterial({
+      color: 0xffffff,
+      transmission: 0.90,          // 유리 투과율
+      opacity: 1,
+      transparent: true,
+      roughness: 0.14,             // 미세한 서리(frosted) 질감으로 눈의 피로 방지
+      ior: 1.42,                   // 편안한 굴절률
+      reflectivity: 0.45,
+      thickness: 1.2,
+      specularIntensity: 0.9,
+      specularColor: 0xffffff,
+      clearcoat: 0.8,
+      clearcoatRoughness: 0.12
+    });
+    const glassSphere = new THREE.Mesh(glassGeometry, glassMaterial);
+    orbGroup.add(glassSphere);
+
+    // [B] 내부 부드러운 오팔 글로우 코어
+    const innerGeometry = new THREE.SphereGeometry(0.9, 32, 32);
+    const innerMaterial = new THREE.MeshStandardMaterial({
+      color: 0xe0e7ff,
+      emissive: 0x2563eb,
+      emissiveIntensity: 0.28,
+      roughness: 0.3,
+      metalness: 0.1,
+      transparent: true,
+      opacity: 0.65
+    });
+    const innerCore = new THREE.Mesh(innerGeometry, innerMaterial);
+    orbGroup.add(innerCore);
+
+    // [C] 초박형 3D 궤도 링 3종 (Thin Orbital Rings)
+    const ringMat1 = new THREE.MeshStandardMaterial({
+      color: 0x94a3b8,
+      roughness: 0.3,
+      metalness: 0.7,
+      transparent: true,
+      opacity: 0.55
+    });
+    const ringMat2 = new THREE.MeshStandardMaterial({
+      color: 0x2563eb,
+      roughness: 0.2,
+      metalness: 0.8,
+      transparent: true,
+      opacity: 0.4
+    });
+    const ringMat3 = new THREE.MeshStandardMaterial({
+      color: 0x06b6d4,
+      roughness: 0.4,
+      metalness: 0.6,
+      transparent: true,
+      opacity: 0.3
+    });
+
+    const ring1 = new THREE.Mesh(new THREE.TorusGeometry(2.5, 0.014, 16, 120), ringMat1);
+    ring1.rotation.x = Math.PI / 2.3;
+    orbGroup.add(ring1);
+
+    const ring2 = new THREE.Mesh(new THREE.TorusGeometry(3.1, 0.012, 16, 120), ringMat2);
+    ring2.rotation.x = Math.PI / 3.8;
+    ring2.rotation.y = Math.PI / 4.5;
+    orbGroup.add(ring2);
+
+    const ring3 = new THREE.Mesh(new THREE.TorusGeometry(3.8, 0.009, 16, 120), ringMat3);
+    ring3.rotation.x = -Math.PI / 3.2;
+    ring3.rotation.y = -Math.PI / 5.2;
+    orbGroup.add(ring3);
+
+    // [D] 궤도를 공전하는 펄 위성 점들
+    const satelliteMat = new THREE.MeshStandardMaterial({
+      color: 0xffffff,
+      emissive: 0x2563eb,
+      emissiveIntensity: 0.6,
+      roughness: 0.2
+    });
+
+    const satellite1 = new THREE.Mesh(new THREE.SphereGeometry(0.06, 16, 16), satelliteMat);
+    const satellite2 = new THREE.Mesh(new THREE.SphereGeometry(0.045, 16, 16), satelliteMat);
+    orbGroup.add(satellite1);
+    orbGroup.add(satellite2);
+
+    // ----------------------------------------------------
+    // 3. 3D 조명 시스템 (눈이 편안한 라이팅 & 그림자 반응)
+    // ----------------------------------------------------
+    const ambientLight = new THREE.AmbientLight(0xf8fafc, 1.3);
+    scene.add(ambientLight);
+
+    const dirLight = new THREE.DirectionalLight(0xffffff, 1.8);
+    dirLight.position.set(5, 7, 6);
+    scene.add(dirLight);
+
+    const blueLight = new THREE.PointLight(0x2563eb, 2.2, 12);
+    blueLight.position.set(-3, -2, 4);
+    scene.add(blueLight);
+
+    const cyanLight = new THREE.PointLight(0x06b6d4, 1.6, 10);
+    cyanLight.position.set(3, 4, -2);
+    scene.add(cyanLight);
+
+    // ----------------------------------------------------
+    // 4. 마우스 커서 추적 3D 마이크로 틸트 (Micro Tilt) 인터랙션
+    // ----------------------------------------------------
+    let mouseX = 0;
+    let mouseY = 0;
+    let targetMouseX = 0;
+    let targetMouseY = 0;
+
+    window.addEventListener('mousemove', (e) => {
+      // 화면 중앙(0,0) 기준 -1.0 ~ 1.0 정규화
+      targetMouseX = (e.clientX / window.innerWidth) * 2 - 1;
+      targetMouseY = -(e.clientY / window.innerHeight) * 2 + 1;
+    });
+
+    // 터치 디바이스 자이로 느낌 지원
+    window.addEventListener('touchmove', (e) => {
+      if (e.touches.length > 0) {
+        targetMouseX = (e.touches[0].clientX / window.innerWidth) * 2 - 1;
+        targetMouseY = -(e.touches[0].clientY / window.innerHeight) * 2 + 1;
+      }
+    }, { passive: true });
+
+    // ----------------------------------------------------
+    // 5. Framer Motion 감성의 유기적 탭 모핑 전환 로직
+    // ----------------------------------------------------
+    let targetCameraZ = 8.5;
+    let targetScale = 1.0;
+    let targetRotOffset = 0;
+    let currentTab = 'home';
+
+    const tabConfigs = {
+      home: { cameraZ: 8.5, scale: 1.0, rotOffset: 0 },
+      about: { cameraZ: 10.2, scale: 1.15, rotOffset: 0.35 },
+      projects: { cameraZ: 11.2, scale: 0.88, rotOffset: 0.6 },
+      guestbook: { cameraZ: 9.0, scale: 1.04, rotOffset: -0.25 }
+    };
+
+    function switchTab(tabKey) {
+      if (!tabConfigs[tabKey]) return;
+      currentTab = tabKey;
+
+      const cfg = tabConfigs[tabKey];
+      targetCameraZ = cfg.cameraZ;
+      targetScale = cfg.scale;
+      targetRotOffset = cfg.rotOffset;
+
+      // 탭 링크 활성화 상태 토글
+      document.querySelectorAll('.orbital-tab-link').forEach(btn => {
+        btn.classList.toggle('active', btn.getAttribute('data-tab') === tabKey);
+      });
+
+      // 패널 활성화 상태 토글 (유기적 모핑 블러 전환)
+      document.querySelectorAll('.spatial-content-pane').forEach(pane => {
+        pane.classList.remove('active');
+      });
+
+      const activePane = document.getElementById(`pane-${tabKey}`);
+      if (activePane) {
+        setTimeout(() => {
+          activePane.classList.add('active');
+        }, 80);
+      }
+    }
+
+    document.querySelectorAll('.orbital-tab-link').forEach(btn => {
+      btn.addEventListener('click', () => {
+        switchTab(btn.getAttribute('data-tab'));
+      });
+    });
+
+    // ----------------------------------------------------
+    // 6. 렌더 루프 (애니메이션 & 틸트 보간)
+    // ----------------------------------------------------
+    let clock = new THREE.Clock();
+
+    function animate() {
+      requestAnimationFrame(animate);
+
+      const elapsedTime = clock.getElapsedTime();
+
+      // 마우스 좌표 감속 보간 (Smooth Lerp)
+      mouseX += (targetMouseX - mouseX) * 0.045;
+      mouseY += (targetMouseY - mouseY) * 0.045;
+
+      // 탭 전환 카메라 거리 보간 (Spring Lerp)
+      camera.position.z += (targetCameraZ - camera.position.z) * 0.06;
+
+      // 마이크로 틸트: 마우스에 반응해 카메라 시선과 각도가 자연스럽게 회전
+      camera.position.x = mouseX * 1.3;
+      camera.position.y = mouseY * 0.95;
+      camera.lookAt(0, 0, 0);
+
+      // 구체 크기 모핑 보간
+      const curScale = orbGroup.scale.x;
+      const nextScale = curScale + (targetScale - curScale) * 0.06;
+      orbGroup.scale.set(nextScale, nextScale, nextScale);
+
+      // 오브젝트 기본 자전 + 마우스 틸트
+      orbGroup.rotation.y = elapsedTime * 0.18 + mouseX * 0.4 + targetRotOffset;
+      orbGroup.rotation.x = Math.sin(elapsedTime * 0.3) * 0.15 + mouseY * 0.35;
+      orbGroup.rotation.z = -mouseX * 0.2;
+
+      // 링별 독립 자전
+      ring1.rotation.z = elapsedTime * 0.22;
+      ring2.rotation.z = -elapsedTime * 0.18;
+      ring3.rotation.z = elapsedTime * 0.14;
+
+      // 위성 공전 계산
+      const satRadius1 = 2.5;
+      satellite1.position.x = Math.cos(elapsedTime * 0.7) * satRadius1;
+      satellite1.position.y = Math.sin(elapsedTime * 0.7) * Math.cos(Math.PI / 2.3) * satRadius1;
+      satellite1.position.z = Math.sin(elapsedTime * 0.7) * Math.sin(Math.PI / 2.3) * satRadius1;
+
+      const satRadius2 = 3.1;
+      satellite2.position.x = Math.cos(-elapsedTime * 0.5 + 1.5) * satRadius2;
+      satellite2.position.y = Math.sin(-elapsedTime * 0.5 + 1.5) * Math.cos(Math.PI / 3.8) * satRadius2;
+      satellite2.position.z = Math.sin(-elapsedTime * 0.5 + 1.5) * Math.sin(Math.PI / 3.8) * satRadius2;
+
+      // 내부 코어 은은한 맥동
+      const pulse = 0.9 + Math.sin(elapsedTime * 2) * 0.05;
+      innerCore.scale.set(pulse, pulse, pulse);
+
+      // 조명 위치 반응형 틸트 (그림자와 하이라이트가 마우스를 따라 부드럽게 이동)
+      dirLight.position.x = 5 + mouseX * 4;
+      dirLight.position.y = 7 + mouseY * 3;
+
+      renderer.render(scene, camera);
+    }
+
+    animate();
+
+    // 창 크기 변경 시 캔버스 반응형 리사이즈
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+
+    // ----------------------------------------------------
+    // 7. 방명록 마그넷 칩 관리 (LocalStorage 호환 연동)
+    // ----------------------------------------------------
+    const STORAGE_KEY = 'supia_spatial_3d_guestbook_v1';
+    const orbitForm = document.getElementById("orbit-form");
+    const swarm = document.getElementById("chips-swarm");
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    function getBoardPosts() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) {
+          const defaults = [
+            { id: '1', nickname: '바이브코더', message: 'Three.js 글래스 구체와 마우스 틸트 인터랙션이 너무 매끄럽네요!' },
+            { id: '2', nickname: '우주항해사', message: '눈이 편안한 화이트 톤 3D 디자인 최고입니다 ✨' },
+            { id: '3', nickname: 'AI_Maker', message: 'Next-Gen 스페이셜 오비탈의 미래지향적 감성이 느껴집니다.' }
+          ];
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(defaults));
+          return defaults;
+        }
+        return JSON.parse(raw);
+      } catch (e) {
+        return [];
+      }
+    }
+
+    function saveBoardPosts(posts) {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(posts));
+      } catch (e) {}
+    }
+
+    function renderChips() {
+      const posts = getBoardPosts();
+      swarm.innerHTML = posts.slice(0, 10).map((p, idx) => `
+        <div class="orbital-magnet-chip" style="animation-delay: -${(idx % 4) * 1.3}s;">
+          <span class="chip-author-label">@${escapeHtml(p.nickname || '방문자')}:</span>
+          <span>${escapeHtml(p.message)}</span>
+        </div>
+      `).join('');
+    }
+
+    orbitForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const author = document.getElementById("orbit-author").value.trim();
+      const msg = document.getElementById("orbit-msg").value.trim();
+
+      if (!author || !msg) return;
+
+      const posts = getBoardPosts();
+      posts.unshift({
+        id: Date.now().toString(),
+        nickname: author,
+        message: msg
+      });
+
+      saveBoardPosts(posts);
+      renderChips();
+
+      document.getElementById("orbit-msg").value = "";
+    });
+
+    renderChips();
+  </script>
+</body>
+</html>
