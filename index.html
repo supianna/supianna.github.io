@@ -336,14 +336,67 @@
       color: var(--accent-cobalt);
     }
 
-    /* --- [2] ABOUT 뷰: 성좌 파이프라인 --- */
+    /* --- [2] ABOUT 뷰: 바이브 코더 정체성 & 성좌 파이프라인 --- */
     .about-constellation-wrap {
-      width: 900px;
-      height: 480px;
+      width: 980px;
+      max-width: 94vw;
       position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      z-index: 5;
+    }
+
+    /* 1. 상단 슬로건 & 인트로 */
+    .about-header-block {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      z-index: 3;
+    }
+
+    .about-badge {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 2px;
+      color: var(--accent-cobalt);
+      text-transform: uppercase;
+      background: rgba(37, 99, 235, 0.06);
+      padding: 4px 14px;
+      border-radius: 20px;
+      border: 1px solid rgba(37, 99, 235, 0.18);
+      font-weight: 700;
+    }
+
+    .about-slogan {
+      font-size: clamp(20px, 2.6vw, 29px);
+      font-weight: 900;
+      letter-spacing: -0.8px;
+      color: var(--text-black);
+      line-height: 1.25;
+    }
+
+    .about-subtitle {
+      font-size: 13.5px;
+      color: var(--text-gray);
+      max-width: 540px;
+      line-height: 1.5;
+      word-break: keep-all;
+    }
+
+    /* 2. 중앙 성좌 노드 클러스터 */
+    .about-nodes-cluster {
+      position: relative;
+      width: 100%;
+      height: 250px;
       display: flex;
       align-items: center;
       justify-content: space-between;
+      gap: 16px;
     }
 
     .constellation-svg {
@@ -369,23 +422,39 @@
     .orbital-node {
       position: relative;
       z-index: 2;
-      width: 240px;
+      width: 290px;
       display: flex;
       flex-direction: column;
       gap: 8px;
-      padding: 18px 22px;
-      background: rgba(255, 255, 255, 0.92);
-      backdrop-filter: blur(12px);
-      border-radius: 16px;
+      padding: 20px 22px;
+      background: rgba(255, 255, 255, 0.94);
+      backdrop-filter: blur(14px);
+      border-radius: 18px;
       border: 1px solid var(--ring-border);
       box-shadow: 0 10px 30px rgba(15, 23, 42, 0.04);
-      transition: all 0.3s var(--spring-motion);
+      transition: all 0.35s var(--spring-motion);
     }
 
     .orbital-node:hover {
-      transform: translateY(-5px);
+      transform: translateY(-6px);
       border-color: var(--accent-cobalt);
-      box-shadow: 0 16px 40px var(--accent-glow);
+      box-shadow: 0 18px 45px var(--accent-glow);
+    }
+
+    .node-step-1 {
+      align-self: center;
+    }
+
+    .node-step-2 {
+      align-self: flex-start;
+      margin-top: 10px;
+      border-color: rgba(37, 99, 235, 0.3);
+      box-shadow: 0 12px 35px rgba(37, 99, 235, 0.06);
+    }
+
+    .node-step-3 {
+      align-self: flex-end;
+      margin-bottom: 10px;
     }
 
     .node-tag {
@@ -393,6 +462,7 @@
       font-size: 10px;
       font-weight: 700;
       color: var(--accent-cobalt);
+      letter-spacing: 0.5px;
     }
 
     .node-title {
@@ -404,7 +474,69 @@
     .node-desc {
       font-size: 13px;
       color: var(--text-muted);
-      line-height: 1.5;
+      line-height: 1.55;
+      word-break: keep-all;
+    }
+
+    /* 3. 하단 미니멀 기술 스택 뱃지 클러스터 */
+    .about-tech-cluster {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      z-index: 3;
+    }
+
+    .tech-stack-group {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.88);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--ring-border);
+      border-radius: 30px;
+      padding: 6px 14px;
+      box-shadow: 0 4px 16px rgba(15, 23, 42, 0.03);
+      font-size: 12.5px;
+      transition: all 0.25s ease;
+    }
+
+    .tech-stack-group:hover {
+      border-color: var(--accent-cobalt);
+      background: #ffffff;
+      transform: translateY(-2px);
+    }
+
+    .tech-group-label {
+      font-family: var(--font-mono);
+      font-size: 10.5px;
+      font-weight: 700;
+      color: var(--accent-cobalt);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      background: rgba(37, 99, 235, 0.08);
+      padding: 2px 8px;
+      border-radius: 12px;
+    }
+
+    .tech-chip {
+      font-weight: 600;
+      color: var(--text-black);
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .tech-chip.highlight {
+      color: var(--accent-cobalt);
+      font-weight: 700;
+    }
+
+    .chip-note {
+      font-size: 11.5px;
+      color: var(--text-muted);
+      font-weight: 400;
     }
 
     /* --- [3] PROJECTS 뷰: 오비탈 행성 갤러리 --- */
@@ -666,7 +798,28 @@
       .orbital-system-root {
         transform: scale(0.72);
       }
-      .about-constellation-wrap,
+      .about-constellation-wrap {
+        width: 92vw;
+        gap: 14px;
+      }
+      .about-nodes-cluster {
+        height: auto;
+        flex-direction: column;
+        gap: 12px;
+      }
+      .about-nodes-cluster .constellation-svg {
+        display: none;
+      }
+      .orbital-node {
+        width: 100%;
+        max-width: 320px;
+        align-self: center !important;
+        margin: 0 !important;
+      }
+      .about-tech-cluster {
+        flex-direction: column;
+        gap: 8px;
+      }
       .projects-orbital-wrap,
       .guestbook-orbital-wrap {
         width: 100vw;
@@ -752,36 +905,66 @@
     </div>
 
     <!-- ============================================== -->
-    <!-- [2] ABOUT 뷰: 유기적 성좌 파이프라인 -->
+    <!-- [2] ABOUT 뷰: 바이브 코더 정체성 & 성좌 파이프라인 -->
     <!-- ============================================== -->
     <div class="spatial-content-pane" id="pane-about">
       <div class="about-constellation-wrap">
         
-        <!-- 성좌 연결 SVG 라인 -->
-        <svg class="constellation-svg" viewBox="0 0 900 480">
-          <path class="constellation-line" d="M 120 240 Q 450 110 780 240" fill="none" />
-          <path class="constellation-line" d="M 120 240 Q 450 370 780 240" fill="none" />
-        </svg>
-
-        <!-- 노드 1: INPUT -->
-        <div class="orbital-node" style="align-self: center;">
-          <span class="node-tag">ORBIT 01 · PROBLEM</span>
-          <h3 class="node-title">해결할 난제</h3>
-          <p class="node-desc">수작업 데이터 병목, 비정형 텍스트 및 저화질 이미지의 실시간 정밀 추론 부재.</p>
+        <!-- 1. 핵심 타이틀 (한 줄 슬로건) -->
+        <div class="about-header-block">
+          <span class="about-badge">MAKER · VIBE CODER</span>
+          <h2 class="about-slogan">"아이디어를 코드로 즉시 증명하는 바이브 코더"</h2>
+          <p class="about-subtitle">복잡한 문법의 벽을 넘어, AI와 함께 상상을 실체화하는 개발 여정을 기록합니다.</p>
         </div>
 
-        <!-- 노드 2: ENGINE (중앙) -->
-        <div class="orbital-node" style="align-self: flex-start; margin-top: 20px; border-color: var(--accent-cobalt);">
-          <span class="node-tag">ORBIT 02 · ARCHITECTURE</span>
-          <h3 class="node-title">핵심 엔지니어링</h3>
-          <p class="node-desc">TensorRT C++ 커널 최적화, Qdrant 벡터 검색 엔진, Kafka 스트리밍 파이프라인.</p>
+        <!-- 2. 나의 정체성 & 철학 (3개의 미니멀 칩/포인트) -->
+        <div class="about-nodes-cluster">
+          <!-- 성좌 연결 SVG 라인 -->
+          <svg class="constellation-svg" viewBox="0 0 980 250">
+            <path class="constellation-line" d="M 145 125 Q 490 30 835 155" fill="none" />
+            <path class="constellation-line" d="M 145 125 Q 490 220 835 155" fill="none" />
+          </svg>
+
+          <!-- 노드 1: AI-Native Workflow -->
+          <div class="orbital-node node-step-1">
+            <span class="node-tag">ORBIT 01 · WORKFLOW</span>
+            <h3 class="node-title">AI-Native Workflow</h3>
+            <p class="node-desc">안티그래비티 등 최신 AI 플랫폼을 활용해 기획부터 프로토타이핑, 구현까지 속도감 있게 전개합니다.</p>
+          </div>
+
+          <!-- 노드 2: Practical Automation -->
+          <div class="orbital-node node-step-2">
+            <span class="node-tag">ORBIT 02 · PRACTICAL</span>
+            <h3 class="node-title">Practical Automation</h3>
+            <p class="node-desc">"이거 프로그램으로 만들 수 있겠는데?"라는 생각이 드는 순간, 파이썬을 기반으로 일상의 불편함을 해결하는 실전형 자동화 툴을 만듭니다.</p>
+          </div>
+
+          <!-- 노드 3: Vibe Coding Explorer -->
+          <div class="orbital-node node-step-3">
+            <span class="node-tag">ORBIT 03 · PHILOSOPHY</span>
+            <h3 class="node-title">Vibe Coding Explorer</h3>
+            <p class="node-desc">완벽한 문법 암기보다 문제 해결의 흐름(Vibe)에 집중하며, 매일 코딩의 영감을 확장해 나가는 중입니다.</p>
+          </div>
         </div>
 
-        <!-- 노드 3: OUTPUT -->
-        <div class="orbital-node" style="align-self: flex-end; margin-bottom: 20px;">
-          <span class="node-tag">ORBIT 03 · IMPACT</span>
-          <h3 class="node-title">실질적 가치</h3>
-          <p class="node-desc">검사 소요 40분 → 4.2ms 단축, 오류 누락률 0.001% 미만, 연 8천만 원 절감.</p>
+        <!-- 3. 현재 다루고 있는 툴 & 기술 스택 (미니멀 뱃지 형태) -->
+        <div class="about-tech-cluster">
+          <div class="tech-stack-group">
+            <span class="tech-group-label">Language</span>
+            <span class="tech-chip">Python <span class="chip-note">(기본 로직 구현, 데이터 조작)</span></span>
+          </div>
+          <div class="tech-stack-group">
+            <span class="tech-group-label">Environment</span>
+            <span class="tech-chip">Google Colab</span>
+            <span class="tech-chip">·</span>
+            <span class="tech-chip">VS Code <span class="chip-note">(uv 패키지 매니저)</span></span>
+          </div>
+          <div class="tech-stack-group">
+            <span class="tech-group-label">Ecosystem</span>
+            <span class="tech-chip highlight">Antigravity</span>
+            <span class="tech-chip">·</span>
+            <span class="tech-chip">AI Development Platforms</span>
+          </div>
         </div>
 
       </div>
