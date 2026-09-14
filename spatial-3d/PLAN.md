@@ -33,3 +33,4 @@
 ## 2. 파일 구조
 - `spatial-3d/PLAN.md`: 본 설계 및 계획 문서
 - `spatial-3d/index.html`: 독립 실행형 3D 스페이셜 오비탈 웹 애플리케이션
+
