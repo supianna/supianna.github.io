@@ -218,10 +218,10 @@
   // 캔버스 크기: 800 x 600
   // 각 층 바닥 Y: 530 (1층 바닥), 430 (2층), 330 (3층), 230 (4층), 130 (5층 꼭대기)
   const STAGES = [
-    // [Stage 1] 입문 코스 (완전 쉬움 & 튜토리얼)
+    // [Stage 1] 입문 튜토리얼 (기초 이동 및 점프)
     {
       stageNum: 1,
-      name: "초원 언덕 (쉬움)",
+      name: "초원 언덕 (입문)",
       platforms: [
         { x: 30, y: 530, w: 740, h: 18 }, // 1층
         { x: 70, y: 430, w: 660, h: 18 }, // 2층
@@ -236,11 +236,11 @@
         { x: 260, y: 130, h: 100 }  // 4 -> 5층 좌측
       ],
       spikes: [
-        { x: 360, y: 514 }, // 1층 연습용 압정 1개
+        { x: 380, y: 514 }, // 1층 연습용 압정 1개
         { x: 380, y: 314 }  // 3층 압정 1개
       ],
       snakes: [
-        // 2층 느림보 뱀 1마리만 배치 (속도 0.65)
+        // 2층 느림보 뱀 1마리 (속도 0.65)
         { x: 320, y: 410, minX: 220, maxX: 460, speed: 0.65, dir: 1 }
       ],
       foods: [
@@ -257,60 +257,372 @@
       spawn: { x: 70, y: 500 }
     },
 
-    // [Stage 2] 중급 코스
+    // [Stage 2] 바람의 언덕 (기초 점프와 타이밍)
     {
       stageNum: 2,
+      name: "바람의 언덕 (쉬움)",
+      platforms: [
+        { x: 30, y: 530, w: 740, h: 18 },
+        { x: 70, y: 430, w: 660, h: 18 },
+        { x: 70, y: 330, w: 660, h: 18 },
+        { x: 70, y: 230, w: 660, h: 18 },
+        { x: 180, y: 130, w: 440, h: 18 }
+      ],
+      ladders: [
+        { x: 160, y: 430, h: 100 },
+        { x: 600, y: 330, h: 100 },
+        { x: 200, y: 230, h: 100 },
+        { x: 480, y: 130, h: 100 }
+      ],
+      spikes: [
+        { x: 320, y: 514 },
+        { x: 500, y: 514 },
+        { x: 380, y: 314 }
+      ],
+      snakes: [
+        { x: 340, y: 410, minX: 240, maxX: 520, speed: 0.8, dir: 1 }
+      ],
+      foods: [
+        { x: 100, y: 504, type: 'apple', points: 100 },
+        { x: 420, y: 504, type: 'carrot', points: 100 },
+        { x: 680, y: 504, type: 'grape', points: 150 },
+        { x: 300, y: 404, type: 'mushroom', points: 150 },
+        { x: 500, y: 404, type: 'radish', points: 200 },
+        { x: 260, y: 304, type: 'apple', points: 100 },
+        { x: 460, y: 304, type: 'carrot', points: 100 },
+        { x: 340, y: 204, type: 'watermelon', points: 300 },
+        { x: 360, y: 104, type: 'watermelon', points: 600 }
+      ],
+      spawn: { x: 700, y: 500 }
+    },
+
+    // [Stage 3] 밤의 사원 (좌우 엇갈림)
+    {
+      stageNum: 3,
       name: "밤의 사원 (보통)",
       platforms: [
         { x: 30, y: 530, w: 740, h: 18 },
-        { x: 80, y: 430, w: 320, h: 18 },
-        { x: 440, y: 430, w: 300, h: 18 },
+        { x: 60, y: 430, w: 310, h: 18 },
+        { x: 430, y: 430, w: 310, h: 18 },
         { x: 60, y: 330, w: 680, h: 18 },
-        { x: 140, y: 230, w: 520, h: 18 },
+        { x: 120, y: 230, w: 560, h: 18 },
+        { x: 200, y: 130, w: 400, h: 18 }
+      ],
+      ladders: [
+        { x: 180, y: 430, h: 100 },
+        { x: 600, y: 430, h: 100 },
+        { x: 320, y: 330, h: 100 },
+        { x: 520, y: 230, h: 100 },
+        { x: 260, y: 130, h: 100 }
+      ],
+      spikes: [
+        { x: 360, y: 514 },
+        { x: 520, y: 514 },
+        { x: 220, y: 314 },
+        { x: 420, y: 214 }
+      ],
+      snakes: [
+        { x: 240, y: 510, minX: 100, maxX: 460, speed: 0.85, dir: 1 },
+        { x: 200, y: 310, minX: 120, maxX: 420, speed: 0.9, dir: -1 }
+      ],
+      foods: [
+        { x: 100, y: 504, type: 'carrot', points: 100 },
+        { x: 440, y: 504, type: 'apple', points: 100 },
+        { x: 680, y: 504, type: 'grape', points: 150 },
+        { x: 240, y: 404, type: 'mushroom', points: 150 },
+        { x: 620, y: 404, type: 'radish', points: 200 },
+        { x: 160, y: 304, type: 'apple', points: 100 },
+        { x: 460, y: 304, type: 'grape', points: 150 },
+        { x: 300, y: 204, type: 'carrot', points: 100 },
+        { x: 380, y: 104, type: 'watermelon', points: 700 }
+      ],
+      spawn: { x: 70, y: 500 }
+    },
+
+    // [Stage 4] 모래 협곡 (연속 점프)
+    {
+      stageNum: 4,
+      name: "모래 협곡 (보통+)",
+      platforms: [
+        { x: 30, y: 530, w: 740, h: 18 },
+        { x: 70, y: 430, w: 660, h: 18 },
+        { x: 60, y: 330, w: 320, h: 18 },
+        { x: 420, y: 330, w: 320, h: 18 },
+        { x: 90, y: 230, w: 620, h: 18 },
+        { x: 220, y: 130, w: 360, h: 18 }
+      ],
+      ladders: [
+        { x: 620, y: 430, h: 100 }, // 1 -> 2층 우측
+        { x: 160, y: 330, h: 100 }, // 2 -> 3층 좌측
+        { x: 500, y: 330, h: 100 }, // 2 -> 3층 우측 (기존 600에서 500으로 변경하여 1층 사다리와 간섭 제거)
+        { x: 280, y: 230, h: 100 }, // 3 -> 4층
+        { x: 460, y: 130, h: 100 }  // 4 -> 5층
+      ],
+      spikes: [
+        { x: 260, y: 514 },
+        { x: 460, y: 514 },
+        { x: 340, y: 414 },
+        { x: 580, y: 414 },
+        { x: 380, y: 214 }
+      ],
+      snakes: [
+        { x: 300, y: 410, minX: 180, maxX: 540, speed: 0.95, dir: 1 },
+        { x: 200, y: 210, minX: 120, maxX: 440, speed: 1.0, dir: -1 }
+      ],
+      foods: [
+        { x: 120, y: 504, type: 'apple', points: 100 },
+        { x: 360, y: 504, type: 'carrot', points: 100 },
+        { x: 220, y: 404, type: 'grape', points: 150 },
+        { x: 560, y: 404, type: 'mushroom', points: 150 },
+        { x: 200, y: 304, type: 'radish', points: 200 },
+        { x: 540, y: 304, type: 'apple', points: 100 },
+        { x: 320, y: 204, type: 'grape', points: 150 },
+        { x: 520, y: 204, type: 'carrot', points: 100 },
+        { x: 380, y: 104, type: 'watermelon', points: 800 }
+      ],
+      spawn: { x: 70, y: 500 }
+    },
+
+    // [Stage 5] 지하 미궁 (중간 관문)
+    {
+      stageNum: 5,
+      name: "지하 미궁 (도전)",
+      platforms: [
+        { x: 30, y: 530, w: 740, h: 18 },
+        { x: 60, y: 430, w: 680, h: 18 },
+        { x: 100, y: 330, w: 600, h: 18 },
+        { x: 60, y: 230, w: 680, h: 18 },
+        { x: 200, y: 130, w: 400, h: 18 }
+      ],
+      ladders: [
+        { x: 180, y: 430, h: 100 },
+        { x: 580, y: 330, h: 100 },
+        { x: 240, y: 230, h: 100 },
+        { x: 480, y: 130, h: 100 }
+      ],
+      spikes: [
+        { x: 300, y: 514 },
+        { x: 480, y: 514 },
+        { x: 280, y: 414 },
+        { x: 460, y: 414 },
+        { x: 340, y: 314 },
+        { x: 380, y: 214 }
+      ],
+      snakes: [
+        { x: 380, y: 510, minX: 200, maxX: 640, speed: 1.05, dir: 1 },
+        { x: 360, y: 310, minX: 140, maxX: 500, speed: 1.1, dir: -1 }
+      ],
+      foods: [
+        { x: 100, y: 504, type: 'carrot', points: 100 },
+        { x: 400, y: 504, type: 'watermelon', points: 250 },
+        { x: 360, y: 404, type: 'apple', points: 100 },
+        { x: 620, y: 404, type: 'grape', points: 150 },
+        { x: 200, y: 304, type: 'mushroom', points: 150 },
+        { x: 480, y: 304, type: 'radish', points: 200 },
+        { x: 300, y: 204, type: 'carrot', points: 100 },
+        { x: 540, y: 204, type: 'grape', points: 150 },
+        { x: 380, y: 104, type: 'watermelon', points: 900 }
+      ],
+      spawn: { x: 70, y: 500 }
+    },
+
+    // [Stage 6] 얼어붙은 동굴 (스피드 순찰)
+    {
+      stageNum: 6,
+      name: "얼어붙은 동굴 (도전+)",
+      platforms: [
+        { x: 30, y: 530, w: 740, h: 18 },
+        { x: 80, y: 430, w: 640, h: 18 },
+        { x: 60, y: 330, w: 680, h: 18 },
+        { x: 90, y: 230, w: 620, h: 18 },
+        { x: 220, y: 130, w: 360, h: 18 }
+      ],
+      ladders: [
+        { x: 620, y: 430, h: 100 },
+        { x: 150, y: 330, h: 100 },
+        { x: 560, y: 230, h: 100 },
+        { x: 300, y: 130, h: 100 }
+      ],
+      spikes: [
+        { x: 260, y: 514 },
+        { x: 480, y: 514 },
+        { x: 320, y: 414 },
+        { x: 480, y: 414 },
+        { x: 280, y: 314 },
+        { x: 420, y: 214 }
+      ],
+      snakes: [
+        { x: 340, y: 510, minX: 180, maxX: 560, speed: 1.1, dir: 1 },
+        { x: 360, y: 410, minX: 200, maxX: 540, speed: 1.15, dir: -1 },
+        { x: 300, y: 210, minX: 160, maxX: 480, speed: 1.2, dir: 1 }
+      ],
+      foods: [
+        { x: 120, y: 504, type: 'apple', points: 100 },
+        { x: 380, y: 504, type: 'grape', points: 150 },
+        { x: 220, y: 404, type: 'carrot', points: 100 },
+        { x: 540, y: 404, type: 'mushroom', points: 150 },
+        { x: 200, y: 304, type: 'radish', points: 200 },
+        { x: 440, y: 304, type: 'watermelon', points: 300 },
+        { x: 220, y: 204, type: 'apple', points: 100 },
+        { x: 480, y: 204, type: 'grape', points: 150 },
+        { x: 380, y: 104, type: 'watermelon', points: 1000 }
+      ],
+      spawn: { x: 70, y: 500 }
+    },
+
+    // [Stage 7] 붉은 용암탑 (까다로운 사다리)
+    {
+      stageNum: 7,
+      name: "붉은 용암탑 (어려움)",
+      platforms: [
+        { x: 30, y: 530, w: 740, h: 18 },
+        { x: 60, y: 430, w: 300, h: 18 },
+        { x: 440, y: 430, w: 300, h: 18 },
+        { x: 80, y: 330, w: 640, h: 18 },
+        { x: 100, y: 230, w: 600, h: 18 },
+        { x: 240, y: 130, w: 320, h: 18 }
+      ],
+      ladders: [
+        { x: 180, y: 430, h: 100 },
+        { x: 600, y: 430, h: 100 },
+        { x: 360, y: 330, h: 100 },
+        { x: 220, y: 230, h: 100 },
+        { x: 460, y: 130, h: 100 }
+      ],
+      spikes: [
+        { x: 240, y: 514 },
+        { x: 440, y: 514 },
+        { x: 580, y: 514 },
+        { x: 240, y: 314 },
+        { x: 480, y: 314 },
+        { x: 320, y: 214 },
+        { x: 480, y: 214 }
+      ],
+      snakes: [
+        { x: 300, y: 510, minX: 120, maxX: 540, speed: 1.25, dir: 1 },
+        { x: 260, y: 310, minX: 140, maxX: 520, speed: 1.3, dir: -1 },
+        { x: 340, y: 210, minX: 180, maxX: 480, speed: 1.25, dir: 1 }
+      ],
+      foods: [
+        { x: 100, y: 504, type: 'carrot', points: 100 },
+        { x: 500, y: 504, type: 'apple', points: 100 },
+        { x: 220, y: 404, type: 'mushroom', points: 150 },
+        { x: 620, y: 404, type: 'radish', points: 200 },
+        { x: 180, y: 304, type: 'grape', points: 150 },
+        { x: 540, y: 304, type: 'watermelon', points: 300 },
+        { x: 280, y: 204, type: 'apple', points: 100 },
+        { x: 540, y: 204, type: 'carrot', points: 100 },
+        { x: 380, y: 104, type: 'watermelon', points: 1200 }
+      ],
+      spawn: { x: 70, y: 500 }
+    },
+
+    // [Stage 8] 밤하늘 요새 (타이밍의 달인)
+    {
+      stageNum: 8,
+      name: "밤하늘 요새 (어려움+)",
+      platforms: [
+        { x: 30, y: 530, w: 740, h: 18 },
+        { x: 70, y: 430, w: 660, h: 18 },
+        { x: 70, y: 330, w: 660, h: 18 },
+        { x: 90, y: 230, w: 620, h: 18 },
+        { x: 220, y: 130, w: 360, h: 18 }
+      ],
+      ladders: [
+        { x: 620, y: 430, h: 100 },
+        { x: 160, y: 330, h: 100 },
+        { x: 580, y: 230, h: 100 },
+        { x: 340, y: 130, h: 100 }
+      ],
+      spikes: [
+        { x: 220, y: 514 },
+        { x: 380, y: 514 },
+        { x: 520, y: 514 },
+        { x: 280, y: 414 },
+        { x: 440, y: 414 },
+        { x: 240, y: 314 },
+        { x: 400, y: 314 },
+        { x: 460, y: 214 }
+      ],
+      snakes: [
+        { x: 320, y: 510, minX: 100, maxX: 580, speed: 1.35, dir: 1 },
+        { x: 360, y: 410, minX: 180, maxX: 540, speed: 1.4, dir: -1 },
+        { x: 300, y: 210, minX: 140, maxX: 520, speed: 1.35, dir: 1 }
+      ],
+      foods: [
+        { x: 120, y: 504, type: 'apple', points: 100 },
+        { x: 460, y: 504, type: 'watermelon', points: 300 },
+        { x: 220, y: 404, type: 'grape', points: 150 },
+        { x: 520, y: 404, type: 'carrot', points: 100 },
+        { x: 180, y: 304, type: 'mushroom', points: 150 },
+        { x: 500, y: 304, type: 'radish', points: 200 },
+        { x: 240, y: 204, type: 'grape', points: 150 },
+        { x: 520, y: 204, type: 'apple', points: 100 },
+        { x: 380, y: 104, type: 'watermelon', points: 1400 }
+      ],
+      spawn: { x: 70, y: 500 }
+    },
+
+    // [Stage 9] 그림자 성채 (초고난도)
+    {
+      stageNum: 9,
+      name: "그림자 성채 (극악)",
+      platforms: [
+        { x: 30, y: 530, w: 740, h: 18 },
+        { x: 60, y: 430, w: 320, h: 18 },
+        { x: 420, y: 430, w: 320, h: 18 },
+        { x: 80, y: 330, w: 640, h: 18 },
+        { x: 80, y: 230, w: 640, h: 18 },
         { x: 220, y: 130, w: 360, h: 18 }
       ],
       ladders: [
         { x: 180, y: 430, h: 100 },
         { x: 600, y: 430, h: 100 },
-        { x: 300, y: 330, h: 100 },
-        { x: 520, y: 330, h: 100 },
-        { x: 220, y: 230, h: 100 },
-        { x: 420, y: 130, h: 100 }
+        { x: 320, y: 330, h: 100 },
+        { x: 560, y: 230, h: 100 },
+        { x: 300, y: 130, h: 100 }
       ],
       spikes: [
-        { x: 340, y: 514 },
-        { x: 560, y: 514 },
-        { x: 360, y: 314 },
-        { x: 360, y: 214 }
+        { x: 260, y: 514 },
+        { x: 420, y: 514 },
+        { x: 580, y: 514 },
+        { x: 240, y: 414 },
+        { x: 500, y: 414 },
+        { x: 220, y: 314 },
+        { x: 440, y: 314 },
+        { x: 340, y: 214 },
+        { x: 480, y: 214 }
       ],
       snakes: [
-        { x: 300, y: 510, minX: 180, maxX: 480, speed: 0.9, dir: 1 },
-        { x: 220, y: 310, minX: 120, maxX: 360, speed: 0.9, dir: -1 }
+        { x: 340, y: 510, minX: 140, maxX: 620, speed: 1.45, dir: 1 },
+        { x: 220, y: 410, minX: 100, maxX: 340, speed: 1.4, dir: -1 },
+        { x: 360, y: 310, minX: 160, maxX: 560, speed: 1.5, dir: 1 },
+        { x: 320, y: 210, minX: 140, maxX: 520, speed: 1.45, dir: -1 }
       ],
       foods: [
-        { x: 100, y: 504, type: 'apple', points: 100 },
-        { x: 460, y: 504, type: 'grape', points: 150 },
-        { x: 680, y: 504, type: 'carrot', points: 100 },
-        { x: 260, y: 404, type: 'mushroom', points: 150 },
-        { x: 620, y: 404, type: 'radish', points: 200 },
-        { x: 160, y: 304, type: 'apple', points: 100 },
-        { x: 460, y: 304, type: 'grape', points: 150 },
-        { x: 280, y: 204, type: 'watermelon', points: 300 },
-        { x: 380, y: 104, type: 'watermelon', points: 500 }
+        { x: 100, y: 504, type: 'watermelon', points: 300 },
+        { x: 500, y: 504, type: 'apple', points: 100 },
+        { x: 200, y: 404, type: 'carrot', points: 100 },
+        { x: 620, y: 404, type: 'mushroom', points: 150 },
+        { x: 160, y: 304, type: 'radish', points: 200 },
+        { x: 520, y: 304, type: 'grape', points: 150 },
+        { x: 260, y: 204, type: 'apple', points: 100 },
+        { x: 520, y: 204, type: 'watermelon', points: 400 },
+        { x: 380, y: 104, type: 'watermelon', points: 1600 }
       ],
       spawn: { x: 70, y: 500 }
     },
 
-    // [Stage 3] 상급 코스
+    // [Stage 10] 오로라 첨탑 (최종장: FINAL BOSS STAGE)
     {
-      stageNum: 3,
-      name: "오로라 첨탑 (도전)",
+      stageNum: 10,
+      name: "오로라 첨탑 - FINAL",
       platforms: [
         { x: 30, y: 530, w: 740, h: 18 },
-        { x: 90, y: 430, w: 620, h: 18 },
-        { x: 60, y: 330, w: 680, h: 18 },
+        { x: 60, y: 430, w: 680, h: 18 },
+        { x: 80, y: 330, w: 640, h: 18 },
         { x: 100, y: 230, w: 600, h: 18 },
-        { x: 240, y: 130, w: 320, h: 18 }
+        { x: 260, y: 130, w: 280, h: 18 }
       ],
       ladders: [
         { x: 640, y: 430, h: 100 },
@@ -319,26 +631,33 @@
         { x: 380, y: 130, h: 100 }
       ],
       spikes: [
-        { x: 260, y: 514 },
-        { x: 460, y: 514 },
-        { x: 320, y: 414 },
+        { x: 220, y: 514 },
+        { x: 360, y: 514 },
+        { x: 500, y: 514 },
+        { x: 280, y: 414 },
+        { x: 440, y: 414 },
+        { x: 240, y: 314 },
         { x: 400, y: 314 },
-        { x: 340, y: 214 }
+        { x: 520, y: 314 },
+        { x: 280, y: 214 },
+        { x: 480, y: 214 }
       ],
       snakes: [
-        { x: 340, y: 510, minX: 180, maxX: 580, speed: 1.2, dir: 1 },
-        { x: 380, y: 410, minX: 200, maxX: 540, speed: 1.2, dir: -1 },
-        { x: 320, y: 210, minX: 200, maxX: 480, speed: 1.3, dir: 1 }
+        { x: 300, y: 510, minX: 100, maxX: 640, speed: 1.6, dir: 1 },
+        { x: 360, y: 410, minX: 180, maxX: 560, speed: 1.65, dir: -1 },
+        { x: 420, y: 310, minX: 140, maxX: 580, speed: 1.7, dir: 1 },
+        { x: 320, y: 210, minX: 160, maxX: 540, speed: 1.6, dir: -1 }
       ],
       foods: [
-        { x: 140, y: 504, type: 'watermelon', points: 200 },
-        { x: 540, y: 504, type: 'apple', points: 100 },
+        { x: 120, y: 504, type: 'watermelon', points: 300 },
+        { x: 420, y: 504, type: 'apple', points: 100 },
         { x: 340, y: 404, type: 'grape', points: 150 },
-        { x: 560, y: 404, type: 'radish', points: 200 },
-        { x: 260, y: 304, type: 'mushroom', points: 150 },
-        { x: 500, y: 304, type: 'carrot', points: 100 },
-        { x: 300, y: 204, type: 'grape', points: 150 },
-        { x: 380, y: 104, type: 'watermelon', points: 1000 }
+        { x: 540, y: 404, type: 'radish', points: 200 },
+        { x: 200, y: 304, type: 'mushroom', points: 150 },
+        { x: 480, y: 304, type: 'carrot', points: 100 },
+        { x: 220, y: 204, type: 'grape', points: 150 },
+        { x: 540, y: 204, type: 'watermelon', points: 500 },
+        { x: 380, y: 104, type: 'watermelon', points: 2000 } // 최종 황금 수박!
       ],
       spawn: { x: 70, y: 500 }
     }
@@ -393,8 +712,8 @@
         this.walkFrame = (this.walkFrame + 1) % 4;
       }
 
-      // 사다리 감지
-      const currentLadder = this.getNearbyLadder(stage.ladders);
+      // 사다리 감지 (입력 방향에 맞춰 최적의 사다리 선택)
+      const currentLadder = this.getNearbyLadder(stage.ladders, keys.up, keys.down);
 
       // 사다리 진입 판정
       if (currentLadder && !this.isJumping) {
@@ -418,14 +737,14 @@
 
         this.y += this.vy;
 
-        // 사다리 상단 도달 (위층 발판에 안착)
-        if (this.y + this.h <= currentLadder.y + 6) {
+        // 사다리 상단 도달 (오직 위로 올라갈 때만 위층 발판에 안착)
+        if (this.vy < 0 && this.y + this.h <= currentLadder.y + 4) {
           this.y = currentLadder.y - this.h;
           this.isClimbing = false;
           this.isGrounded = true;
         }
-        // 사다리 하단 도달 (아래층 발판에 안착)
-        else if (this.y + this.h >= currentLadder.y + currentLadder.h) {
+        // 사다리 하단 도달 (오직 아래로 내려갈 때만 아래층 발판에 안착)
+        else if (this.vy > 0 && this.y + this.h >= currentLadder.y + currentLadder.h) {
           this.y = currentLadder.y + currentLadder.h - this.h;
           this.isClimbing = false;
           this.isGrounded = true;
@@ -449,16 +768,16 @@
         if (keys.spacePressedThisFrame) {
           this.isJumping = true;
           this.isGrounded = false;
-          this.vy = -9.2; // 시원한 수직 도약력 (기존 -8.2에서 상향)
-          // 걷는 도중이면 이동 방향으로 넉넉한 포물선 점프, 멈춰있으면 수직 점프
-          this.jumpVx = this.vx !== 0 ? this.facing * 3.8 : 0;
+          this.vy = -6.8; // 위칸으로 올라가지 못하도록 점프력 하향 (최대 50px 상승, 층간 간격은 100px)
+          // 걷는 도중이면 이동 방향으로 포물선 점프, 멈춰있으면 수직 점프
+          this.jumpVx = this.vx !== 0 ? this.facing * 3.4 : 0;
           audio.playJump();
         }
       } else {
         // 공중 점프 진행 중: 발동 시점의 수평 속도 유지
         this.vx = this.jumpVx;
-        // 중력 적용 (부드러운 체공 시간)
-        this.vy += 0.38;
+        // 중력 적용
+        this.vy += 0.46;
       }
 
       // 위치 갱신
@@ -494,19 +813,36 @@
       }
     }
 
-    getNearbyLadder(ladders) {
+    getNearbyLadder(ladders, isGoingUp = false, isGoingDown = false) {
       const centerX = this.x + this.w / 2;
       const footY = this.y + this.h;
 
+      // 범위 내 사다리 후보 수집
+      const candidates = [];
       for (const lad of ladders) {
-        // 사다리 감지 범위를 넓혀 부드럽게 사다리를 탈 수 있도록 개선
-        if (centerX >= lad.x - 12 && centerX <= lad.x + 36) {
-          if (footY >= lad.y && this.y <= lad.y + lad.h + 8) {
-            return lad;
+        if (centerX >= lad.x - 14 && centerX <= lad.x + 38) {
+          if (footY >= lad.y - 12 && this.y <= lad.y + lad.h + 10) {
+            candidates.push(lad);
           }
         }
       }
-      return null;
+
+      if (candidates.length === 0) return null;
+      if (candidates.length === 1) return candidates[0];
+
+      // 위층/아래층 사다리가 동시에 닿는 발판 지점인 경우:
+      if (isGoingUp) {
+        // 위로 올라가려면 사다리 머리가 내 몸보다 위에 있는 사다리 우선 선택
+        const upLadder = candidates.find(lad => lad.y < this.y);
+        if (upLadder) return upLadder;
+      }
+      if (isGoingDown) {
+        // 아래로 내려가려면 사다리 바닥이 내 발보다 아래에 있는 사다리 우선 선택
+        const downLadder = candidates.find(lad => lad.y + lad.h > footY);
+        if (downLadder) return downLadder;
+      }
+
+      return candidates[0];
     }
 
     die() {
