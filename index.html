@@ -1255,7 +1255,7 @@
     const SUPABASE_URL = "https://ogjmzzqmsgsbdwlfpadi.supabase.co";
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9nam16enFtc2dzYmR3bGZwYWRpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk0OTA0MTEsImV4cCI6MjEwNTA2NjQxMX0.zXShwX4UYYtq8kHC-Nm5YxK7shzslTlz295jW2uQEhA";
 
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     const orbitForm = document.getElementById("orbit-form");
     const swarm = document.getElementById("chips-swarm");
     const orbitBtn = document.getElementById("orbit-btn");
@@ -1276,7 +1276,7 @@
 
     // Supabase에서 방명록 실시간 조회 (password_hash 컬럼 제외로 보안 유지)
     async function loadGuestChips() {
-      const { data, error } = await supabase
+      const { data, error } = await supabaseClient
         .from("guestbook")
         .select("id, nickname, content, created_at")
         .order("created_at", { ascending: false })
@@ -1321,7 +1321,7 @@
 
       try {
         const password_hash = await hashPassword(pass);
-        const { error } = await supabase.from("guestbook").insert([
+        const { error } = await supabaseClient.from("guestbook").insert([
           { nickname: author, content: msg, password_hash: password_hash }
         ]);
 
@@ -1348,7 +1348,7 @@
 
       const input_password_hash = await hashPassword(inputPass);
 
-      const { data: isDeleted, error } = await supabase.rpc("delete_guestbook_entry", {
+      const { data: isDeleted, error } = await supabaseClient.rpc("delete_guestbook_entry", {
         entry_id: id,
         input_password_hash: input_password_hash
       });
