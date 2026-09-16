@@ -698,6 +698,33 @@
       color: var(--accent-cobalt);
     }
 
+    
+    /* 마그넷 칩 삭제 버튼 (호버 시 자연스럽게 노출) */
+    .chip-del-btn {
+      background: none;
+      border: none;
+      color: #94a3b8;
+      font-size: 11px;
+      cursor: pointer;
+      padding: 0 2px;
+      line-height: 1;
+      opacity: 0.4;
+      transition: all 0.2s;
+    }
+    .orbital-magnet-chip:hover .chip-del-btn {
+      opacity: 1;
+      color: #ef4444;
+    }
+    .chip-del-btn:hover {
+      transform: scale(1.25);
+    }
+
+    .input-password {
+      width: 90px;
+      border-right: 1px solid var(--ring-faint);
+      padding-right: 8px;
+    }
+
     /* 하단 미니멀 원라인 인풋 스트립 */
     .orbital-input-strip {
       display: flex;
@@ -708,7 +735,7 @@
       padding: 6px 14px;
       border-radius: 40px;
       box-shadow: 0 10px 30px rgba(15, 23, 42, 0.05);
-      width: 520px;
+      width: 620px;
       max-width: 90%;
     }
 
@@ -842,6 +869,7 @@
       }
     }
   </style>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 
@@ -1034,7 +1062,7 @@
       <div class="guestbook-orbital-wrap">
         
         <div style="text-align: center; margin-top: 10px;">
-          <span style="font-family: var(--font-mono); font-size: 11px; color: var(--accent-cobalt); letter-spacing: 1px;">MAGNETIC ORBITAL CARDS // REALTIME LOCALSTORAGE</span>
+          <span style="font-family: var(--font-mono); font-size: 11px; color: var(--accent-cobalt); letter-spacing: 1px;">MAGNETIC ORBITAL CARDS // SECURE SUPABASE CLOUD</span>
         </div>
 
         <!-- 부유하는 방명록 마그넷 칩 군집 -->
@@ -1044,9 +1072,10 @@
 
         <!-- 미니멀 원라인 인풋 스트립 -->
         <form class="orbital-input-strip" id="orbit-form">
-          <input type="text" class="strip-input input-author" id="orbit-author" placeholder="닉네임" required maxlength="10">
-          <input type="text" class="strip-input input-message" id="orbit-msg" placeholder="중앙 궤도 주변으로 새하얀 칩을 띄워보세요..." required maxlength="36">
-          <button type="submit" class="btn-orbit-send">↗</button>
+          <input type="text" class="strip-input input-author" id="orbit-author" placeholder="닉네임" required maxlength="12">
+          <input type="password" class="strip-input input-password" id="orbit-pass" placeholder="삭제비번" required maxlength="20">
+          <input type="text" class="strip-input input-message" id="orbit-msg" placeholder="중앙 궤도 주변으로 새하얀 칩을 띄워보세요..." required maxlength="50">
+          <button type="submit" class="btn-orbit-send" id="orbit-btn">↗</button>
         </form>
 
       </div>
@@ -1222,10 +1251,14 @@
       }, 600);
     }
 
-    // [4] 방명록 마그넷 칩 부착 & 기존 블로그 LocalStorage 호환 연동
-    const STORAGE_KEY = 'supia_gitblog_board_posts_v1';
+    // [4] 방명록 마그넷 칩 부착 & Supabase 클라우드 보안 DB 연동
+    const SUPABASE_URL = "https://ogjmzzqmsgsbdwlfpadi.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9nam16enFtc2dzYmR3bGZwYWRpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk0OTA0MTEsImV4cCI6MjEwNTA2NjQxMX0.zXShwX4UYYtq8kHC-Nm5YxK7shzslTlz295jW2uQEhA";
+
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     const orbitForm = document.getElementById("orbit-form");
     const swarm = document.getElementById("chips-swarm");
+    const orbitBtn = document.getElementById("orbit-btn");
 
     function escapeHtml(text) {
       const div = document.createElement('div');
@@ -1233,78 +1266,107 @@
       return div.innerHTML;
     }
 
-    function getBoardPosts() {
-      try {
-        const raw = localStorage.getItem(STORAGE_KEY);
-        if (!raw) {
-          const defaults = [
-            { id: '1', nickname: '우주탐험가', message: '스페이셜 오비탈 인터페이스가 너무 신선하고 아름답습니다!' },
-            { id: '2', nickname: '클린코더', message: '복잡한 사각형 박스를 탈피한 순백의 궤도 디자인 최고입니다 ✨' },
-            { id: '3', nickname: 'AI_Researcher', message: '중앙 뉴럴 파티클 코어와 지표 중심 구성이 신뢰를 주네요.' }
-          ];
-          localStorage.setItem(STORAGE_KEY, JSON.stringify(defaults));
-          return defaults;
-        }
-        return JSON.parse(raw);
-      } catch (e) {
-        return [];
+    // SHA-256 비밀번호 해싱 (브라우저 내장 Web Crypto API)
+    async function hashPassword(text) {
+      const msgBuffer = new TextEncoder().encode(text);
+      const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    }
+
+    // Supabase에서 방명록 실시간 조회 (password_hash 컬럼 제외로 보안 유지)
+    async function loadGuestChips() {
+      const { data, error } = await supabase
+        .from("guestbook")
+        .select("id, nickname, content, created_at")
+        .order("created_at", { ascending: false })
+        .limit(16);
+
+      if (error) {
+        console.error("Supabase 로드 에러:", error);
+        swarm.innerHTML = `<div style="color: var(--text-muted); font-size: 12px;">방명록을 불러오는 중 오류가 발생했습니다.</div>`;
+        return;
       }
-    }
 
-    function saveBoardPosts(posts) {
-      try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(posts));
-      } catch (e) {}
-    }
+      if (!data || data.length === 0) {
+        swarm.innerHTML = `
+          <div class="orbital-magnet-chip" style="opacity: 0.7;">
+            <span class="chip-author-label">@Supianna:</span>
+            <span>첫 번째 방명록의 주인공이 되어보세요 ✨</span>
+          </div>
+        `;
+        return;
+      }
 
-    function renderChips() {
-      const posts = getBoardPosts();
-      swarm.innerHTML = posts.slice(0, 10).map((p, idx) => `
+      swarm.innerHTML = data.map((p, idx) => `
         <div class="orbital-magnet-chip" style="animation-delay: -${(idx % 4) * 1.2}s;">
           <span class="chip-author-label">@${escapeHtml(p.nickname || '방문자')}:</span>
-          <span>${escapeHtml(p.message)}</span>
+          <span>${escapeHtml(p.content)}</span>
+          <button type="button" class="chip-del-btn" title="삭제" onclick="deleteGuestChip(${p.id})">✕</button>
         </div>
       `).join('');
     }
 
-    orbitForm.addEventListener("submit", (e) => {
+    // 방명록 등록 이벤트
+    orbitForm.addEventListener("submit", async (e) => {
       e.preventDefault();
       const author = document.getElementById("orbit-author").value.trim();
+      const pass = document.getElementById("orbit-pass").value;
       const msg = document.getElementById("orbit-msg").value.trim();
 
-      if (!author || !msg) return;
+      if (!author || !pass || !msg) return;
 
-      const now = new Date();
-      const formattedDate = `${now.getFullYear()}.${String(now.getMonth() + 1).padStart(2, '0')}.${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+      orbitBtn.disabled = true;
+      orbitBtn.textContent = "...";
 
-      const newPost = {
-        id: 'post_' + Date.now(),
-        nickname: author,
-        category: '응원',
-        message: msg,
-        createdAt: formattedDate,
-        likes: 0
-      };
+      try {
+        const password_hash = await hashPassword(pass);
+        const { error } = await supabase.from("guestbook").insert([
+          { nickname: author, content: msg, password_hash: password_hash }
+        ]);
 
-      const posts = getBoardPosts();
-      posts.unshift(newPost);
-      saveBoardPosts(posts);
-
-      // DOM 칩 생성
-      const chip = document.createElement("div");
-      chip.className = "orbital-magnet-chip";
-      chip.style.animation = "snapMagnet 0.45s cubic-bezier(0.16, 1, 0.3, 1)";
-      chip.innerHTML = `
-        <span class="chip-author-label">@${escapeHtml(author)}:</span>
-        <span>${escapeHtml(msg)}</span>
-      `;
-      swarm.prepend(chip);
-
-      document.getElementById("orbit-msg").value = "";
+        if (error) {
+          alert("등록에 실패했습니다: " + error.message);
+        } else {
+          document.getElementById("orbit-pass").value = "";
+          document.getElementById("orbit-msg").value = "";
+          await loadGuestChips();
+        }
+      } catch (err) {
+        console.error(err);
+        alert("등록 중 오류가 발생했습니다.");
+      } finally {
+        orbitBtn.disabled = false;
+        orbitBtn.textContent = "↗";
+      }
     });
 
+    // 방명록 삭제 (Supabase RPC 보안 함수 호출)
+    async function deleteGuestChip(id) {
+      const inputPass = prompt("작성 시 설정했던 비밀번호를 입력하세요:");
+      if (!inputPass) return;
+
+      const input_password_hash = await hashPassword(inputPass);
+
+      const { data: isDeleted, error } = await supabase.rpc("delete_guestbook_entry", {
+        entry_id: id,
+        input_password_hash: input_password_hash
+      });
+
+      if (error) {
+        alert("삭제 중 오류가 발생했습니다: " + error.message);
+        return;
+      }
+
+      if (isDeleted) {
+        await loadGuestChips();
+      } else {
+        alert("비밀번호가 일치하지 않습니다.");
+      }
+    }
+
     // 초기 실행
-    renderChips();
+    loadGuestChips();
   </script>
 
 </body>
