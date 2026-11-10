@@ -612,6 +612,16 @@
       border-color: rgba(147, 51, 234, 0.25);
     }
 
+    .proj-card-ulfra {
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      border-color: rgba(20, 184, 166, 0.4);
+    }
+    .proj-card-ulfra:hover {
+      transform: translateX(-50%) scale(1.06);
+    }
+
     .proj-card-icon {
       font-size: 22px;
     }
@@ -853,6 +863,15 @@
         flex-direction: column;
         gap: 14px;
       }
+      #pane-projects {
+        align-items: flex-start;
+        justify-content: flex-start;
+        overflow-y: auto;
+      }
+      .projects-orbital-wrap {
+        height: auto;
+        padding: 18px 0;
+      }
       .project-satellite-card {
         position: relative;
         inset: auto !important;
@@ -1050,6 +1069,14 @@
           <div class="proj-card-name">15대 인터랙티브 시각화 쇼케이스</div>
           <div class="proj-card-metric">15 Prototypes ↗</div>
           <p class="proj-card-sub">다크 코스믹, 미니멀 화이트, 벤토 스위트 등 15대 디자인 랩 아카이브.</p>
+        </a>
+
+        <!-- 프로젝트 6: 울산 생활인프라 로컬 대시보드 -->
+        <a href="https://github.com/supianna/supianna.github.io/tree/main/ulfra-dashboard" class="project-satellite-card proj-card-ulfra" target="_blank" rel="noopener noreferrer">
+          <div class="proj-card-icon">🗺️</div>
+          <div class="proj-card-name">ULFRA 울산 생활인프라</div>
+          <div class="proj-card-metric">Streamlit · SQLite · Local ↗</div>
+          <p class="proj-card-sub">55개 읍면동의 시설 공급을 비교하는 팀 프로젝트. 로컬 DB로 실행하며 외부 AI 서비스는 사용하지 않습니다.</p>
         </a>
 
       </div>

@@ -1,0 +1,15 @@
+[project]
+name = "ulfra-pjt"
+version = "0.1.0"
+description = "Offline ULFRA Streamlit dashboard backed by the bundled SQLite database"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "pandas>=3.0.6",
+    "plotly>=7.1.0",
+    "streamlit>=1.64.0",
+]
+
+[build-system]
+requires = ["uv_build>=0.12.5,<0.13.0"]
+build-backend = "uv_build"
