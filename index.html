@@ -541,6 +541,8 @@
 
     /* --- [3] PROJECTS 뷰: 오비탈 행성 갤러리 --- */
     .projects-orbital-wrap {
+      /* Projects 탭의 ring-core 반경 (440px × 1.22 ÷ 2) */
+      --project-orbit-radius: 268.4px;
       width: 1020px;
       height: 520px;
       position: relative;
@@ -551,6 +553,9 @@
 
     .project-satellite-card {
       position: absolute;
+      left: calc(50% + var(--project-orbit-radius) * cos(var(--orbit-angle)));
+      top: calc(50% + var(--project-orbit-radius) * sin(var(--orbit-angle)));
+      transform: translate(-50%, -50%);
       width: 240px;
       background: rgba(255, 255, 255, 0.95);
       backdrop-filter: blur(16px);
@@ -568,16 +573,15 @@
     }
 
     .project-satellite-card:hover {
-      transform: scale(1.06);
+      transform: translate(-50%, -50%) scale(1.06);
+      z-index: 6;
       border-color: var(--accent-cobalt);
       box-shadow: 0 20px 50px var(--accent-glow);
     }
 
-    /* 5대 프로젝트 노드 배치 (오비탈 성좌 구조) */
+    /* 6개 카드의 중심을 60도 간격으로 배치 */
     .proj-card-portfolio {
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
+      --orbit-angle: -120deg;
       width: 250px;
       z-index: 5;
       border-color: rgba(37, 99, 235, 0.45);
@@ -591,35 +595,26 @@
     }
 
     .proj-card-lotte {
-      top: 30px;
-      left: 50px;
+      --orbit-angle: -60deg;
     }
 
     .proj-card-neoguri {
-      top: 30px;
-      right: 50px;
+      --orbit-angle: 0deg;
     }
 
     .proj-card-classic {
-      bottom: 30px;
-      left: 60px;
+      --orbit-angle: 60deg;
       border-color: rgba(37, 99, 235, 0.25);
     }
 
     .proj-card-hub {
-      bottom: 30px;
-      right: 60px;
+      --orbit-angle: 120deg;
       border-color: rgba(147, 51, 234, 0.25);
     }
 
     .proj-card-ulfra {
-      bottom: 0;
-      left: 50%;
-      transform: translateX(-50%);
+      --orbit-angle: 180deg;
       border-color: rgba(20, 184, 166, 0.4);
-    }
-    .proj-card-ulfra:hover {
-      transform: translateX(-50%) scale(1.06);
     }
 
     .proj-card-icon {
@@ -820,8 +815,33 @@
     }
 
 
+    @media (max-width: 860px), (max-height: 760px) {
+      #pane-projects {
+        align-items: flex-start;
+        overflow-y: auto;
+      }
+      .projects-orbital-wrap {
+        width: 100%;
+        height: auto;
+        flex-direction: column;
+        gap: 14px;
+        padding: 96px 0 32px;
+      }
+      .project-satellite-card {
+        position: relative;
+        inset: auto;
+      }
+      .project-satellite-card,
+      .project-satellite-card:hover {
+        transform: none;
+      }
+    }
+
     /* 모바일 뷰포트 대응 */
     @media (max-width: 860px) {
+      .projects-orbital-wrap {
+        padding-top: 120px;
+      }
       .orbital-top-nav {
         padding: 16px 20px;
         flex-direction: column;
@@ -857,25 +877,10 @@
         flex-direction: column;
         gap: 8px;
       }
-      .projects-orbital-wrap,
       .guestbook-orbital-wrap {
         width: 100vw;
         flex-direction: column;
         gap: 14px;
-      }
-      #pane-projects {
-        align-items: flex-start;
-        justify-content: flex-start;
-        overflow-y: auto;
-      }
-      .projects-orbital-wrap {
-        height: auto;
-        padding: 18px 0;
-      }
-      .project-satellite-card {
-        position: relative;
-        inset: auto !important;
-        transform: none !important;
       }
       .spatial-bottom-hud {
         left: 20px;
@@ -985,7 +990,7 @@
           <div class="orbital-node node-step-1">
             <span class="node-tag">ORBIT 01 · WORKFLOW</span>
             <h3 class="node-title">AI-Native Workflow</h3>
-            <p class="node-desc">안티그래비티 등 최신 AI 플랫폼을 활용해 기획부터 프로토타이핑, 구현까지 속도감 있게 전개합니다.</p>
+            <p class="node-desc">Codex, 안티그래비티 등 최신 AI 플랫폼을 활용해 기획부터 프로토타이핑, 구현까지 속도감 있게 전개합니다.</p>
           </div>
 
           <!-- 노드 2: Practical Automation -->
@@ -1017,6 +1022,8 @@
           </div>
           <div class="tech-stack-group">
             <span class="tech-group-label">Ecosystem</span>
+            <span class="tech-chip highlight">codex</span>
+            <span class="tech-chip">·</span>
             <span class="tech-chip highlight">Antigravity</span>
             <span class="tech-chip">·</span>
             <span class="tech-chip">AI Development Platforms</span>
@@ -1031,7 +1038,7 @@
     <!-- ============================================== -->
     <div class="spatial-content-pane" id="pane-projects">
       <div class="projects-orbital-wrap">
-        <!-- 프로젝트 1: Supianna 공식 포트폴리오 (중앙 코어 쇼케이스) -->
+        <!-- 프로젝트 1: Supianna 공식 포트폴리오 -->
         <a href="portfolio/index.html" class="project-satellite-card proj-card-portfolio">
           <div class="proj-card-icon">🌟</div>
           <div class="proj-card-name">Supianna Digital Portfolio</div>
